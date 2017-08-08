@@ -164,8 +164,8 @@ obj/%.lo: $(srcdir)/%.c $(GENH) $(IMPH)
 	$(CC_CMD)
 
 lib/libc.so: $(LOBJS) $(LDSO_OBJS)
-	$(CC) $(CFLAGS_ALL) $(LDFLAGS_ALL) -nostdlib -shared \
-	-Wl,-e,_dlstart -o $@ $(LOBJS) $(LDSO_OBJS) $(LIBCC)
+	$(LD) $(LDFLAGS_ALL) -nostdlib -shared \
+	--entry _dlstart -o $@ $(LOBJS) $(LDSO_OBJS) $(LIBCC)
 
 lib/libc.a: $(AOBJS)
 	rm -f $@
