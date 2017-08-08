@@ -1,0 +1,52 @@
+INCLUDES = /I. /Iprotorpc/include /Iext/BearSSL/src /Iext/BearSSL/inc /Iext
+cflagscmn = $INCLUDES /MDd /Z7 /GR- /Od /FS /D_CRT_SECURE_NO_WARNINGS /DWIN32 /wd4206 /wd4131 /wd4127 /wd4996 /wd4204 /wd4214 /wd4221 /wd4702 /wd4100
+cflags = /TC $cflagscmn /D_HAS_EXCEPTIONS=0
+cxxflags = /TP /EHsc $cflagscmn /W4 /WX
+linkflags = /DEBUG
+arflags = /LTCG
+
+
+tgt = msvc
+
+rule cc
+ command = cl /showIncludes -c $in /Fo$out /nologo $cflags /W4 /WX
+ deps = msvc
+ description = CC $out
+
+rule extcc
+ command = cl /showIncludes -c $in /Fo$out /nologo $cflags 
+ deps = msvc
+ description = CC $out
+
+rule ccdll
+ command = cl /showIncludes -c $in /Fo$out /nologo $cflags
+ deps = msvc
+ description = CC $out
+
+rule cxx
+ command = cl /showIncludes -c $in /Fo$out /nologo $cxxflags
+ deps = msvc
+ description = CXX $out
+
+rule cxxdll
+ command = cl /showIncludes -c $in /Fo$out /nologo $cxxflags
+ deps = msvc
+ description = CXX $out
+
+rule lib
+ command = lib $in /nologo -OUT:$out $arflags
+ description = AR $out
+
+rule exe
+ command = link $in /nologo /out:$out $linkflags
+ description = EXE $out
+
+rule cexe
+ command = link $in /nologo /out:$out $linkflags
+ description = EXE $out
+
+rule dll
+ command = link /DLL /INCREMENTAL:no /nologo $in /out:$out.dll /implib:$out $linkflags
+ description = DLL $out
+
+include build/src.ninja

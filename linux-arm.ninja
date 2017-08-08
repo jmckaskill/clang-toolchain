@@ -1,0 +1,55 @@
+CC = $TOOLCHAIN_DIR/host-$HOST/bin/clang
+CPP = $TOOLCHAIN_DIR/host-$HOST/bin/clang++
+AR = $TOOLCHAIN_DIR/host-$HOST/bin/llvm-ar
+LD = $TOOLCHAIN_DIR/host-$HOST/bin/ld.lld.exe
+LIB = $TOOLCHAIN_DIR/target-arm
+
+INCLUDES = -I . -I protorpc/include -I ext/BearSSL/src -I ext/BearSSL/inc -I ext -I $LIB/include -I $TOOLCHAIN_DIR/host-$HOST/lib/clang/4.0.0/include
+CFLAGS = $INCLUDES -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
+CXXFLAGS = -std=c++11 -fno-rtti -fno-exceptions -I $LIB/include/c++ $CFLAGS
+LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
+LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
+
+TGT = linux-arm
+
+rule cc
+ command = $CC $CFLAGS -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out -pedantic
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
+
+rule ccdll
+ command = $CC $CFLAGS -std=c11 -fdata-sections -ffunction-sections -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
+
+rule cxx
+ command = $CPP $CXXFLAGS -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out 
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CXX $in
+
+rule cxxdll
+ command = $CPP $CXXFLAGS -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out -I clang-arm-linux/include/c++
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CXX $in
+
+rule lib
+ command = $AR rcs $out $in
+ description = ARM-AR $out
+
+rule clink
+ command = $LD --nostdlib --whole-archive --gc-sections -o $out $in $LIBS_A $LIB/crt1.o
+ description = C-ARM-EXE $out
+
+rule cxxlink
+ command = $LD --dynamic-linker /lib/ld-musl-arm.so.1 --nostdlib --whole-archive --gc-sections -o $out $in $LIBS_SO $LIB/crt1.o
+ description = CPP-ARM-EXE $out
+
+rule clinkdll
+ command = $LD --shared --nostdlib -o $out $in $DEFLIBS
+ description = ARM-DLL $out
+
+include $SRC_NINJA

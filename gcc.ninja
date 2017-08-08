@@ -1,0 +1,53 @@
+CFLAGS = $INCLUDES -g -D_GNU_SOURCE
+CXXFLAGS = $CFLAGS -fno-rtti -fno-exceptions -std=c++11 -Werror
+LDFLAGS = -g -lpthread
+
+TGT = $HOST
+
+rule cc
+ command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS -Werror -pedantic
+ deps = gcc
+ depfile = $out.d
+ description = CC $in
+
+rule extcc
+ command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS -I ext/BearSSL/src 
+ deps = gcc
+ depfile = $out.d
+ description = CC $in
+
+rule ccdll
+ command = gcc -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS
+ deps = gcc
+ depfile = $out.d
+ description = CC $in
+
+rule cxx
+ command = g++ $CXXFLAGS -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = CXX $in
+
+rule cxxdll
+ command = g++ $CXXFLAGS -fPIC -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = CXX $in
+
+rule lib
+ command = ar rcs $out $in
+ description = AR $out
+
+rule clinkdll
+ command = g++ -shared $in -o $out $LDFLAGS
+ description = AR $out
+
+rule clink
+ command = g++ $in -o $out $LDFLAGS
+ description = EXE $out
+
+rule cxxlink
+ command = g++ $in -o $out $LDFLAGS
+ description = EXE $out
+
+include $SRC_NINJA

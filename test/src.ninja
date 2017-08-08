@@ -1,0 +1,8 @@
+
+OBJ = obj/$TGT
+
+build $OBJ/main.o: cc main.c
+
+build bin/$TGT/main.exe: clink $
+ $OBJ/main.o
+
