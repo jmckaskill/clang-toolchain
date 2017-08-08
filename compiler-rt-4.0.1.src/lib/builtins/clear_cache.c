@@ -82,10 +82,6 @@ uintptr_t GetCurrentProcess(void);
   #endif
 #endif
 
-#if defined(__linux__) && defined(__arm__)
-  #include <asm/unistd.h>
-#endif
-
 /*
  * The compiler generates calls to __clear_cache() when creating 
  * trampoline functions on the stack for use with nested functions.
@@ -108,6 +104,7 @@ void __clear_cache(void *start, void *end) {
 
         sysarch(ARM_SYNC_ICACHE, &arg);
     #elif defined(__linux__)
+#define __ARM_NR_cacheflush 0x0F0002
          register int start_reg __asm("r0") = (int) (intptr_t) start;
          const register int end_reg __asm("r1") = (int) (intptr_t) end;
          const register int flags __asm("r2") = 0;

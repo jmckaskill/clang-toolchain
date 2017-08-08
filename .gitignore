@@ -1,6 +1,4 @@
-host-*
-target-*
-build-libc.ninja
+/build-libc.ninja
 /llvm-build
 /host
-compiler-rt-4.0.1.src/lib/builtins/disabled
+/compiler-rt-4.0.1.src/lib/builtins/disabled
