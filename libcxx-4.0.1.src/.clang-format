@@ -1,0 +1,17 @@
+BasedOnStyle: LLVM
+
+---
+Language: Cpp
+
+AlwaysBreakTemplateDeclarations: true
+AllowShortFunctionsOnASingleLine: Inline
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterClass: true
+  AfterFunction: true
+PointerAlignment: Left
+
+# Disable formatting options which may break tests.
+SortIncludes: false
+ReflowComments: false
+---

@@ -4,7 +4,6 @@ AR = $TOOLCHAIN_DIR/host-$HOST/bin/llvm-ar
 LD = $TOOLCHAIN_DIR/host-$HOST/bin/ld.lld.exe
 LIB = $TOOLCHAIN_DIR/target-arm
 
-INCLUDES = -I . -I protorpc/include -I ext/BearSSL/src -I ext/BearSSL/inc -I ext -I $LIB/include -I $TOOLCHAIN_DIR/host-$HOST/lib/clang/4.0.0/include
 CFLAGS = $INCLUDES -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
 CXXFLAGS = -std=c++11 -fno-rtti -fno-exceptions -I $LIB/include/c++ $CFLAGS
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so

@@ -1,3 +1,4 @@
 host-*
 target-*
 build-libc.ninja
+/llvm-build
