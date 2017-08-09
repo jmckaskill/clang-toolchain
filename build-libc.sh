@@ -93,3 +93,5 @@ make -e install || exit 1
 rm -rf "$OUT/bin"
 rm -f "$OUT"/ld-musl-arm.so.1
 
+date > "$OUT"/build-date.txt
+

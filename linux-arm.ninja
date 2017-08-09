@@ -1,7 +1,7 @@
-CC = $TOOLCHAIN_DIR/host-$HOST/bin/clang
-CPP = $TOOLCHAIN_DIR/host-$HOST/bin/clang++
-AR = $TOOLCHAIN_DIR/host-$HOST/bin/llvm-ar
-LD = $TOOLCHAIN_DIR/host-$HOST/bin/ld.lld.exe
+CC = $TOOLCHAIN_DIR/host/bin/clang
+CPP = $TOOLCHAIN_DIR/host/bin/clang++
+AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
+LD = $TOOLCHAIN_DIR/host/bin/ld.lld.exe
 LIB = $TOOLCHAIN_DIR/target-arm
 
 CFLAGS = $INCLUDES -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
