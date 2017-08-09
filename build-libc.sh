@@ -1,16 +1,18 @@
 #!/bin/sh
 
+ROOT="$PWD"
 BIN="$PWD/host/bin"
-OUT="$PWD/target-arm"
+OUT="$PWD/lib/arm"
 
 MUSL="$PWD/musl-1.1.16"
 COMPILER_RT="$PWD/compiler-rt-4.0.1.src"
+NINJA_COMMON="$PWD/build-libc-common.ninja"
 
 export CFLAGS="--target=armv7---linux-eabi -Os -Xclang -target-feature -Xclang -neon"
 NINJA_TARGET="--target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon"
 
 rm -rf "$OUT"
-mkdir "$OUT"
+mkdir -p "$OUT"
 
 echo "configure musl"
 cd $MUSL
@@ -34,7 +36,8 @@ cd "$OUT"
 F="build-libc.ninja"
 echo "TARGET=$NINJA_TARGET" > $F
 echo "OUT=$OUT" >> $F
-echo "include ../build-libc-common.ninja" >> $F
+echo "BIN=$BIN" >> $F
+echo "include $NINJA_COMMON" >> $F
 
 C="$COMPILER_RT/lib/builtins/*.c"
 CA="$COMPILER_RT/lib/builtins/arm/*.c"
@@ -84,6 +87,7 @@ ninja -f "$F" "$OUT/libclang-rt.so" "$OUT/libclang-rt.a" || exit 1
 echo "build musl"
 cd "$MUSL"
 make -e install || exit 1
+cd "$ROOT"
 
 #echo "building c++ library"
 #cd $D
@@ -91,7 +95,10 @@ make -e install || exit 1
 
 # get rid of the musl clang wrappers which we don't want
 rm -rf "$OUT/bin"
-rm -f "$OUT"/ld-musl-arm.so.1
+rm -f "$OUT/ld-musl-arm.so.1" 
+rm -rf "$OUT/build-libc.ninja" "$OUT/obj" "$OUT/.ninja_deps" "$OUT/.ninja_log"
 
-date > "$OUT"/build-date.txt
+date > "$OUT/build-date.txt"
+rm -f libarm.txz
+tar -cJf libarm.txz lib/arm || exit 1
 

@@ -2,20 +2,20 @@ CFLAGS = $TARGET -fpic -Os -I $OUT/include -fno-builtin
 CPPFLAGS = -std=c++14 -I $OUT/include/c++ $CFLAGS -fno-exceptions -fno-rtti -D _LIBCXXABI_NO_EXCEPTIONS -D LIBCXX_BUILDING_LIBCXXABI -D _LIBCXXABI_NO_RTTI
 
 rule cc
- command = ../host/bin/clang $CFLAGS -MMD -MF $out.d -c $in -o $out
+ command = $BIN/clang $CFLAGS -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
 
 rule cxx
- command = ../host/bin/clang++ $CPPFLAGS -MMD -MF $out.d -c $in -o $out
+ command = $BIN/clang++ $CPPFLAGS -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
 
 rule lib
- command = ../host/bin/llvm-ar rcs $out $in
+ command = $BIN/llvm-ar rcs $out $in
 
 rule as
- command = ../host/bin/clang $CFLAGS -c $in -o $out
+ command = $BIN/clang $CFLAGS -c $in -o $out
 
 rule dll
- command = ../host/bin/ld.lld.exe --shared $in -o $out
+ command = $BIN/ld.lld.exe --shared $in -o $out
