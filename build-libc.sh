@@ -98,7 +98,7 @@ rm -rf "$OUT/bin"
 rm -f "$OUT/ld-musl-arm.so.1" 
 rm -rf "$OUT/build-libc.ninja" "$OUT/obj" "$OUT/.ninja_deps" "$OUT/.ninja_log"
 
-date > "$OUT/build-date.txt"
+date --utc --iso-8601=seconds > "$OUT/build-date.txt"
 rm -f libarm.txz
 tar -cJf libarm.txz lib/arm || exit 1
 
