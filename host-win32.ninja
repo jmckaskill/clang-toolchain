@@ -1,0 +1,9 @@
+host = msvc
+
+rule run
+ command = $in -o $out
+ description = RUN $in -o $out
+
+rule copy
+ command = "C:\Program Files\Git\usr\bin\cp.exe" -f $in $out
+ description = COPY $in $out

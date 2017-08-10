@@ -1,0 +1,51 @@
+CFLAGSCMN = $INCLUDES /MT /GR- /Ox /GL /DNDEBUG /D_CRT_SECURE_NO_WARNINGS /DWIN32 /wd4206 /wd4131 /wd4127 /wd4996 /wd4204 /wd4214 /wd4221 /wd4100 /wd4702
+CFLAGS = /TC $CFLAGSCMN /D_HAS_EXCEPTIONS=0 
+CXXFLAGS = /TP /EHsc $CFLAGSCMN /W4
+LINKFLAGS = /LTCG /OPT:REF /OPT:ICF
+LIBFLAGS = /LTCG
+
+
+TGT = win32-release
+
+rule cc
+ command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS /W4 /WX
+ deps = msvc
+ description = CC $out
+
+rule extcc
+ command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS
+ deps = msvc
+ description = CC $out
+
+rule ccdll
+ command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS
+ deps = msvc
+ description = CC $out
+
+rule cxx
+ command = cl /showIncludes -c $in /Fo$out /nologo $CXXFLAGS
+ deps = msvc
+ description = CXX $out
+
+rule cxxdll
+ command = cl /showIncludes -c $in /Fo$out /nologo $CXXFLAGS
+ deps = msvc
+ description = CXX $out
+
+rule lib
+ command = lib $in /nologo -OUT:$out $LIBFLAGS
+ description = AR $out
+
+rule clinkdll
+ command = link /DLL /INCREMENTAL:no /nologo $in /out:$out.dll /implib:$out $LINKFLAGS
+ description = DLL $out
+
+rule clink
+ command = link $in /nologo /out:$out $LINKFLAGS
+ description = EXE $out
+
+rule cxxlink
+ command = link $in /nologo /out:$out $LINKFLAGS
+ description = EXE $out
+
+include $SRC_NINJA

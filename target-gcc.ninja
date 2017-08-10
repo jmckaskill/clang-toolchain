@@ -10,12 +10,6 @@ rule cc
  depfile = $out.d
  description = CC $in
 
-rule extcc
- command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS -I ext/BearSSL/src 
- deps = gcc
- depfile = $out.d
- description = CC $in
-
 rule ccdll
  command = gcc -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS
  deps = gcc

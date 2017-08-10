@@ -59,7 +59,7 @@ Linux)
 Darwin)
 	install_txz "http://releases.llvm.org/4.0.1/clang+llvm-4.0.1-x86_64-apple-darwin.tar.xz" clang+llvm-4.0.1-x86_64-apple-macosx10.9.0
 	;;
-MINGW64_NT*)
+MSYS*|MINGW*)
 	install_7z "https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2017-08-09.7z"
 	# add host to path for xz so we can unpack libc below
 	export PATH=$PATH:$PWD/host/bin
@@ -95,6 +95,7 @@ if [ "$LIBC_HAVE" != "$LIBC_WANT" ]; then
 	rm -f libarm.txz
 fi
 
+echo "toolchain successfully installed"
 
 
 
