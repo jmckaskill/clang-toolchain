@@ -1,4 +1,4 @@
-host = msvc
+HOST = win32-debug
 
 rule run
  command = $in -o $out

@@ -2,9 +2,9 @@ CC = $TOOLCHAIN_DIR/host/bin/clang
 CPP = $TOOLCHAIN_DIR/host/bin/clang++
 AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
 LD = $TOOLCHAIN_DIR/host/bin/ld.lld.exe
-LIB = $TOOLCHAIN_DIR/target-arm
+LIB = $TOOLCHAIN_DIR/lib/arm
 
-CFLAGS = $INCLUDES -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
+CFLAGS = $INCLUDES -I $TOOLCHAIN_DIR/lib/arm/include -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
 CXXFLAGS = -std=c++11 -fno-rtti -fno-exceptions -I $LIB/include/c++ $CFLAGS
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
