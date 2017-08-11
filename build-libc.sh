@@ -14,8 +14,12 @@ NINJA_TARGET="--target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon"
 rm -rf "$OUT"
 mkdir -p "$OUT"
 
-echo "configure musl"
+
 cd $MUSL
+echo "disabling musl files with overrides in compiler-rt"
+rm src/string/arm/__aeabi_*.c
+
+echo "configure musl"
 export CC="$BIN/clang"
 export CROSS_COMPILE="$BIN/llvm-"
 export LD="$BIN/ld.lld.exe"
