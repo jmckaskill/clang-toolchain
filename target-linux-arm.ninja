@@ -4,12 +4,19 @@ AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
 LD = $TOOLCHAIN_DIR/host/bin/ld.lld.exe
 LIB = $TOOLCHAIN_DIR/lib/arm
 
-CFLAGS = $INCLUDES -I $TOOLCHAIN_DIR/lib/arm/include -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -Wall -Werror -Wno-missing-braces
-CXXFLAGS = -std=c++11 -fno-rtti -fno-exceptions -I $LIB/include/c++ $CFLAGS
+CFLAGSCMN = $INCLUDES -I $TOOLCHAIN_DIR/lib/arm/include -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
+CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces
+CXXFLAGS = -std=c++11 -fno-rtti -fno-exceptions -I $LIB/include/c++ $CFLAGSCMN  -Wall -Werror -Wno-missing-braces
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
 
 TGT = linux-arm
+
+rule extcc
+ command = $CC $CFLAGSCMN -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
 
 rule cc
  command = $CC $CFLAGS -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out -pedantic

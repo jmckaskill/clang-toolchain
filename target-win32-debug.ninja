@@ -12,6 +12,11 @@ rule cc
  deps = msvc
  description = CC $out
 
+rule extcc
+ command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS
+ deps = msvc
+ description = CC $out
+
 rule ccdll
  command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS
  deps = msvc
