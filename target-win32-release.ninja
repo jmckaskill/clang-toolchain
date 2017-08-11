@@ -13,7 +13,7 @@ rule cc
  description = CC $out
 
 rule extcc
- command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS
+ command = cl /showIncludes -c $in /Fo$out /nologo $EXT_INCLUDES $CFLAGS
  deps = msvc
  description = CC $out
 

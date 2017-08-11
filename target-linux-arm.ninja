@@ -13,7 +13,7 @@ LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
 TGT = linux-arm
 
 rule extcc
- command = $CC $CFLAGSCMN -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
+ command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
  description = ARM-CC $in
