@@ -1,0 +1,10 @@
+HOST = host
+
+rule run
+ command = $in -o $out
+ description = RUN $in -o $out
+ 
+rule copy
+ command = rm -f $out && ln -T $in $out
+ description = COPY $in $out
+

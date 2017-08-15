@@ -1,17 +1,23 @@
-CFLAGS = $INCLUDES -g -D_GNU_SOURCE
-CXXFLAGS = $CFLAGS -fno-rtti -fno-exceptions -std=c++11 -Werror
+CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Werror -Wno-missing-braces -Wno-unused-function -pedantic
+CXXFLAGS = $CFLAGS -fno-rtti -fno-exceptions -std=c++11 -Wall -Werror
 LDFLAGS = -g -lpthread
 
-TGT = $HOST
+TGT = host
 
 rule cc
- command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS -Werror -pedantic
+ command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS
+ deps = gcc
+ depfile = $out.d
+ description = CC $in
+
+rule extcc
+ command = gcc -MMD -MF $out.d -c $in -o $out -g $EXT_INCLUDES $INCLUDES
  deps = gcc
  depfile = $out.d
  description = CC $in
 
 rule ccdll
- command = gcc -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS
+ command = gcc -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS -Wall -Werror
  deps = gcc
  depfile = $out.d
  description = CC $in
