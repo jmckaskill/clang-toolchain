@@ -40,7 +40,8 @@ install_7z() {
 		curl -f "$URL" -o "$FILE" || exit 1
 		echo "unpacking toolchain"
 		rm -rf host || exit 1
-		/c/Program\ Files/7-Zip/7z.exe x clang.7z || exit 1
+		/c/Program\ Files/7-Zip/7z.exe x "$FILE" || exit 1
+		rm -f "$FILE"
 
 		VERSION=`host/bin/clang -v 2>&1 | head -n 1`
 		if [ "$VERSION" != "$WANT" ]; then
