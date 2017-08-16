@@ -32,7 +32,7 @@ EOF
 }
 
 
-write_project() {
+do_write_project() {
 	DIR="$1"
 	NAME="$2"
 	TYPE="$3"
@@ -51,7 +51,7 @@ EndProject"
 		$UUID.Windows-Debug|ALL.ActiveCfg = Windows-Debug|Win32
 		$UUID.Windows-Release|ALL.ActiveCfg = Windows-Release|Win32"
 
-	echo "GENERATING $DIR/$FILE.vcxproj"
+	echo "GENERATING $DIR/$NAME.vcxproj"
 
 	pushd $DIR &> /dev/null
 	FILE="$NAME.vcxproj"
@@ -134,7 +134,7 @@ EOF
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Windows-Release|Win32'">
-    <NMakeOutput>\$(SolutionDir)\\${TYPE}\\win32-release\\${DEBUG_TARGET}</NMakeOutput>
+    <NMakeOutput>\$(SolutionDir)\\bin\\win32-release\\${DEBUG_TARGET}</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
@@ -145,7 +145,7 @@ EOF
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Windows-Debug|Win32'">
-    <NMakeOutput>\$(SolutionDir)\\${TYPE}\\win32-debug\\${DEBUG_TARGET}</NMakeOutput>
+    <NMakeOutput>\$(SolutionDir)\\bin\\win32-debug\\${DEBUG_TARGET}</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
@@ -156,7 +156,7 @@ EOF
     <ExcludePath />
   </PropertyGroup>
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Linux-Arm|Win32'">
-    <NMakeOutput>\$(SolutionDir)\\${TYPE}\linux-arm\\${DEBUG_TARGET}</NMakeOutput>
+    <NMakeOutput>\$(SolutionDir)\\bin\linux-arm\\${DEBUG_TARGET}</NMakeOutput>
     <NMakePreprocessorDefinitions>__linux__;__arm__</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/linux-arm/${BUILD_TARGET}</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/linux-arm/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/linux-arm/${BUILD_TARGET}</NMakeReBuildCommandLine>
@@ -176,6 +176,42 @@ EOF
 
 	unix2dos --add-bom $FILE &> /dev/null
 	popd &> /dev/null
+}
+
+write_sg6() {
+	DIR="$1"
+	NAME="$2"
+	DEBUG_TARGET="$3"
+	UUID=`echo $4 | tr [a-z] [A-Z]`
+	shift; shift; shift; shift
+	FOLDERS="$*"
+
+	do_write_project "$DIR" "$NAME" sg6 "$NAME.sg6" "$DEBUG_TARGET" "$UUID" "$FOLDERS"
+
+	PROJECT_SECTIONS="$PROJECT_SECTIONS
+		$UUID.Linux-Arm|ALL.Build.0 = Linux-Arm|Win32
+		$UUID.Windows-Debug|ALL.Build.0 = Windows-Debug|Win32
+		$UUID.Windows-Release|ALL.Build.0 = Windows-Release|Win32"
+}
+
+write_exe() {
+	DIR="$1"
+	NAME="$2"
+	UUID=`echo $3 | tr [a-z] [A-Z]`
+	shift; shift; shift
+	FOLDERS="$*"
+
+	do_write_project "$DIR" "$NAME" bin "$NAME.exe" "$NAME.exe" "$UUID" "$FOLDERS"
+}
+
+write_lib() {
+	DIR="$1"
+	NAME="$2"
+	UUID=`echo $3 | tr [a-z] [A-Z]`
+	shift; shift; shift
+	FOLDERS="$*"
+
+	do_write_project "$DIR" "$NAME" lib "$NAME.lib" "$NAME.lib" "$UUID" "$FOLDERS"
 }
 
 write_command() {

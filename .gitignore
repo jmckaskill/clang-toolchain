@@ -3,3 +3,5 @@
 /host
 /compiler-rt-4.0.1.src/lib/builtins/disabled
 /lib
+*~
+*.swp
