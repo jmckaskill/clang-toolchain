@@ -13,7 +13,8 @@ VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1${PROJECT_LIST}
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		R2|ALL = R2|ALL
+		ARM-Debug|ALL = ARM-Debug|ALL
+		ARM-Release|ALL = ARM-Release|ALL
 		Debug|ALL = Debug|ALL
 		Release|ALL = Release|ALL
 	EndGlobalSection
@@ -47,7 +48,8 @@ Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"$TYPE - $BUILD_TARGET\",
 EndProject"
 
 	PROJECT_SECTIONS="$PROJECT_SECTIONS
-		$UUID.R2|ALL.ActiveCfg = R2|Win32
+		$UUID.ARM-Debug|ALL.ActiveCfg = ARM-Debug|Win32
+		$UUID.ARM-Release|ALL.ActiveCfg = ARM-Release|Win32
 		$UUID.Debug|ALL.ActiveCfg = Debug|Win32
 		$UUID.Release|ALL.ActiveCfg = Release|Win32"
 
@@ -68,8 +70,12 @@ EndProject"
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="R2|Win32">
-      <Configuration>R2</Configuration>
+    <ProjectConfiguration Include="ARM-Debug|Win32">
+      <Configuration>ARM-Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ARM-Release|Win32">
+      <Configuration>ARM-Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
@@ -113,7 +119,12 @@ EOF
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -129,7 +140,10 @@ EOF
   <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='Debug|Win32'">
     <Import Project="\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
+    <Import Project="\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
     <Import Project="\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -155,12 +169,23 @@ EOF
     <SourcePath />
     <ExcludePath />
   </PropertyGroup>
-  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'">
-    <NMakeOutput>\$(SolutionDir)\\bin\linux-arm\\${DEBUG_TARGET}</NMakeOutput>
-    <NMakePreprocessorDefinitions>__linux__;__arm__</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/linux-arm/${BUILD_TARGET}</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/linux-arm/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/linux-arm/${BUILD_TARGET}</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/linux-arm/${BUILD_TARGET}</NMakeCleanCommandLine>
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
+    <NMakeOutput>\$(SolutionDir)\\bin\\arm-release\\${DEBUG_TARGET}</NMakeOutput>
+    <NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET}</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);\$(SolutionDir)\\toolchain\\lib\\arm\\include;\$(SolutionDir)\\toolchain\\host\\lib\\clang\\4.0.1\\include</NMakeIncludeSearchPath>
+    <IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
+    <NMakeOutput>\$(SolutionDir)\\bin\\arm-debug\\${DEBUG_TARGET}</NMakeOutput>
+    <NMakePreprocessorDefinitions>__linux__;__arm__;DEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);\$(SolutionDir)\\toolchain\\lib\\arm\\include;\$(SolutionDir)\\toolchain\\host\\lib\\clang\\4.0.1\\include</NMakeIncludeSearchPath>
     <IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
     <SourcePath />
@@ -189,7 +214,8 @@ write_sg6() {
 	do_write_project "$DIR" "$NAME" sg6 "$NAME.sg6" "$DEBUG_TARGET" "$UUID" "$FOLDERS"
 
 	PROJECT_SECTIONS="$PROJECT_SECTIONS
-		$UUID.R2|ALL.Build.0 = R2|Win32
+		$UUID.ARM-Debug|ALL.Build.0 = ARM-Debug|Win32
+		$UUID.ARM-Release|ALL.Build.0 = ARM-Release|Win32
 		$UUID.Debug|ALL.Build.0 = Debug|Win32
 		$UUID.Release|ALL.Build.0 = Release|Win32"
 }
@@ -229,7 +255,8 @@ Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"$NAME\", \"$FILE\", \"$U
 EndProject"
 
 	PROJECT_SECTIONS="$PROJECT_SECTIONS
-		$UUID.R2|ALL.ActiveCfg = R2|Win32
+		$UUID.ARM-Debug|ALL.ActiveCfg = ARM-Debug|Win32
+		$UUID.ARM-Release|ALL.ActiveCfg = ARM-Release|Win32
 		$UUID.Debug|ALL.ActiveCfg = Debug|Win32
 		$UUID.Release|ALL.ActiveCfg = Release|Win32"
 
@@ -245,8 +272,12 @@ EndProject"
 		<Configuration>Debug</Configuration>
 		<Platform>Win32</Platform>
 	</ProjectConfiguration>
-	<ProjectConfiguration Include="R2|Win32">
-		<Configuration>R2</Configuration>
+	<ProjectConfiguration Include="ARM-Debug|Win32">
+		<Configuration>ARM-Debug</Configuration>
+		<Platform>Win32</Platform>
+	</ProjectConfiguration>
+	<ProjectConfiguration Include="ARM-Release|Win32">
+		<Configuration>ARM-Release</Configuration>
 		<Platform>Win32</Platform>
 	</ProjectConfiguration>
   </ItemGroup>
@@ -266,7 +297,12 @@ EndProject"
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -282,7 +318,10 @@ EndProject"
   <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='Debug|Win32'">
     <Import Project="\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
+    <Import Project="\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
     <Import Project="\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props" Condition="exists('\$(UserRootDir)\\Microsoft.Cpp.\$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -292,7 +331,10 @@ EndProject"
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Debug|Win32'">
     <NMakeBuildCommandLine>${COMMAND}</NMakeBuildCommandLine>
   </PropertyGroup>
-  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='R2|Win32'">
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
+    <NMakeBuildCommandLine>${COMMAND}</NMakeBuildCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
     <NMakeBuildCommandLine>${COMMAND}</NMakeBuildCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

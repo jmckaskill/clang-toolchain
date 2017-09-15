@@ -3,4 +3,6 @@ SRC_NINJA = src.ninja
 
 include ../host-gcc.ninja
 subninja ../target-gcc.ninja
-subninja ../target-linux-arm.ninja
+subninja ../target-arm-debug.ninja
+subninja ../target-arm-release.ninja
+
