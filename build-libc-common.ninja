@@ -1,5 +1,5 @@
 CFLAGS = $TARGET -fpic -Os -I $OUT/include -fno-builtin
-CPPFLAGS = -std=c++14 -I $OUT/include/c++ $CFLAGS -fno-exceptions -fno-rtti -D _LIBCXXABI_NO_EXCEPTIONS -D LIBCXX_BUILDING_LIBCXXABI -D _LIBCXXABI_NO_RTTI
+CPPFLAGS = -std=c++14 -I $OUT/include/c++ $CFLAGS -D LIBCXX_BUILDING_LIBCXXABI -D _LIBCPP_HAS_MUSL_LIBC -D _GCC_MAX_ALIGN_T
 
 rule cc
  command = $BIN/clang $CFLAGS -MMD -MF $out.d -c $in -o $out
