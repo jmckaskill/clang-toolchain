@@ -75,8 +75,8 @@ esac
 echo "checking libc"
 
 LIBC_HAVE=`cat lib/arm/build-date.txt`
-LIBC_WANT="2017-08-11T16:19:57+00:00"
-LIBC_URL="https://storage.googleapis.com/ctct-clang-toolchain/libarm-2017-08-11.txz"
+LIBC_WANT="2017-09-15T18:18:38+00:00"
+LIBC_URL="https://storage.googleapis.com/ctct-clang-toolchain/libarm-2017-09-15.txz"
 
 if [ "$LIBC_HAVE" != "$LIBC_WANT" ]; then
 	echo "downloading libc"

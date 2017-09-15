@@ -118,7 +118,7 @@ rm -rf "$OUT/build-libc.ninja" "$OUT/obj" "$OUT/.ninja_deps" "$OUT/.ninja_log"
 
 cd "$ROOT"
 date --utc --iso-8601=seconds > "$OUT/build-date.txt"
-TAR_FILE="libarm`date --utc --iso-8601=date`.txz"
+TAR_FILE="libarm-`date --utc --iso-8601=date`.txz"
 rm -f $TAR_FILE
 tar -cJf $TAR_FILE lib/arm || exit 1
 
