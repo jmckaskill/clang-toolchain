@@ -1,9 +1,0 @@
-# ninja log v5
-0	314	0	obj/linux-arm/main.o	bb3243f095266120
-1	364	0	obj/osx/main.o	afa0b9f7290e120e
-364	502	0	bin/osx/main.exe	dda79302523ee4a0
-0	125	0	bin/linux-arm/main.exe	b7934059a6bed1e5
-1	29	0	obj/osx/main.o	afa0b9f7290e120e
-0	30	0	obj/linux-arm/main.o	bb3243f095266120
-29	58	0	bin/osx/main.exe	dda79302523ee4a0
-30	58	0	bin/linux-arm/main.exe	b7934059a6bed1e5

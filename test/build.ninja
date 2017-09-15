@@ -1,0 +1,6 @@
+TOOLCHAIN_DIR = ..
+SRC_NINJA = src.ninja
+
+include ../host-gcc.ninja
+subninja ../target-gcc.ninja
+subninja ../target-linux-arm.ninja

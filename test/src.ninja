@@ -1,8 +1,10 @@
 
 OBJ = obj/$TGT
 
-build $OBJ/main.o: cc main.c
+build $OBJ/cmain.o: cc main.c
+build $OBJ/cppmain.o: cxx main.cpp
 
-build bin/$TGT/main.exe: clink $
- $OBJ/main.o
+build bin/$TGT/cmain.exe: clink $OBJ/cmain.o
+
+build bin/$TGT/cppmain.exe: cxxlink $OBJ/cppmain.o
 
