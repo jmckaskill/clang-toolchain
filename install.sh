@@ -61,7 +61,7 @@ Darwin)
 	install_txz "http://releases.llvm.org/4.0.1/clang+llvm-4.0.1-x86_64-apple-darwin.tar.xz" clang+llvm-4.0.1-x86_64-apple-macosx10.9.0
 	;;
 MSYS*|MINGW*)
-	install_7z "https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2017-08-09.7z"
+	install_7z "https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2017-09-17.7z"
 	# add host to path for xz so we can unpack libc below
 	export PATH=$PATH:$PWD/host/bin
 	;;
