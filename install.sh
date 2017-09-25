@@ -1,5 +1,7 @@
 #!/bin/sh
 
+export PATH="$PATH:/mingw64/bin"
+
 if [ -n "$1" ]; then
 	cd "$1"
 fi
