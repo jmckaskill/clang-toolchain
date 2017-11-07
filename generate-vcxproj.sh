@@ -84,7 +84,7 @@ EOF
 
 	if [ -n "$FOLDERS" ]; then
 		echo '  <ItemGroup>' >> $FILE
-		for file in `find $FOLDERS -iname '*.c' -o -iname '*.cpp'`; do
+		for file in `find $FOLDERS -iname '*.c' -o -iname '*.cpp' -o -iname '*.S'`; do
 			echo "    <ClCompile Include=\"$file\" />" >> $FILE
 		done
 		echo '  </ItemGroup>' >> $FILE
