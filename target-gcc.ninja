@@ -1,5 +1,5 @@
 CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Werror -Wno-missing-braces -Wno-unused-function -pedantic
-CXXFLAGS = $CFLAGS -std=c++11 -Wall -Werror
+CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -g -lpthread
 
 TGT = host
