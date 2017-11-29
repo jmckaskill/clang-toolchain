@@ -151,9 +151,9 @@ EOF
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Release|Win32'">
 	<NMakeOutput>\$(SolutionDir)\\bin\\win32-release\\${DEBUG_TARGET}</NMakeOutput>
 	<NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-release/${BUILD_TARGET}</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-release/${BUILD_TARGET}</NMakeCleanCommandLine>
 	<NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);${INCLUDEDIRS}</NMakeIncludeSearchPath>
 	<IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
 	<SourcePath />
@@ -162,9 +162,9 @@ EOF
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Debug|Win32'">
 	<NMakeOutput>\$(SolutionDir)\\bin\\win32-debug\\${DEBUG_TARGET}</NMakeOutput>
 	<NMakePreprocessorDefinitions>WIN32</NMakePreprocessorDefinitions>
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/win32-debug/${BUILD_TARGET}</NMakeCleanCommandLine>
 	<NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);${INCLUDEDIRS}</NMakeIncludeSearchPath>
 	<IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
 	<SourcePath />
@@ -173,9 +173,9 @@ EOF
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
 	<NMakeOutput>\$(SolutionDir)\\bin\\arm-release\\${DEBUG_TARGET}</NMakeOutput>
 	<NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET}</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-release/${BUILD_TARGET}</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-release/${BUILD_TARGET}</NMakeCleanCommandLine>
 	<NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);${INCLUDEDIRS};\$(SolutionDir)\\toolchain\\lib\\arm\\include;\$(SolutionDir)\\toolchain\\host\\lib\\clang\\4.0.1\\include</NMakeIncludeSearchPath>
 	<IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
 	<SourcePath />
@@ -184,9 +184,9 @@ EOF
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
 	<NMakeOutput>\$(SolutionDir)\\bin\\arm-debug\\${DEBUG_TARGET}</NMakeOutput>
 	<NMakePreprocessorDefinitions>__linux__;__arm__;DEBUG</NMakePreprocessorDefinitions>
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET} &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean ${TYPE}/arm-debug/${BUILD_TARGET}</NMakeCleanCommandLine>
 	<NMakeIncludeSearchPath>\$(SolutionDir);\$(ProjectDir);${INCLUDEDIRS};\$(SolutionDir)\\toolchain\\lib\\arm\\include;\$(SolutionDir)\\toolchain\\host\\lib\\clang\\4.0.1\\include</NMakeIncludeSearchPath>
 	<IntDir>\$(SolutionDir)\\obj\\\$(Configuration)\</IntDir>
 	<SourcePath />
@@ -438,24 +438,24 @@ EndProject"
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Release|Win32'">
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='Debug|Win32'">
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Debug|Win32'">
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'\$(Configuration)|\$(Platform)'=='ARM-Release|Win32'">
-	<NMakeBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
-	<NMakeReBuildCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
-	<NMakeCleanCommandLine>"c:\\Program Files\\git\\usr\\bin\\sh.exe" --login \$(SolutionDir)\\toolchain\install.sh \$(SolutionDir)\\toolchain &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
+	<NMakeBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeBuildCommandLine>
+	<NMakeReBuildCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja</NMakeReBuildCommandLine>
+	<NMakeCleanCommandLine>\$(SolutionDir)\\toolchain\install.exe &amp;&amp; \$(SolutionDir)\\toolchain\\host\\bin\\ninja -C \$(SolutionDir) -f msvc.ninja -t clean</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

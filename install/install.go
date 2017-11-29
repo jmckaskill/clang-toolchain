@@ -100,7 +100,7 @@ func main() {
 	}
 	dir := filepath.Dir(exe)
 
-	log.Printf("installing to %v", exe, dir)
+	log.Printf("installing to %v", dir)
 	os.Chdir(dir)
 
 	log.Printf("checking host toolchain")
