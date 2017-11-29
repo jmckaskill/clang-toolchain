@@ -43,27 +43,40 @@ func downloadTXZ(url string) error {
 			log.Printf("tar error %v", err)
 			return err
 		}
-		if hdr.Typeflag != tar.TypeReg {
-			continue
-		}
-		log.Printf("unpacking %v", hdr.Name)
 
-		dir := filepath.Dir(hdr.Name)
-		os.MkdirAll(dir, os.ModePerm)
+		switch hdr.Typeflag {
+		case tar.TypeReg:
+			log.Printf("unpacking %v", hdr.Name)
 
-		f, err := os.Create(hdr.Name)
-		if err != nil {
-			log.Printf("failed to open file %v for write %v", hdr.Name, err)
-			return err
-		}
+			dir := filepath.Dir(hdr.Name)
+			os.MkdirAll(dir, os.ModePerm)
 
-		_, err = io.Copy(f, tr)
-		if err != nil {
-			log.Printf("tar read failed %v", err)
+			f, err := os.Create(hdr.Name)
+			if err != nil {
+				log.Printf("failed to open file %v for write %v", hdr.Name, err)
+				return err
+			}
+
+			_, err = io.Copy(f, tr)
+			if err != nil {
+				log.Printf("tar read failed %v", err)
+				f.Close()
+				return err
+			}
 			f.Close()
-			return err
+		case tar.TypeSymlink:
+			log.Printf("unpacking %v", hdr.Name)
+
+			dir := filepath.Dir(hdr.Name)
+			os.MkdirAll(dir, os.ModePerm)
+
+			log.Printf("creating symlink from %v to %v", hdr.Linkname, hdr.Name)
+			err = os.Symlink(hdr.Linkname, hdr.Name)
+			if err != nil {
+				log.Printf("symlink create failed %v", err)
+				return err
+			}
 		}
-		f.Close()
 	}
 
 	return nil
