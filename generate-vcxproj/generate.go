@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 )
 
@@ -21,7 +22,8 @@ type project struct {
 }
 
 type target struct {
-	Dir     string
+	VS      string
+	Ninja   string
 	Defines string
 }
 
@@ -31,7 +33,7 @@ type config struct {
 	Projects     []*project
 	DefaultUUID  string
 	GenerateUUID string
-	Targets      map[string]*target
+	Targets      []*target
 }
 
 func replace(name string, data []byte) {
@@ -57,7 +59,7 @@ func writeSolution(c *config) {
 		"MinimumVisualStudioVersion = 10.0.40219.1\r\n"))
 
 	for _, prj := range c.Projects {
-		fmt.Fprintf(&buf, "Project{%q) = %q, %q, %q\r\nEndProject\r\n",
+		fmt.Fprintf(&buf, "Project{\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
 			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
 			prj.Name,
 			strings.Replace(prj.File, "/", "\\", -1),
@@ -65,7 +67,7 @@ func writeSolution(c *config) {
 	}
 
 	if c.GenerateUUID != "" {
-		fmt.Fprintf(&buf, "Project{%q) = %q, %q, %q\r\nEndProject\r\n",
+		fmt.Fprintf(&buf, "Project{\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
 			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
 			"_GENERATE PROJECTS",
 			"_GENERATE PROJECTS.vcxproj",
@@ -73,7 +75,7 @@ func writeSolution(c *config) {
 	}
 
 	if c.DefaultUUID != "" {
-		fmt.Fprintf(&buf, "Project{%q) = %q, %q, %q\r\nEndProject\r\n",
+		fmt.Fprintf(&buf, "Project{\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
 			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
 			"_DEFAULT",
 			"_DEFAULT.vcxproj",
@@ -81,28 +83,28 @@ func writeSolution(c *config) {
 	}
 
 	fmt.Fprintf(&buf, "Global\r\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\r\n")
-	for tgt := range c.Targets {
-		fmt.Fprintf(&buf, "\t\t%v|ALL = %v|ALL\r\n", tgt, tgt)
+	for _, tgt := range c.Targets {
+		fmt.Fprintf(&buf, "\t\t%v|ALL = %v|ALL\r\n", tgt.VS, tgt.VS)
 	}
 	fmt.Fprintf(&buf, "\tEndGlobalSection\r\n")
 
 	fmt.Fprintf(&buf, "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n")
 	for _, prj := range c.Projects {
-		for tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", prj.UUID, tgt, tgt)
+		for _, tgt := range c.Targets {
+			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", prj.UUID, tgt.VS, tgt.VS)
 		}
 	}
 
 	if c.GenerateUUID != "" {
-		for tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", c.GenerateUUID, tgt, tgt)
+		for _, tgt := range c.Targets {
+			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", c.GenerateUUID, tgt.VS, tgt.VS)
 		}
 	}
 
 	if c.DefaultUUID != "" {
-		for tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", c.DefaultUUID, tgt, tgt)
-			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.Build.0 = %v|Win32\r\n", c.DefaultUUID, tgt, tgt)
+		for _, tgt := range c.Targets {
+			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.ActiveCfg = %v|Win32\r\n", c.DefaultUUID, tgt.VS, tgt.VS)
+			fmt.Fprintf(&buf, "\t\t%v.%v|ALL.Build.0 = %v|Win32\r\n", c.DefaultUUID, tgt.VS, tgt.VS)
 		}
 	}
 
@@ -137,28 +139,38 @@ func writeProject(c *config, prj *project, toolchain string) {
 				return nil
 			}
 
+			relfn, err := filepath.Rel(filepath.Dir(prj.File), path)
+			if err != nil {
+				return err
+			}
+			relfn = strings.Replace(relfn, "/", "\\", -1)
+
 			switch filepath.Ext(path) {
 			case ".c", ".cpp", ".S", ".s", ".asm":
-				cfiles = append(cfiles, path)
+				cfiles = append(cfiles, relfn)
 			case ".h", ".H", ".hpp":
-				hfiles = append(hfiles, path)
+				hfiles = append(hfiles, relfn)
 			case ".proto", ".txt", ".css", ".js", ".html", ".sh", ".json":
-				ofiles = append(ofiles, path)
+				ofiles = append(ofiles, relfn)
 			}
 
 			return nil
 		}))
 	}
 
+	sort.Strings(cfiles)
+	sort.Strings(hfiles)
+	sort.Strings(ofiles)
+
 	buf.Write([]byte("\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" +
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n" +
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n"))
 
-	for tgt := range c.Targets {
-		fmt.Fprintf(&buf, "  <ProjectConfiguration Include=\"%v|Win32\">\r\n", tgt)
-		fmt.Fprintf(&buf, "    <Configuration>%v</Configuration>\r\n", tgt)
-		fmt.Fprintf(&buf, "    <Platform>Win32</Platform>\r\n")
-		fmt.Fprintf(&buf, "  </ProjectConfiguration>\r\n")
+	for _, tgt := range c.Targets {
+		fmt.Fprintf(&buf, "    <ProjectConfiguration Include=\"%v|Win32\">\r\n", tgt.VS)
+		fmt.Fprintf(&buf, "      <Configuration>%v</Configuration>\r\n", tgt.VS)
+		fmt.Fprintf(&buf, "      <Platform>Win32</Platform>\r\n")
+		fmt.Fprintf(&buf, "    </ProjectConfiguration>\r\n")
 	}
 
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
@@ -182,22 +194,22 @@ func writeProject(c *config, prj *project, toolchain string) {
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
 
 	fmt.Fprintf(&buf, "  <PropertyGroup Label=\"Globals\">\r\n"+
-		"  <ProjectGuid>%v</ProjectGuid>\r\n"+
-		"  <Keyword>MakeFileProj</Keyword>\r\n"+
-		"  <ProjectName>%v</ProjectName>\r\n"+
+		"    <ProjectGuid>%v</ProjectGuid>\r\n"+
+		"    <Keyword>MakeFileProj</Keyword>\r\n"+
+		"    <ProjectName>%v</ProjectName>\r\n"+
 		"  </PropertyGroup>\r\n"+
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n",
 		prj.UUID, prj.Name)
 
-	for tgt, ninja := range c.Targets {
+	for _, tgt := range c.Targets {
 		debug := "false"
-		if ninja.Dir == "win32-debug" {
+		if tgt.Ninja == "win32-debug" {
 			debug = "true"
 		}
 		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\" Label=\"Configuration\">\r\n"+
-			"  <ConfigurationType>Makefile</ConfigurationType>\r\n"+
-			"  <UseDebugLibraries>%v</UseDebugLibraries>\r\n"+
-			"  <PlatformToolset>v140</PlatformToolset>\r\n"+
+			"    <ConfigurationType>Makefile</ConfigurationType>\r\n"+
+			"    <UseDebugLibraries>%v</UseDebugLibraries>\r\n"+
+			"    <PlatformToolset>v140</PlatformToolset>\r\n"+
 			"  </PropertyGroup>\r\n",
 			tgt, debug)
 	}
@@ -208,36 +220,36 @@ func writeProject(c *config, prj *project, toolchain string) {
 		"  <ImportGroup Label=\"Shared\">\r\n"+
 		"  </ImportGroup>\r\n")
 
-	for tgt := range c.Targets {
+	for _, tgt := range c.Targets {
 		fmt.Fprintf(&buf, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\">\r\n"+
-			"  <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"+
+			"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"+
 			"  </ImportGroup>\r\n",
-			tgt)
+			tgt.VS)
 	}
 
 	fmt.Fprintf(&buf, "  <PropertyGroup Label=\"UserMacros\" />\r\n")
 
-	for tgt, ninja := range c.Targets {
-		njtgt := strings.Replace(strings.Replace(prj.Target, "{TGT}", ninja.Dir, 1), "/", "\\", -1)
+	for _, tgt := range c.Targets {
+		njtgt := strings.Replace(strings.Replace(prj.Target, "{TGT}", tgt.Ninja, 1), "/", "\\", -1)
 
-		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\">\r\n", tgt)
-		fmt.Fprintf(&buf, "  <NMakeOutput>$(SolutionDir)\\%v</NMakeOutput>\r\n", njtgt)
-		fmt.Fprintf(&buf, "  <NMakePreprocessorDefinitions>%v</NMakePreprocessorDefinitions>\r\n", ninja.Defines)
-		fmt.Fprintf(&buf, "  <NMakeBuildCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %v</NMakeBuildCommandLine>\r\n",
+		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\">\r\n", tgt.VS)
+		fmt.Fprintf(&buf, "    <NMakeOutput>$(SolutionDir)\\%v</NMakeOutput>\r\n", njtgt)
+		fmt.Fprintf(&buf, "    <NMakePreprocessorDefinitions>%v</NMakePreprocessorDefinitions>\r\n", tgt.Defines)
+		fmt.Fprintf(&buf, "    <NMakeBuildCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %v</NMakeBuildCommandLine>\r\n",
 			toolchain, toolchain, njtgt)
-		fmt.Fprintf(&buf, "  <NMakeReBuildCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %v &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %v</NMakeReBuildCommandLine>\r\n",
+		fmt.Fprintf(&buf, "    <NMakeReBuildCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %v &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %v</NMakeReBuildCommandLine>\r\n",
 			toolchain, toolchain, njtgt, toolchain, njtgt)
-		fmt.Fprintf(&buf, "  <NMakeCleanCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %v</NMakeCleanCommandLine>\r\n",
+		fmt.Fprintf(&buf, "    <NMakeCleanCommandLine>%v\\install.exe &amp;&amp; %v\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %v</NMakeCleanCommandLine>\r\n",
 			toolchain, toolchain, njtgt)
 
-		fmt.Fprintf(&buf, "  <NMakeIncludeSearchPath>$(ProjectDir)")
+		fmt.Fprintf(&buf, "    <NMakeIncludeSearchPath>$(ProjectDir)")
 		for _, inc := range c.Includes {
 			fmt.Fprintf(&buf, ";$(SolutionDir)\\%v", strings.Replace(inc, "/", "\\", -1))
 		}
 		fmt.Fprintf(&buf, "</NMakeIncludeSearchPath>\r\n")
-		fmt.Fprintf(&buf, "  <IntDir>$(SolutionDir)\\obj\\$(Configuration)\\</IntDir>\r\n")
-		fmt.Fprintf(&buf, "  <SourcePath />\r\n")
-		fmt.Fprintf(&buf, "  <ExcludePath />\r\n")
+		fmt.Fprintf(&buf, "    <IntDir>$(SolutionDir)\\obj\\$(Configuration)\\</IntDir>\r\n")
+		fmt.Fprintf(&buf, "    <SourcePath />\r\n")
+		fmt.Fprintf(&buf, "    <ExcludePath />\r\n")
 		fmt.Fprintf(&buf, "  </PropertyGroup>\r\n")
 	}
 
@@ -259,30 +271,30 @@ func writeCommand(c *config, name, file, uuid, build, rebuild, clean string) {
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n" +
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n"))
 
-	for tgt := range c.Targets {
-		fmt.Fprintf(&buf, "  <ProjectConfiguration Include=\"%v|Win32\">\r\n", tgt)
-		fmt.Fprintf(&buf, "    <Configuration>%v</Configuration>\r\n", tgt)
-		fmt.Fprintf(&buf, "    <Platform>Win32</Platform>\r\n")
-		fmt.Fprintf(&buf, "  </ProjectConfiguration>\r\n")
+	for _, tgt := range c.Targets {
+		fmt.Fprintf(&buf, "    <ProjectConfiguration Include=\"%v|Win32\">\r\n", tgt.VS)
+		fmt.Fprintf(&buf, "      <Configuration>%v</Configuration>\r\n", tgt.VS)
+		fmt.Fprintf(&buf, "      <Platform>Win32</Platform>\r\n")
+		fmt.Fprintf(&buf, "    </ProjectConfiguration>\r\n")
 	}
 
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
 
 	fmt.Fprintf(&buf, "  <PropertyGroup Label=\"Globals\">\r\n"+
-		"  <ProjectGuid>%v</ProjectGuid>\r\n"+
-		"  <Keyword>MakeFileProj</Keyword>\r\n"+
-		"  <ProjectName>%v</ProjectName>\r\n"+
+		"    <ProjectGuid>%v</ProjectGuid>\r\n"+
+		"    <Keyword>MakeFileProj</Keyword>\r\n"+
+		"    <ProjectName>%v</ProjectName>\r\n"+
 		"  </PropertyGroup>\r\n"+
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n",
 		uuid, name)
 
-	for tgt, _ := range c.Targets {
+	for _, tgt := range c.Targets {
 		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\" Label=\"Configuration\">\r\n"+
-			"  <ConfigurationType>Makefile</ConfigurationType>\r\n"+
-			"  <UseDebugLibraries>false</UseDebugLibraries>\r\n"+
-			"  <PlatformToolset>v140</PlatformToolset>\r\n"+
+			"    <ConfigurationType>Makefile</ConfigurationType>\r\n"+
+			"    <UseDebugLibraries>false</UseDebugLibraries>\r\n"+
+			"    <PlatformToolset>v140</PlatformToolset>\r\n"+
 			"  </PropertyGroup>\r\n",
-			tgt)
+			tgt.VS)
 	}
 
 	fmt.Fprintf(&buf, "  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.props\" />\r\n"+
@@ -291,24 +303,24 @@ func writeCommand(c *config, name, file, uuid, build, rebuild, clean string) {
 		"  <ImportGroup Label=\"Shared\">\r\n"+
 		"  </ImportGroup>\r\n")
 
-	for tgt := range c.Targets {
+	for _, tgt := range c.Targets {
 		fmt.Fprintf(&buf, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\">\r\n"+
-			"  <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"+
+			"    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"+
 			"  </ImportGroup>\r\n",
-			tgt)
+			tgt.VS)
 	}
 
 	fmt.Fprintf(&buf, "  <PropertyGroup Label=\"UserMacros\" />\r\n")
 
-	for tgt, ninja := range c.Targets {
-		njbuild := strings.Replace(build, "{TGT}", ninja.Dir, -1)
-		njrebuild := strings.Replace(rebuild, "{TGT}", ninja.Dir, -1)
-		njclean := strings.Replace(clean, "{TGT}", ninja.Dir, -1)
+	for _, tgt := range c.Targets {
+		njbuild := strings.Replace(build, "{TGT}", tgt.Ninja, -1)
+		njrebuild := strings.Replace(rebuild, "{TGT}", tgt.Ninja, -1)
+		njclean := strings.Replace(clean, "{TGT}", tgt.Ninja, -1)
 
 		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%v|Win32'\">\r\n", tgt)
-		fmt.Fprintf(&buf, "  <NMakeBuildCommandLine>%v</NMakeBuildCommandLine>\r\n", njbuild)
-		fmt.Fprintf(&buf, "  <NMakeReBuildCommandLine>%v</NMakeReBuildCommandLine>\r\n", njrebuild)
-		fmt.Fprintf(&buf, "  <NMakeCleanCommandLine>%v</NMakeCleanCommandLine>\r\n", njclean)
+		fmt.Fprintf(&buf, "    <NMakeBuildCommandLine>%v</NMakeBuildCommandLine>\r\n", njbuild)
+		fmt.Fprintf(&buf, "    <NMakeReBuildCommandLine>%v</NMakeReBuildCommandLine>\r\n", njrebuild)
+		fmt.Fprintf(&buf, "    <NMakeCleanCommandLine>%v</NMakeCleanCommandLine>\r\n", njclean)
 		fmt.Fprintf(&buf, "  </PropertyGroup>\r\n")
 	}
 
@@ -329,9 +341,6 @@ func must(err error) {
 }
 
 func main() {
-	exefn, err := os.Executable()
-	must(err)
-	toolchain := "$(SolutionDir)\\" + strings.Replace(filepath.Dir(exefn), "/", "\\", -1)
 
 	if len(os.Args) != 2 {
 		log.Fatal("usage generate-vcxproj.exe config.json")
@@ -344,8 +353,15 @@ func main() {
 	cfg := config{}
 	must(json.NewDecoder(f).Decode(&cfg))
 
-	dir := filepath.Dir(os.Args[1])
+	dir, err := filepath.Abs(filepath.Dir(os.Args[1]))
+	must(err)
 	must(os.Chdir(dir))
+
+	exefn, err := os.Executable()
+	must(err)
+	tooldir, err := filepath.Rel(dir, filepath.Dir(exefn))
+	must(err)
+	toolchain := "$(SolutionDir)\\" + strings.Replace(tooldir, "/", "\\", -1)
 
 	writeSolution(&cfg)
 	for _, prj := range cfg.Projects {
