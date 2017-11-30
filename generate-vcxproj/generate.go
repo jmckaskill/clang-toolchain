@@ -52,11 +52,12 @@ func writeSolution(c *config) {
 	buf := bytes.Buffer{}
 	fmt.Fprintf(os.Stdout, "generating %s ... ", c.Solution)
 
-	buf.Write([]byte("\xEF\xBB\xBFMicrosoft Visual Studio Solution File, Format Version 12.00\r\n" +
+	buf.Write([]byte("\xEF\xBB\xBF\r\n" +
+		"Microsoft Visual Studio Solution File, Format Version 12.00\r\n" +
 		"# Visual Studio 14\r\n" +
-		"VisualStudioVersion = 14.0.25123.0\r\n" +
+		"VisualStudioVersion = 14.0.25420.1\r\n" +
 		"MinimumVisualStudioVersion = 10.0.40219.1\r\n"))
-	
+
 	if c.DefaultUUID != "" {
 		fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
 			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
@@ -362,6 +363,13 @@ func main() {
 	tooldir, err := filepath.Rel(dir, filepath.Dir(exefn))
 	must(err)
 	toolchain := "$(SolutionDir)\\" + strings.Replace(tooldir, "/", "\\", -1)
+
+	cfg.DefaultUUID = strings.ToUpper(cfg.DefaultUUID)
+	cfg.GenerateUUID = strings.ToUpper(cfg.GenerateUUID)
+
+	for _, prj := range cfg.Projects {
+		prj.UUID = strings.ToUpper(prj.UUID)
+	}
 
 	writeSolution(&cfg)
 	for _, prj := range cfg.Projects {
