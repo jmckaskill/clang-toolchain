@@ -177,19 +177,19 @@ func writeProject(c *config, prj *project, toolchain string) {
 
 	fmt.Fprintf(&buf, "  <ItemGroup>\r\n")
 	for _, fn := range cfiles {
-		fmt.Fprintf(&buf, "    <ClCompile Include=%q />\r\n", fn)
+		fmt.Fprintf(&buf, "    <ClCompile Include=\"%s\" />\r\n", fn)
 	}
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
 
 	fmt.Fprintf(&buf, "  <ItemGroup>\r\n")
 	for _, fn := range hfiles {
-		fmt.Fprintf(&buf, "    <ClInclude Include=%q />\r\n", fn)
+		fmt.Fprintf(&buf, "    <ClInclude Include=\"%s\" />\r\n", fn)
 	}
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
 
 	fmt.Fprintf(&buf, "  <ItemGroup>\r\n")
 	for _, fn := range ofiles {
-		fmt.Fprintf(&buf, "    <None Include=%q />\r\n", fn)
+		fmt.Fprintf(&buf, "    <None Include=\"%s\" />\r\n", fn)
 	}
 	fmt.Fprintf(&buf, "  </ItemGroup>\r\n")
 
