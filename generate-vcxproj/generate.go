@@ -40,6 +40,7 @@ func replace(name string, data []byte) {
 	have, _ := ioutil.ReadFile(name)
 	if !bytes.Equal(have, data) {
 		fmt.Fprintf(os.Stdout, "UPDATING")
+		os.MkdirAll(filepath.Dir(name), os.ModePerm)
 		f, err := os.Create(name)
 		must(err)
 		defer f.Close()
@@ -132,7 +133,7 @@ func writeProject(c *config, prj *project, toolchain string) {
 	ofiles := []string{}
 
 	for _, d := range dirs {
-		must(filepath.Walk(d, func(path string, info os.FileInfo, err error) error {
+		filepath.Walk(d, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			} else if info.IsDir() {
@@ -155,7 +156,7 @@ func writeProject(c *config, prj *project, toolchain string) {
 			}
 
 			return nil
-		}))
+		})
 	}
 
 	sort.Strings(cfiles)
