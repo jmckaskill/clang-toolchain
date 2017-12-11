@@ -136,8 +136,10 @@ func writeProject(c *config, prj *project, toolchain string) {
 		filepath.Walk(d, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
 				return err
-			} else if info.IsDir() {
+			} else if info.IsDir() && path == d {
 				return nil
+			} else if info.IsDir() {
+				return filepath.SkipDir
 			}
 
 			relfn, err := filepath.Rel(filepath.Dir(prj.File), path)
