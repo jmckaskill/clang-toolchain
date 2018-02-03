@@ -5,6 +5,6 @@ rule run
  description = RUN $in -o $out
  
 rule copy
- command = rm -f $out && ln -T $in $out
+ command = cp $in $out
  description = COPY $in $out
 
