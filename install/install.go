@@ -13,6 +13,24 @@ import (
 	"xi2.org/x/xz"
 )
 
+func downloadFile(w io.Writer, url string) error {
+	log.Printf("downloading %v", url)
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Printf("http download failed %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != 200 {
+		log.Printf("http download returned error %v", resp.Status)
+		return errors.New("http error")
+	}
+
+	_, err = io.Copy(w, resp.Body)
+	return err
+}
+
 func downloadTXZ(url string) error {
 	log.Printf("downloading %v", url)
 	resp, err := http.Get(url)
@@ -123,5 +141,15 @@ func main() {
 			os.RemoveAll("lib/arm")
 			os.Exit(2)
 		}
+	}
+
+	log.Printf("checking closure-compiler")
+	if f, err := os.OpenFile("closure-compiler.jar", os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0666); err == nil {
+		if downloadFile(f, "https://storage.googleapis.com/ctct-clang-toolchain/closure-compiler-v20180204.jar") != nil {
+			f.Close()
+			os.Remove("closure-compiler.jar")
+			os.Exit(2)
+		}
+		f.Close()
 	}
 }
