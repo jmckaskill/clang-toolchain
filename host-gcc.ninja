@@ -1,4 +1,4 @@
-HOST = host
+HOST = gcc-debug
 
 rule run
  command = $in -o $out

@@ -58,4 +58,8 @@ rule clinkdll
  command = $LD --shared --nostdlib -o $out $in $DEFLIBS
  description = ARM-DLL $out
 
+rule js-compile
+ command = java -jar $TOOLCHAIN_DIR/closure-compiler.jar -O ADVANCED --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE $out
+
 include $SRC_NINJA

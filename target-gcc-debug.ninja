@@ -1,8 +1,8 @@
-CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -pedantic
+CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -Werror -pedantic
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -g -lpthread
 
-TGT = host
+TGT = gcc-debug
 
 rule cc
  command = gcc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS
@@ -49,5 +49,9 @@ rule clink
 rule cxxlink
  command = g++ $in -o $out $LDFLAGS
  description = EXE $out
+
+rule js-compile
+ command = java -jar $TOOLCHAIN_DIR/closure-compiler.jar -O BUNDLE --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE $out
 
 include $SRC_NINJA
