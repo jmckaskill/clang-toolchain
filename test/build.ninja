@@ -2,7 +2,8 @@ TOOLCHAIN_DIR = ..
 SRC_NINJA = src.ninja
 
 include ../host-gcc.ninja
-subninja ../target-gcc.ninja
+subninja ../target-gcc-debug.ninja
+subninja ../target-gcc-release.ninja
 subninja ../target-arm-debug.ninja
 subninja ../target-arm-release.ninja
 

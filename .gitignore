@@ -6,5 +6,7 @@
 *~
 *.swp
 ._*
+/install/install
+/generate-vcxproj/generate-vcxproj
 
 /closure-compiler.jar

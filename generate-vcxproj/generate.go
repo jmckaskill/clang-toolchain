@@ -239,11 +239,11 @@ func writeProject(c *config, prj *project, toolchain string) {
 		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", tgt.VS)
 		fmt.Fprintf(&buf, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt)
 		fmt.Fprintf(&buf, "    <NMakePreprocessorDefinitions>%s</NMakePreprocessorDefinitions>\r\n", tgt.Defines)
-		fmt.Fprintf(&buf, "    <NMakeBuildCommandLine>%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n",
+		fmt.Fprintf(&buf, "    <NMakeBuildCommandLine>%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n",
 			toolchain, toolchain, njtgt)
-		fmt.Fprintf(&buf, "    <NMakeReBuildCommandLine>%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n",
+		fmt.Fprintf(&buf, "    <NMakeReBuildCommandLine>%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n",
 			toolchain, toolchain, njtgt, toolchain, njtgt)
-		fmt.Fprintf(&buf, "    <NMakeCleanCommandLine>%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n",
+		fmt.Fprintf(&buf, "    <NMakeCleanCommandLine>%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n",
 			toolchain, toolchain, njtgt)
 
 		fmt.Fprintf(&buf, "    <NMakeIncludeSearchPath>$(ProjectDir)")
@@ -363,7 +363,7 @@ func main() {
 
 	exefn, err := os.Executable()
 	must(err)
-	tooldir, err := filepath.Rel(dir, filepath.Dir(exefn))
+	tooldir, err := filepath.Rel(dir, filepath.Join(filepath.Dir(exefn), ".."))
 	must(err)
 	toolchain := "$(SolutionDir)\\" + strings.Replace(tooldir, "/", "\\", -1)
 
@@ -385,9 +385,9 @@ func main() {
 	}
 
 	if cfg.DefaultUUID != "" {
-		build := fmt.Sprintf("%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain)
-		rebuild := fmt.Sprintf("%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain, toolchain)
-		clean := fmt.Sprintf("%s\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT}", toolchain, toolchain)
+		build := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain)
+		rebuild := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain, toolchain)
+		clean := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT}", toolchain, toolchain)
 		writeCommand(&cfg, "_DEFAULT", "_DEFAULT.vcxproj", cfg.DefaultUUID, build, rebuild, clean)
 	}
 }
