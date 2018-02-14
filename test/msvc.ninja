@@ -1,0 +1,9 @@
+TOOLCHAIN_DIR = ..
+SRC_NINJA = src.ninja
+
+include ../host-win32.ninja
+subninja ../target-win32-debug.ninja
+subninja ../target-win32-release.ninja
+subninja ../target-arm-debug.ninja
+subninja ../target-arm-release.ninja
+

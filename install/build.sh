@@ -1,2 +1,2 @@
 #!/bin/sh
-GOOS=windows GOARCH=386 go build -ldflags="-s -w"
+GOOS=windows GOARCH=amd64 go build -ldflags="-s -w"

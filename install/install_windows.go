@@ -1,4 +1,4 @@
 package main
 
-var hostURL = "https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2017-11-29.txz"
-var hostTimeStamp = "2017-11-29T17:16:46+00:00"
+var hostURL = "https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2018-02-14.tar.xz"
+var hostTimeStamp = "2018-02-14T20:16:37+00:00"

@@ -144,12 +144,18 @@ func main() {
 	}
 
 	log.Printf("checking closure-compiler")
-	if f, err := os.OpenFile("closure-compiler.jar", os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0666); err == nil {
-		if downloadFile(f, "https://storage.googleapis.com/ctct-clang-toolchain/closure-compiler-v20180204.jar") != nil {
+	if !checkfile("closure-compiler-build.txt", "v20180204") {
+		if f, err := os.Create("closure-compiler.jar"); err == nil {
+			if downloadFile(f, "https://storage.googleapis.com/ctct-clang-toolchain/closure-compiler-v20180204.jar") != nil {
+				f.Close()
+				os.Remove("closure-compiler.jar")
+				os.Exit(2)
+			}
 			f.Close()
-			os.Remove("closure-compiler.jar")
-			os.Exit(2)
+			if f, err := os.Create("closure-compiler-build.txt"); err == nil {
+				f.WriteString("v20180204")
+				f.Close()
+			}
 		}
-		f.Close()
 	}
 }
