@@ -1,0 +1,4 @@
+; Disable auto-CRLF. Everything should be checked into source control using LF.
+; All editors are perfectly capable of dealing with both line endings anyways.
+* text=off
+

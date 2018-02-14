@@ -108,6 +108,40 @@ func checkfile(name string, contents string) bool {
 	return contents == string(bytes.TrimSpace(data))
 }
 
+func have(path string) bool {
+	_, err := os.Stat(path)
+	return err != nil
+}
+
+func copyProtoc() bool {
+	w, err := os.OpenFile("host/bin/protoc.exe", os.O_RDWR|os.O_CREATE, 0777)
+	if err != nil {
+		log.Printf("failed to open protoc.exe - %v", err)
+		return false
+	}
+	defer w.Close()
+	if st, err := w.Stat(); err == nil && st.Size() > 0 {
+		// we have a valid file
+		return true
+	}
+
+	log.Printf("searching for protoc.exe")
+	if f, err := os.Open("/usr/local/bin/protoc"); err != nil {
+		io.Copy(w, f)
+		f.Close()
+		return true
+	}
+
+	if f, err := os.Open("/usr/bin/protoc"); err != nil {
+		io.Copy(w, f)
+		f.Close()
+		return true
+	}
+
+	log.Printf("failed to find protoc - please install using your package manager")
+	return false
+}
+
 func main() {
 	log.SetFlags(log.Lmicroseconds | log.Ltime)
 	log.Printf("installing toolchain")
@@ -116,7 +150,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to get exe filename %v", err)
 	}
-	dir := filepath.Dir(exe)
+	dir := filepath.Clean(filepath.Join(filepath.Dir(exe), ".."))
 
 	log.Printf("installing to %v", dir)
 	os.Chdir(dir)
@@ -151,5 +185,11 @@ func main() {
 			os.Exit(2)
 		}
 		f.Close()
+	}
+
+	log.Printf("checking protoc.exe")
+	if !copyProtoc() {
+		os.Remove("host/bin/protoc.exe")
+		os.Exit(2)
 	}
 }

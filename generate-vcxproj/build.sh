@@ -1,2 +1,2 @@
 #!/bin/sh
-go build -ldflags="-s -w" && mv generate-vcxproj.exe ..
+GOOS=windows GOARCH=386 go build -ldflags="-s -w"
