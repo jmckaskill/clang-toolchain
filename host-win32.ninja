@@ -1,4 +1,4 @@
-HOST = win32-debug
+HOST_BASE = win32
 
 rule run
  command = $in -o $out

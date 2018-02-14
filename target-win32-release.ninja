@@ -4,7 +4,7 @@ CXXFLAGS = /TP /EHsc $CFLAGSCMN /W4
 LINKFLAGS = /LTCG /OPT:REF /OPT:ICF
 LIBFLAGS = /LTCG
 
-
+HOST = win32-release
 TGT = win32-release
 
 rule cc

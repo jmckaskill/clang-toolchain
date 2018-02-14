@@ -2,6 +2,7 @@ CFLAGS = $INCLUDES -DNDEBUG -O2 -D_GNU_SOURCE -Wno-missing-braces -Wno-unused-fu
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -lpthread
 
+HOST = gcc-release
 TGT = gcc-release
 
 rule cc

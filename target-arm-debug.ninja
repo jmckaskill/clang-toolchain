@@ -10,6 +10,7 @@ CXXFLAGS = -std=c++11 -I $LIB/include/c++ $CFLAGSCMN  -Wall -Werror -Wno-missing
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
 
+HOST = ${HOST_BASE}-debug
 TGT = arm-debug
 
 rule extcc
