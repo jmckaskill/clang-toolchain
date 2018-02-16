@@ -1,4 +1,5 @@
 HOST_BASE = win32
+EXE_EXT = .exe
 
 rule run
  command = $in -o $out

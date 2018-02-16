@@ -1,4 +1,5 @@
 HOST_BASE = gcc
+EXE_EXT =
 
 rule run
  command = $in -o $out

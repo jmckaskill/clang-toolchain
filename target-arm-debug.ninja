@@ -1,7 +1,7 @@
 CC = $TOOLCHAIN_DIR/host/bin/clang
 CPP = $TOOLCHAIN_DIR/host/bin/clang++
 AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
-LD = $TOOLCHAIN_DIR/host/bin/ld.lld.exe
+LD = $TOOLCHAIN_DIR/host/bin/ld.lld${EXE_EXT}
 LIB = $TOOLCHAIN_DIR/lib/arm
 
 CFLAGSCMN = -mstrict-align -g $INCLUDES -I $TOOLCHAIN_DIR/lib/arm/include -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
