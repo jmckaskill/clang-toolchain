@@ -380,7 +380,7 @@ func main() {
 	}
 
 	if cfg.GenerateUUID != "" {
-		cmd := fmt.Sprintf("%s\\generate-vcxproj.exe %s", toolchain, os.Args[1])
+		cmd := fmt.Sprintf("%s\\generate-vcxproj\\generate-vcxproj.exe %s", toolchain, os.Args[1])
 		writeCommand(&cfg, "_GENERATE PROJECTS", "_GENERATE PROJECTS.vcxproj", cfg.GenerateUUID, cmd, cmd, "")
 	}
 
