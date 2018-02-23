@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"xi2.org/x/xz"
+	"github.com/xi2/xz"
 )
 
 func downloadFile(w io.Writer, url string) error {

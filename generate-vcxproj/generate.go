@@ -10,15 +10,16 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"crypto/sha1"
 )
 
 type project struct {
 	Name   string
 	File   string
-	Empty  bool
-	Dirs   []string // defaults to the folder the file is in unless empty is set
-	UUID   string
+	Dirs   []string
 	Target string
+
+	uuid   string
 }
 
 type target struct {
@@ -31,9 +32,10 @@ type config struct {
 	Solution     string
 	Includes     []string
 	Projects     []*project
-	DefaultUUID  string
-	GenerateUUID string
 	Targets      []*target
+
+	defaultUUID  string
+	generateUUID string
 }
 
 func replace(name string, data []byte) {
@@ -59,28 +61,24 @@ func writeSolution(c *config) {
 		"VisualStudioVersion = 14.0.25420.1\r\n" +
 		"MinimumVisualStudioVersion = 10.0.40219.1\r\n"))
 
-	if c.DefaultUUID != "" {
-		fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
-			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
-			"_DEFAULT",
-			"_DEFAULT.vcxproj",
-			c.DefaultUUID)
-	}
+	fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
+		"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
+		"_DEFAULT",
+		"_DEFAULT.vcxproj",
+		c.defaultUUID)
 
-	if c.GenerateUUID != "" {
-		fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
-			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
-			"_GENERATE PROJECTS",
-			"_GENERATE PROJECTS.vcxproj",
-			c.GenerateUUID)
-	}
+	fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
+		"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
+		"_GENERATE_VCXPROJ",
+		"_GENERATE_VCXPROJ.vcxproj",
+		c.generateUUID)
 
 	for _, prj := range c.Projects {
 		fmt.Fprintf(&buf, "Project(\"%s\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n",
 			"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}",
 			prj.Name,
 			strings.Replace(prj.File, "/", "\\", -1),
-			prj.UUID)
+			prj.uuid)
 	}
 
 	fmt.Fprintf(&buf, "Global\r\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\r\n")
@@ -92,21 +90,17 @@ func writeSolution(c *config) {
 	fmt.Fprintf(&buf, "\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n")
 	for _, prj := range c.Projects {
 		for _, tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", prj.UUID, tgt.VS, tgt.VS)
+			fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", prj.uuid, tgt.VS, tgt.VS)
 		}
 	}
 
-	if c.GenerateUUID != "" {
-		for _, tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", c.GenerateUUID, tgt.VS, tgt.VS)
-		}
+	for _, tgt := range c.Targets {
+		fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", c.generateUUID, tgt.VS, tgt.VS)
 	}
 
-	if c.DefaultUUID != "" {
-		for _, tgt := range c.Targets {
-			fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", c.DefaultUUID, tgt.VS, tgt.VS)
-			fmt.Fprintf(&buf, "\t\t%s.%s|ALL.Build.0 = %s|Win32\r\n", c.DefaultUUID, tgt.VS, tgt.VS)
-		}
+	for _, tgt := range c.Targets {
+		fmt.Fprintf(&buf, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", c.defaultUUID, tgt.VS, tgt.VS)
+		fmt.Fprintf(&buf, "\t\t%s.%s|ALL.Build.0 = %s|Win32\r\n", c.defaultUUID, tgt.VS, tgt.VS)
 	}
 
 	fmt.Fprintf(&buf, "\tEndGlobalSection\r\n")
@@ -124,9 +118,6 @@ func writeProject(c *config, prj *project, toolchain string) {
 
 	buf := bytes.Buffer{}
 	dirs := prj.Dirs
-	if len(dirs) == 0 && !prj.Empty {
-		dirs = []string{filepath.Dir(prj.File)}
-	}
 
 	cfiles := []string{}
 	hfiles := []string{}
@@ -202,7 +193,7 @@ func writeProject(c *config, prj *project, toolchain string) {
 		"    <ProjectName>%s</ProjectName>\r\n"+
 		"  </PropertyGroup>\r\n"+
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n",
-		prj.UUID, prj.Name)
+		prj.uuid, prj.Name)
 
 	for _, tgt := range c.Targets {
 		debug := "false"
@@ -338,6 +329,28 @@ func writeCommand(c *config, name, file, uuid, build, rebuild, clean string) {
 	replace(file, buf.Bytes())
 }
 
+func generateUUID(filename string) string {
+	nsuuid := [16]byte{
+		0x7D, 0x2B, 0x2A, 0x65,
+		0x3F, 0x9E,
+		0x4E, 0xC4,
+		0xB4, 0x5B,
+		0xE1, 0xE1, 0xF0, 0x89, 0x2E, 0xAC,
+	}
+	s := sha1.New()
+	s.Write(nsuuid[:])
+	s.Write([]byte(filename))
+	h := s.Sum(nil)
+	h[6] = (h[6] & 0xF) | 0x50 // set version
+	h[8] = (h[8] & 0x3F) | 0x80 // set variant
+	return fmt.Sprintf("{%02X%02X%02X%02X-%02X%02X-%02X%02X-%02X%02X-%02X%02X%02X%02X%02X%02X}",
+		h[0], h[1], h[2], h[3],
+		h[4], h[5],
+		h[6], h[7],
+		h[8], h[9],
+		h[10], h[11], h[12], h[13], h[14], h[15])
+}
+
 func must(err error) {
 	if err != nil {
 		log.Fatal(err)
@@ -367,11 +380,11 @@ func main() {
 	must(err)
 	toolchain := "$(SolutionDir)\\" + strings.Replace(tooldir, "/", "\\", -1)
 
-	cfg.DefaultUUID = strings.ToUpper(cfg.DefaultUUID)
-	cfg.GenerateUUID = strings.ToUpper(cfg.GenerateUUID)
+	cfg.defaultUUID = generateUUID("_DEFAULT.vcxproj")
+	cfg.generateUUID = generateUUID("_GENERATE_VCXPROJ.vcxproj")
 
 	for _, prj := range cfg.Projects {
-		prj.UUID = strings.ToUpper(prj.UUID)
+		prj.uuid = generateUUID(prj.File)
 	}
 
 	writeSolution(&cfg)
@@ -379,15 +392,11 @@ func main() {
 		writeProject(&cfg, prj, toolchain)
 	}
 
-	if cfg.GenerateUUID != "" {
-		cmd := fmt.Sprintf("%s\\generate-vcxproj\\generate-vcxproj.exe %s", toolchain, os.Args[1])
-		writeCommand(&cfg, "_GENERATE PROJECTS", "_GENERATE PROJECTS.vcxproj", cfg.GenerateUUID, cmd, cmd, "")
-	}
+	cmd := fmt.Sprintf("%s\\generate-vcxproj\\generate-vcxproj.exe %s", toolchain, os.Args[1])
+	writeCommand(&cfg, "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", cfg.generateUUID, cmd, cmd, "")
 
-	if cfg.DefaultUUID != "" {
-		build := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain)
-		rebuild := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain, toolchain)
-		clean := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT}", toolchain, toolchain)
-		writeCommand(&cfg, "_DEFAULT", "_DEFAULT.vcxproj", cfg.DefaultUUID, build, rebuild, clean)
-	}
+	build := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain)
+	rebuild := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain, toolchain)
+	clean := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT}", toolchain, toolchain)
+	writeCommand(&cfg, "_DEFAULT", "_DEFAULT.vcxproj", cfg.defaultUUID, build, rebuild, clean)
 }
