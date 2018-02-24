@@ -44,7 +44,7 @@ rule clinkdll
  description = AR $out
 
 rule clink
- command = g++ $in -o $out $LDFLAGS
+ command = gcc $in -o $out $LDFLAGS
  description = EXE $out
 
 rule cxxlink
