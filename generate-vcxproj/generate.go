@@ -25,6 +25,7 @@ type project struct {
 type target struct {
 	VS      string
 	Ninja   string
+	Default string
 	Defines string
 }
 
@@ -308,9 +309,9 @@ func writeCommand(c *config, name, file, uuid, build, rebuild, clean string) {
 	fmt.Fprintf(&buf, "  <PropertyGroup Label=\"UserMacros\" />\r\n")
 
 	for _, tgt := range c.Targets {
-		njbuild := strings.Replace(build, "{TGT}", tgt.Ninja, -1)
-		njrebuild := strings.Replace(rebuild, "{TGT}", tgt.Ninja, -1)
-		njclean := strings.Replace(clean, "{TGT}", tgt.Ninja, -1)
+		njbuild := strings.Replace(build, "{DEFAULT}", tgt.Default, -1)
+		njrebuild := strings.Replace(rebuild, "{DEFAULT}", tgt.Default, -1)
+		njclean := strings.Replace(clean, "{DEFAULT}", tgt.Default, -1)
 
 		fmt.Fprintf(&buf, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", tgt.VS)
 		fmt.Fprintf(&buf, "    <NMakeBuildCommandLine>%s</NMakeBuildCommandLine>\r\n", njbuild)
@@ -395,8 +396,8 @@ func main() {
 	cmd := fmt.Sprintf("%s\\generate-vcxproj\\generate-vcxproj.exe %s", toolchain, os.Args[1])
 	writeCommand(&cfg, "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", cfg.generateUUID, cmd, cmd, "")
 
-	build := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain)
-	rebuild := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {TGT}", toolchain, toolchain, toolchain)
-	clean := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {TGT}", toolchain, toolchain)
+	build := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {DEFAULT}", toolchain, toolchain)
+	rebuild := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {DEFAULT} &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja {DEFAULT}", toolchain, toolchain, toolchain)
+	clean := fmt.Sprintf("%s\\install\\install.exe &amp;&amp; %s\\host\\bin\\ninja.exe -f msvc.ninja -t clean {DEFAULT}", toolchain, toolchain)
 	writeCommand(&cfg, "_DEFAULT", "_DEFAULT.vcxproj", cfg.defaultUUID, build, rebuild, clean)
 }
