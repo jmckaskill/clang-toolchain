@@ -1,4 +1,4 @@
-HOST_BASE = gcc
+HOST_BASE = clang
 EXE_EXT =
 
 rule run
