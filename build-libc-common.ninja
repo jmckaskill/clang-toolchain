@@ -18,4 +18,4 @@ rule as
  command = $BIN/clang $CFLAGS -c $in -o $out
 
 rule dll
- command = $BIN/ld.lld.exe --shared $in -o $out
+ command = $BIN/ld.lld --shared $in -o $out

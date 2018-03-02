@@ -2,16 +2,12 @@ CC = $TOOLCHAIN_DIR/host/bin/clang
 CPP = $TOOLCHAIN_DIR/host/bin/clang++
 AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
 LD = $TOOLCHAIN_DIR/host/bin/ld.lld${EXE_EXT}
-LIB = $TOOLCHAIN_DIR/lib/arm
 
-CFLAGSCMN = -mstrict-align $INCLUDES -I $TOOLCHAIN_DIR/lib/arm/include -Os -flto --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc -DNDEBUG
+CFLAGSCMN = $CROSS_CFLAGS -mstrict-align $INCLUDES -I $LIB/include -flto --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
 CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces -Wno-unused-function
 CXXFLAGS = -std=c++11 -I $LIB/include/c++ $CFLAGSCMN  -Wall -Werror -Wno-missing-braces
-LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
-LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
 
-HOST = ${HOST_BASE}-release
-TGT = arm-release
+HOST = ${HOST_BASE}-debug
 
 rule extcc
  command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
@@ -60,7 +56,7 @@ rule clinkdll
  description = ARM-DLL $out
 
 rule js-compile
- command = java -jar $TOOLCHAIN_DIR/closure-compiler.jar -O ADVANCED --rewrite_polyfills=false --js_output_file $out $in
+ command = java -jar $TOOLCHAIN_DIR/closure-compiler.jar -O BUNDLE --rewrite_polyfills=false --js_output_file $out $in
  description = JS-COMPILE $out
 
 include $SRC_NINJA
