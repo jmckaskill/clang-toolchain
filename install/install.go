@@ -133,11 +133,11 @@ func main() {
 	}
 
 	log.Printf("checking lib/arm")
-	if !checkfile("lib/armv7/build-date.txt", "2018-03-02T17:20:04+00:00") {
+	if !checkfile("lib/armv5/build-date.txt", "2018-03-02T17:57:35+00:00") {
 		log.Printf("removing old lib/arm directory")
 		os.RemoveAll("lib/arm")
 
-		if downloadTXZ("https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02.txz") != nil {
+		if downloadTXZ("https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02-2.txz") != nil {
 			os.RemoveAll("lib/arm")
 			os.Exit(2)
 		}

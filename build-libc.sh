@@ -36,23 +36,23 @@ export CXX="$BIN/clang++"
 export CROSS_COMPILE="$BIN/llvm-"
 export LD="$BIN/ld.lld"
 
-#rm -rf "$OUT"
-#mkdir -p "$OUT"
-#
-#if [ "$1" == "armv5" ]; then
-#	cp libgcc-armv5.a $LIBCC || exit 1
-#fi
-#
-#cd $MUSL
-#echo "disabling musl files with overrides in compiler-rt"
-#mkdir disabled
-#mv src/string/arm/__aeabi_*.c disabled/
-#
-#echo "configure musl"
-#./configure --target=arm --prefix=$OUT --libdir=$OUT --syslibdir=$OUT || exit 1
-#
-#echo "install musl headers"
-#make -e clean install-headers || exit 1
+rm -rf "$OUT"
+mkdir -p "$OUT"
+
+if [ "$1" == "armv5" ]; then
+	cp libgcc-armv5.a $LIBCC || exit 1
+fi
+
+cd $MUSL
+echo "disabling musl files with overrides in compiler-rt"
+mkdir disabled
+mv src/string/arm/__aeabi_*.c disabled/
+
+echo "configure musl"
+./configure --target=arm --prefix=$OUT --libdir=$OUT --syslibdir=$OUT || exit 1
+
+echo "install musl headers"
+make -e clean install-headers || exit 1
 
 cd "$OUT"
 F="build-libc.ninja"
@@ -75,7 +75,6 @@ if [ "$1" == "armv5" ]; then
 
 	echo "building compiler-rt"
 	ninja -f "$F" "$OUT/libclang-rt.a" || exit 1
-	exit 0
 else
 
 	C="$COMPILER_RT/lib/builtins/*.c"
