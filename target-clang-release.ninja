@@ -1,4 +1,4 @@
-CFLAGS = $INCLUDES -DNDEBUG -O2 -D_GNU_SOURCE  -fdiagnostics-format=msvc -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -pedantic
+CFLAGS = $INCLUDES -DNDEBUG -O2 -D_GNU_SOURCE  -fdiagnostics-format=msvc -Wall -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -lpthread
 
