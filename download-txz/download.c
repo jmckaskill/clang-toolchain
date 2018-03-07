@@ -3,12 +3,18 @@
 #include "tar.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
 #else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <unistd.h>
+#define closesocket(fd) close(fd)
 #endif
 
 #ifdef _MSC_VER
@@ -91,7 +97,9 @@ void download_used(struct download_stream *os, int consumed) {
 }
 
 int download_more(struct download_stream *os) {
+	fprintf(stderr, "download_more %d\n", os->avail - os->used);
 	if (!os->length_remaining) {
+		fprintf(stderr, "download finished\n");
 		return 1;
 	}
 	if (os->used && os->used < os->avail) {
@@ -105,6 +113,7 @@ int download_more(struct download_stream *os) {
 		return -1;
 	}
 	os->avail += r;
+	fprintf(stderr, "downloaded %d\n", r);
 	return 0;
 }
 

@@ -45,6 +45,7 @@ int decode_finished(struct decode_stream *ds) {
 }
 
 int decode_more(struct decode_stream *ds, const uint8_t *data, int sz) {
+	fprintf(stderr, "decode_more %d\n", sz);
 	if (ds->finished || !sz) {
 		fprintf(stderr, "mismatch between xz size and content length\n");
 		return -1;
@@ -68,5 +69,6 @@ int decode_more(struct decode_stream *ds, const uint8_t *data, int sz) {
 		ds->finished = 1;
 	}
 
+	fprintf(stderr, "decoded %d\n", (int) ds->b.in_pos);
 	return ds->b.in_pos;
 }

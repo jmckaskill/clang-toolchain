@@ -5,9 +5,10 @@
 
 #ifdef _WIN32
 #include <direct.h>
-#define mkdir(x) _mkdir(x)
+#define mkdir(x,mode) _mkdir(x)
 #else
 #include <unistd.h>
+#include <sys/stat.h>
 #endif
 
 #define BLOCK_SIZE 512
@@ -38,7 +39,7 @@ static uint8_t *get_block(struct decode_stream *ds, struct download_stream *os) 
 	}
 }
 int main() {
-	struct download_stream *os = open_download_stream("storage.googleapis.com", "/ctct-clang-toolchain/host-win64-2018-02-14.tar.xz");
+	struct download_stream *os = open_download_stream("storage.googleapis.com", "/ctct-clang-toolchain/libarm-2018-03-02-2.txz");
 	struct decode_stream *ds = open_decode_stream();
 	if (!os || !ds) {
 		return 1;
@@ -67,7 +68,7 @@ int main() {
 			}
 			break;
 		case DIRTYPE:
-			if (mkdir(t->name)) {
+			if (mkdir(t->name, 755)) {
 				fprintf(stderr, "failed to creat %s\n", t->name);
 			}
 			break;
