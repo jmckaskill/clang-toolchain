@@ -81,8 +81,8 @@ int main() {
 			}
 
 			int touse = BLOCK_SIZE;
-			if ((uint64_t) touse > sz) {
-				touse = (int) sz;
+			if ((uint64_t)touse > sz) {
+				touse = (int)sz;
 			}
 			if (f) {
 				fwrite(p, 1, touse, f);

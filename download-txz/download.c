@@ -72,6 +72,8 @@ int do_write(void *write_context, const unsigned char *data, size_t len) {
 
 struct download_stream {
 	br_sslio_context ctx;
+	br_ssl_client_context sc;
+	br_x509_minimal_context xc;
 	uint8_t inrec[32 * 1024];
 	uint8_t outrec[32 * 1024];
 	uint8_t buf[32 * 1024];
@@ -97,7 +99,7 @@ void download_used(struct download_stream *os, int consumed) {
 }
 
 int download_more(struct download_stream *os) {
-	fprintf(stderr, "download_more %d\n", os->avail - os->used);
+	fprintf(stderr, "download_more %d %d\n", os->avail, os->used);
 	if (!os->length_remaining) {
 		fprintf(stderr, "download finished\n");
 		return 1;
@@ -108,7 +110,7 @@ int download_more(struct download_stream *os) {
 	os->avail -= os->used;
 	os->used = 0;
 	int r = br_sslio_read(&os->ctx, os->buf + os->avail, sizeof(os->buf) - os->avail);
-	if (r < 0) {
+	if (r <= 0) {
 		fprintf(stderr, "ssl error on read %d\n", br_ssl_engine_last_error(os->ctx.engine));
 		return -1;
 	}
@@ -146,26 +148,23 @@ static char *get_line(struct download_stream *os) {
 static struct download_stream gos;
 
 struct download_stream *open_download_stream(const char *host, const char *path) {
-	br_ssl_client_context sc;
-	br_x509_minimal_context xc;
-
 	int fd = open_client_socket(host, 443);
 	if (fd < 0) {
 		fprintf(stderr, "failed to connect to %s\n", host);
 		return NULL;
 	}
 
-	br_ssl_client_init_full(&sc, &xc, TAs, TAs_NUM);
-	br_ssl_engine_set_buffers_bidi(&sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
-	br_ssl_client_reset(&sc, "storage.googleapis.com", 0);
-	br_sslio_init(&gos.ctx, &sc.eng, &do_read, (void*)(intptr_t)fd, &do_write, (void*)(intptr_t)fd);
+	br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
+	br_ssl_engine_set_buffers_bidi(&gos.sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
+	br_ssl_client_reset(&gos.sc, "storage.googleapis.com", 0);
+	br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, (void*)(intptr_t)fd, &do_write, (void*)(intptr_t)fd);
 
 	char request[256];
 	int reqsz = snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost:%s\r\n\r\n", path, host);
 	int w = br_sslio_write_all(&gos.ctx, request, reqsz);
 	int f = br_sslio_flush(&gos.ctx);
 	if (w < 0 || f < 0) {
-		fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&sc.eng));
+		fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&gos.sc.eng));
 		return NULL;
 	}
 
