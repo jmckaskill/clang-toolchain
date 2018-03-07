@@ -1,0 +1,8 @@
+SRC_NINJA = src.ninja
+TOOLCHAIN_DIR = ..
+INCLUDES = -I BearSSL/inc -I BearSSL/src -I xz-embedded/linux/include/linux -I xz-embedded/userspace -D XZ_USE_CRC64
+
+include ../host-clang.ninja
+subninja ../target-clang-release.ninja
+subninja ../target-clang-debug.ninja
+
