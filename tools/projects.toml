@@ -1,0 +1,58 @@
+solution = "clang-toolchain.sln"
+includes = [
+	"xz-embedded/linux/include/linux",
+	"xz-embedded/userspace",
+	"BearSSL/inc",
+	"BearSSL/src",
+	"",
+]
+
+[[target]]
+vs = "Debug"
+ninja = "win32-debug"
+default = "win32-debug"
+defines = "_WIN32;DEBUG"
+
+[[target]]
+vs = "Release"
+ninja = "win32-release"
+default = "win32-release"
+defines = "_WIN32;NDEBUG"
+
+[[project]]
+name = "download-txz"
+file = "download-txz.vcxproj"
+target = "bin/{TGT}/download-txz.exe"
+dirs = ["."]
+
+[[project]]
+name = "bearssl"
+file = "bearssl.vcxproj"
+target = "bin/obj/{TGT}/bearssl.lib"
+dirs = [
+	"BearSSL/inc",
+	"BearSSL/src/aead",
+	"BearSSL/src/codec",
+	"BearSSL/src/ec",
+	"BearSSL/src/hash",
+	"BearSSL/src/int",
+	"BearSSL/src/mac",
+	"BearSSL/src/rand",
+	"BearSSL/src/rsa",
+	"BearSSL/src/ssl",
+	"BearSSL/src/symcipher",
+	"BearSSL/src/x509",
+	"BearSSL/src",
+]
+
+[[project]]
+name = "xz"
+file = "xz.vcxproj"
+target = "bin/obj/{TGT}/xz.lib"
+dirs = [
+	"xz-embedded/linux/lib/xz",
+	"xz-embedded/linux/lib",
+	"xz-embedded/linux/include/linux/decompress",
+	"xz-embedded/linux/include/linux",
+	"xz-embedded/userspace",
+]
