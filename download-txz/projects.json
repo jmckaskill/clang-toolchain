@@ -1,0 +1,66 @@
+{
+    "Solution": "clang-toolchain.sln",
+    "Includes": [
+        "xz-embedded/linux/include/linux",
+        "xz-embedded/userspace",
+        "BearSSL/inc",
+        "BearSSL/src",
+        ""
+    ],
+    "Targets": [
+        {
+            "VS": "Debug",
+            "Ninja": "win32-debug",
+            "Default": "win32-debug win32-debug/check",
+            "Defines": "_WIN32;DEBUG"
+        },
+        {
+            "VS": "Release",
+            "Ninja": "win32-release",
+            "Default": "win32-release win32-release/check",
+            "Defines": "_WIN32;NDEBUG"
+        }
+    ],
+    "Projects": [
+        {
+            "Name": "download-txz",
+            "File": "download-txz.vcxproj",
+            "Target": "bin/{TGT}/download-txz.exe",
+            "Dirs": [
+                "."
+            ]
+        },
+        {
+            "Name": "bearssl",
+            "File": "bearssl.vcxproj",
+            "Target": "bin/obj/{TGT}/bearssl.lib",
+            "Dirs": [
+                "BearSSL/inc",
+                "BearSSL/src/aead",
+                "BearSSL/src/codec",
+                "BearSSL/src/ec",
+                "BearSSL/src/hash",
+                "BearSSL/src/int",
+                "BearSSL/src/mac",
+                "BearSSL/src/rand",
+                "BearSSL/src/rsa",
+                "BearSSL/src/ssl",
+                "BearSSL/src/symcipher",
+                "BearSSL/src/x509",
+                "BearSSL/src"
+            ]
+        },
+        {
+            "Name": "xz",
+            "File": "xz.vcxproj",
+            "Target": "bin/obj/{TGT}/xz.lib",
+            "Dirs": [
+                "xz-embedded/linux/lib/xz",
+                "xz-embedded/linux/lib",
+                "xz-embedded/linux/include/linux/decompress",
+                "xz-embedded/linux/include/linux",
+                "xz-embedded/userspace"
+            ]
+        }
+    ]
+}

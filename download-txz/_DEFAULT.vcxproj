@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{70B14E82-21E2-5842-A4A3-2358F8E7E30B}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>_DEFAULT</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-debug win32-debug/check</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-debug win32-debug/check &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-debug win32-debug/check</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-debug win32-debug/check</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-release win32-release/check</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-release win32-release/check &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-release win32-release/check</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-release win32-release/check</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

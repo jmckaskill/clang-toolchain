@@ -1,0 +1,6 @@
+[submodule "download-txz/BearSSL"]
+	path = download-txz/BearSSL
+	url = https://www.bearssl.org/git/BearSSL
+[submodule "download-txz/xz-embedded"]
+	path = download-txz/xz-embedded
+	url = http://git.tukaani.org/xz-embedded.git

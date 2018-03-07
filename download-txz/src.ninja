@@ -1,0 +1,545 @@
+obj = bin/obj/$TGT
+bin = bin/$TGT
+
+build $obj/download.o: cc download.c
+build $obj/decode.o: cc decode.c
+build $obj/main.o: cc main.c
+build $bin/download-txz.exe: clink $
+ $obj/main.o $
+ $obj/decode.o $
+ $obj/download.o $
+ $obj/bearssl.lib $
+ $obj/xz.lib $
+
+build $obj/BearSSL/tools/brssl.o: extcc BearSSL/tools/brssl.c
+build $obj/BearSSL/tools/certs.o: extcc BearSSL/tools/certs.c
+build $obj/BearSSL/tools/chain.o: extcc BearSSL/tools/chain.c
+build $obj/BearSSL/tools/client.o: extcc BearSSL/tools/client.c
+build $obj/BearSSL/tools/errors.o: extcc BearSSL/tools/errors.c
+build $obj/BearSSL/tools/files.o: extcc BearSSL/tools/files.c
+build $obj/BearSSL/tools/impl.o: extcc BearSSL/tools/impl.c
+build $obj/BearSSL/tools/keys.o: extcc BearSSL/tools/keys.c
+build $obj/BearSSL/tools/names.o: extcc BearSSL/tools/names.c
+build $obj/BearSSL/tools/server.o: extcc BearSSL/tools/server.c
+build $obj/BearSSL/tools/skey.o: extcc BearSSL/tools/skey.c
+build $obj/BearSSL/tools/sslio.o: extcc BearSSL/tools/sslio.c
+build $obj/BearSSL/tools/ta.o: extcc BearSSL/tools/ta.c
+build $obj/BearSSL/tools/twrch.o: extcc BearSSL/tools/twrch.c
+build $obj/BearSSL/tools/vector.o: extcc BearSSL/tools/vector.c
+build $obj/BearSSL/tools/verify.o: extcc BearSSL/tools/verify.c
+build $obj/BearSSL/tools/xmem.o: extcc BearSSL/tools/xmem.c
+
+build $bin/brssl.exe: clink $
+ $obj/BearSSL/tools/brssl.o $
+ $obj/BearSSL/tools/certs.o $
+ $obj/BearSSL/tools/chain.o $
+ $obj/BearSSL/tools/client.o $
+ $obj/BearSSL/tools/errors.o $
+ $obj/BearSSL/tools/files.o $
+ $obj/BearSSL/tools/impl.o $
+ $obj/BearSSL/tools/keys.o $
+ $obj/BearSSL/tools/names.o $
+ $obj/BearSSL/tools/server.o $
+ $obj/BearSSL/tools/skey.o $
+ $obj/BearSSL/tools/sslio.o $
+ $obj/BearSSL/tools/ta.o $
+ $obj/BearSSL/tools/twrch.o $
+ $obj/BearSSL/tools/vector.o $
+ $obj/BearSSL/tools/verify.o $
+ $obj/BearSSL/tools/xmem.o $
+ $obj/bearssl.lib $
+
+build $obj/BearSSL/src/aead/ccm.o: extcc BearSSL/src/aead/ccm.c
+build $obj/BearSSL/src/aead/eax.o: extcc BearSSL/src/aead/eax.c
+build $obj/BearSSL/src/aead/gcm.o: extcc BearSSL/src/aead/gcm.c
+build $obj/BearSSL/src/codec/ccopy.o: extcc BearSSL/src/codec/ccopy.c
+build $obj/BearSSL/src/codec/dec16be.o: extcc BearSSL/src/codec/dec16be.c
+build $obj/BearSSL/src/codec/dec16le.o: extcc BearSSL/src/codec/dec16le.c
+build $obj/BearSSL/src/codec/dec32be.o: extcc BearSSL/src/codec/dec32be.c
+build $obj/BearSSL/src/codec/dec32le.o: extcc BearSSL/src/codec/dec32le.c
+build $obj/BearSSL/src/codec/dec64be.o: extcc BearSSL/src/codec/dec64be.c
+build $obj/BearSSL/src/codec/dec64le.o: extcc BearSSL/src/codec/dec64le.c
+build $obj/BearSSL/src/codec/enc16be.o: extcc BearSSL/src/codec/enc16be.c
+build $obj/BearSSL/src/codec/enc16le.o: extcc BearSSL/src/codec/enc16le.c
+build $obj/BearSSL/src/codec/enc32be.o: extcc BearSSL/src/codec/enc32be.c
+build $obj/BearSSL/src/codec/enc32le.o: extcc BearSSL/src/codec/enc32le.c
+build $obj/BearSSL/src/codec/enc64be.o: extcc BearSSL/src/codec/enc64be.c
+build $obj/BearSSL/src/codec/enc64le.o: extcc BearSSL/src/codec/enc64le.c
+build $obj/BearSSL/src/codec/pemdec.o: extcc BearSSL/src/codec/pemdec.c
+build $obj/BearSSL/src/ec/ec_all_m15.o: extcc BearSSL/src/ec/ec_all_m15.c
+build $obj/BearSSL/src/ec/ec_all_m31.o: extcc BearSSL/src/ec/ec_all_m31.c
+build $obj/BearSSL/src/ec/ec_c25519_i15.o: extcc BearSSL/src/ec/ec_c25519_i15.c
+build $obj/BearSSL/src/ec/ec_c25519_i31.o: extcc BearSSL/src/ec/ec_c25519_i31.c
+build $obj/BearSSL/src/ec/ec_c25519_m15.o: extcc BearSSL/src/ec/ec_c25519_m15.c
+build $obj/BearSSL/src/ec/ec_c25519_m31.o: extcc BearSSL/src/ec/ec_c25519_m31.c
+build $obj/BearSSL/src/ec/ec_curve25519.o: extcc BearSSL/src/ec/ec_curve25519.c
+build $obj/BearSSL/src/ec/ec_default.o: extcc BearSSL/src/ec/ec_default.c
+build $obj/BearSSL/src/ec/ec_p256_m15.o: extcc BearSSL/src/ec/ec_p256_m15.c
+build $obj/BearSSL/src/ec/ec_p256_m31.o: extcc BearSSL/src/ec/ec_p256_m31.c
+build $obj/BearSSL/src/ec/ec_prime_i15.o: extcc BearSSL/src/ec/ec_prime_i15.c
+build $obj/BearSSL/src/ec/ec_prime_i31.o: extcc BearSSL/src/ec/ec_prime_i31.c
+build $obj/BearSSL/src/ec/ec_secp256r1.o: extcc BearSSL/src/ec/ec_secp256r1.c
+build $obj/BearSSL/src/ec/ec_secp384r1.o: extcc BearSSL/src/ec/ec_secp384r1.c
+build $obj/BearSSL/src/ec/ec_secp521r1.o: extcc BearSSL/src/ec/ec_secp521r1.c
+build $obj/BearSSL/src/ec/ecdsa_atr.o: extcc BearSSL/src/ec/ecdsa_atr.c
+build $obj/BearSSL/src/ec/ecdsa_default_sign_asn1.o: extcc BearSSL/src/ec/ecdsa_default_sign_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_default_sign_raw.o: extcc BearSSL/src/ec/ecdsa_default_sign_raw.c
+build $obj/BearSSL/src/ec/ecdsa_default_vrfy_asn1.o: extcc BearSSL/src/ec/ecdsa_default_vrfy_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_default_vrfy_raw.o: extcc BearSSL/src/ec/ecdsa_default_vrfy_raw.c
+build $obj/BearSSL/src/ec/ecdsa_i15_bits.o: extcc BearSSL/src/ec/ecdsa_i15_bits.c
+build $obj/BearSSL/src/ec/ecdsa_i15_sign_asn1.o: extcc BearSSL/src/ec/ecdsa_i15_sign_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_i15_sign_raw.o: extcc BearSSL/src/ec/ecdsa_i15_sign_raw.c
+build $obj/BearSSL/src/ec/ecdsa_i15_vrfy_asn1.o: extcc BearSSL/src/ec/ecdsa_i15_vrfy_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_i15_vrfy_raw.o: extcc BearSSL/src/ec/ecdsa_i15_vrfy_raw.c
+build $obj/BearSSL/src/ec/ecdsa_i31_bits.o: extcc BearSSL/src/ec/ecdsa_i31_bits.c
+build $obj/BearSSL/src/ec/ecdsa_i31_sign_asn1.o: extcc BearSSL/src/ec/ecdsa_i31_sign_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_i31_sign_raw.o: extcc BearSSL/src/ec/ecdsa_i31_sign_raw.c
+build $obj/BearSSL/src/ec/ecdsa_i31_vrfy_asn1.o: extcc BearSSL/src/ec/ecdsa_i31_vrfy_asn1.c
+build $obj/BearSSL/src/ec/ecdsa_i31_vrfy_raw.o: extcc BearSSL/src/ec/ecdsa_i31_vrfy_raw.c
+build $obj/BearSSL/src/ec/ecdsa_rta.o: extcc BearSSL/src/ec/ecdsa_rta.c
+build $obj/BearSSL/src/hash/dig_oid.o: extcc BearSSL/src/hash/dig_oid.c
+build $obj/BearSSL/src/hash/dig_size.o: extcc BearSSL/src/hash/dig_size.c
+build $obj/BearSSL/src/hash/ghash_ctmul.o: extcc BearSSL/src/hash/ghash_ctmul.c
+build $obj/BearSSL/src/hash/ghash_ctmul32.o: extcc BearSSL/src/hash/ghash_ctmul32.c
+build $obj/BearSSL/src/hash/ghash_ctmul64.o: extcc BearSSL/src/hash/ghash_ctmul64.c
+build $obj/BearSSL/src/hash/ghash_pclmul.o: extcc BearSSL/src/hash/ghash_pclmul.c
+build $obj/BearSSL/src/hash/ghash_pwr8.o: extcc BearSSL/src/hash/ghash_pwr8.c
+build $obj/BearSSL/src/hash/md5.o: extcc BearSSL/src/hash/md5.c
+build $obj/BearSSL/src/hash/md5sha1.o: extcc BearSSL/src/hash/md5sha1.c
+build $obj/BearSSL/src/hash/multihash.o: extcc BearSSL/src/hash/multihash.c
+build $obj/BearSSL/src/hash/sha1.o: extcc BearSSL/src/hash/sha1.c
+build $obj/BearSSL/src/hash/sha2big.o: extcc BearSSL/src/hash/sha2big.c
+build $obj/BearSSL/src/hash/sha2small.o: extcc BearSSL/src/hash/sha2small.c
+build $obj/BearSSL/src/int/i15_add.o: extcc BearSSL/src/int/i15_add.c
+build $obj/BearSSL/src/int/i15_bitlen.o: extcc BearSSL/src/int/i15_bitlen.c
+build $obj/BearSSL/src/int/i15_decmod.o: extcc BearSSL/src/int/i15_decmod.c
+build $obj/BearSSL/src/int/i15_decode.o: extcc BearSSL/src/int/i15_decode.c
+build $obj/BearSSL/src/int/i15_decred.o: extcc BearSSL/src/int/i15_decred.c
+build $obj/BearSSL/src/int/i15_encode.o: extcc BearSSL/src/int/i15_encode.c
+build $obj/BearSSL/src/int/i15_fmont.o: extcc BearSSL/src/int/i15_fmont.c
+build $obj/BearSSL/src/int/i15_iszero.o: extcc BearSSL/src/int/i15_iszero.c
+build $obj/BearSSL/src/int/i15_modpow.o: extcc BearSSL/src/int/i15_modpow.c
+build $obj/BearSSL/src/int/i15_modpow2.o: extcc BearSSL/src/int/i15_modpow2.c
+build $obj/BearSSL/src/int/i15_montmul.o: extcc BearSSL/src/int/i15_montmul.c
+build $obj/BearSSL/src/int/i15_mulacc.o: extcc BearSSL/src/int/i15_mulacc.c
+build $obj/BearSSL/src/int/i15_muladd.o: extcc BearSSL/src/int/i15_muladd.c
+build $obj/BearSSL/src/int/i15_ninv15.o: extcc BearSSL/src/int/i15_ninv15.c
+build $obj/BearSSL/src/int/i15_reduce.o: extcc BearSSL/src/int/i15_reduce.c
+build $obj/BearSSL/src/int/i15_rshift.o: extcc BearSSL/src/int/i15_rshift.c
+build $obj/BearSSL/src/int/i15_sub.o: extcc BearSSL/src/int/i15_sub.c
+build $obj/BearSSL/src/int/i15_tmont.o: extcc BearSSL/src/int/i15_tmont.c
+build $obj/BearSSL/src/int/i31_add.o: extcc BearSSL/src/int/i31_add.c
+build $obj/BearSSL/src/int/i31_bitlen.o: extcc BearSSL/src/int/i31_bitlen.c
+build $obj/BearSSL/src/int/i31_decmod.o: extcc BearSSL/src/int/i31_decmod.c
+build $obj/BearSSL/src/int/i31_decode.o: extcc BearSSL/src/int/i31_decode.c
+build $obj/BearSSL/src/int/i31_decred.o: extcc BearSSL/src/int/i31_decred.c
+build $obj/BearSSL/src/int/i31_encode.o: extcc BearSSL/src/int/i31_encode.c
+build $obj/BearSSL/src/int/i31_fmont.o: extcc BearSSL/src/int/i31_fmont.c
+build $obj/BearSSL/src/int/i31_iszero.o: extcc BearSSL/src/int/i31_iszero.c
+build $obj/BearSSL/src/int/i31_modpow.o: extcc BearSSL/src/int/i31_modpow.c
+build $obj/BearSSL/src/int/i31_modpow2.o: extcc BearSSL/src/int/i31_modpow2.c
+build $obj/BearSSL/src/int/i31_montmul.o: extcc BearSSL/src/int/i31_montmul.c
+build $obj/BearSSL/src/int/i31_mulacc.o: extcc BearSSL/src/int/i31_mulacc.c
+build $obj/BearSSL/src/int/i31_muladd.o: extcc BearSSL/src/int/i31_muladd.c
+build $obj/BearSSL/src/int/i31_ninv31.o: extcc BearSSL/src/int/i31_ninv31.c
+build $obj/BearSSL/src/int/i31_reduce.o: extcc BearSSL/src/int/i31_reduce.c
+build $obj/BearSSL/src/int/i31_rshift.o: extcc BearSSL/src/int/i31_rshift.c
+build $obj/BearSSL/src/int/i31_sub.o: extcc BearSSL/src/int/i31_sub.c
+build $obj/BearSSL/src/int/i31_tmont.o: extcc BearSSL/src/int/i31_tmont.c
+build $obj/BearSSL/src/int/i32_add.o: extcc BearSSL/src/int/i32_add.c
+build $obj/BearSSL/src/int/i32_bitlen.o: extcc BearSSL/src/int/i32_bitlen.c
+build $obj/BearSSL/src/int/i32_decmod.o: extcc BearSSL/src/int/i32_decmod.c
+build $obj/BearSSL/src/int/i32_decode.o: extcc BearSSL/src/int/i32_decode.c
+build $obj/BearSSL/src/int/i32_decred.o: extcc BearSSL/src/int/i32_decred.c
+build $obj/BearSSL/src/int/i32_div32.o: extcc BearSSL/src/int/i32_div32.c
+build $obj/BearSSL/src/int/i32_encode.o: extcc BearSSL/src/int/i32_encode.c
+build $obj/BearSSL/src/int/i32_fmont.o: extcc BearSSL/src/int/i32_fmont.c
+build $obj/BearSSL/src/int/i32_iszero.o: extcc BearSSL/src/int/i32_iszero.c
+build $obj/BearSSL/src/int/i32_modpow.o: extcc BearSSL/src/int/i32_modpow.c
+build $obj/BearSSL/src/int/i32_montmul.o: extcc BearSSL/src/int/i32_montmul.c
+build $obj/BearSSL/src/int/i32_mulacc.o: extcc BearSSL/src/int/i32_mulacc.c
+build $obj/BearSSL/src/int/i32_muladd.o: extcc BearSSL/src/int/i32_muladd.c
+build $obj/BearSSL/src/int/i32_ninv32.o: extcc BearSSL/src/int/i32_ninv32.c
+build $obj/BearSSL/src/int/i32_reduce.o: extcc BearSSL/src/int/i32_reduce.c
+build $obj/BearSSL/src/int/i32_sub.o: extcc BearSSL/src/int/i32_sub.c
+build $obj/BearSSL/src/int/i32_tmont.o: extcc BearSSL/src/int/i32_tmont.c
+build $obj/BearSSL/src/int/i62_modpow2.o: extcc BearSSL/src/int/i62_modpow2.c
+build $obj/BearSSL/src/mac/hmac.o: extcc BearSSL/src/mac/hmac.c
+build $obj/BearSSL/src/mac/hmac_ct.o: extcc BearSSL/src/mac/hmac_ct.c
+build $obj/BearSSL/src/rand/hmac_drbg.o: extcc BearSSL/src/rand/hmac_drbg.c
+build $obj/BearSSL/src/rand/sysrng.o: extcc BearSSL/src/rand/sysrng.c
+build $obj/BearSSL/src/rsa/rsa_default_pkcs1_sign.o: extcc BearSSL/src/rsa/rsa_default_pkcs1_sign.c
+build $obj/BearSSL/src/rsa/rsa_default_pkcs1_vrfy.o: extcc BearSSL/src/rsa/rsa_default_pkcs1_vrfy.c
+build $obj/BearSSL/src/rsa/rsa_default_priv.o: extcc BearSSL/src/rsa/rsa_default_priv.c
+build $obj/BearSSL/src/rsa/rsa_default_pub.o: extcc BearSSL/src/rsa/rsa_default_pub.c
+build $obj/BearSSL/src/rsa/rsa_i15_pkcs1_sign.o: extcc BearSSL/src/rsa/rsa_i15_pkcs1_sign.c
+build $obj/BearSSL/src/rsa/rsa_i15_pkcs1_vrfy.o: extcc BearSSL/src/rsa/rsa_i15_pkcs1_vrfy.c
+build $obj/BearSSL/src/rsa/rsa_i15_priv.o: extcc BearSSL/src/rsa/rsa_i15_priv.c
+build $obj/BearSSL/src/rsa/rsa_i15_pub.o: extcc BearSSL/src/rsa/rsa_i15_pub.c
+build $obj/BearSSL/src/rsa/rsa_i31_pkcs1_sign.o: extcc BearSSL/src/rsa/rsa_i31_pkcs1_sign.c
+build $obj/BearSSL/src/rsa/rsa_i31_pkcs1_vrfy.o: extcc BearSSL/src/rsa/rsa_i31_pkcs1_vrfy.c
+build $obj/BearSSL/src/rsa/rsa_i31_priv.o: extcc BearSSL/src/rsa/rsa_i31_priv.c
+build $obj/BearSSL/src/rsa/rsa_i31_pub.o: extcc BearSSL/src/rsa/rsa_i31_pub.c
+build $obj/BearSSL/src/rsa/rsa_i32_pkcs1_sign.o: extcc BearSSL/src/rsa/rsa_i32_pkcs1_sign.c
+build $obj/BearSSL/src/rsa/rsa_i32_pkcs1_vrfy.o: extcc BearSSL/src/rsa/rsa_i32_pkcs1_vrfy.c
+build $obj/BearSSL/src/rsa/rsa_i32_priv.o: extcc BearSSL/src/rsa/rsa_i32_priv.c
+build $obj/BearSSL/src/rsa/rsa_i32_pub.o: extcc BearSSL/src/rsa/rsa_i32_pub.c
+build $obj/BearSSL/src/rsa/rsa_i62_pkcs1_sign.o: extcc BearSSL/src/rsa/rsa_i62_pkcs1_sign.c
+build $obj/BearSSL/src/rsa/rsa_i62_pkcs1_vrfy.o: extcc BearSSL/src/rsa/rsa_i62_pkcs1_vrfy.c
+build $obj/BearSSL/src/rsa/rsa_i62_priv.o: extcc BearSSL/src/rsa/rsa_i62_priv.c
+build $obj/BearSSL/src/rsa/rsa_i62_pub.o: extcc BearSSL/src/rsa/rsa_i62_pub.c
+build $obj/BearSSL/src/rsa/rsa_pkcs1_sig_pad.o: extcc BearSSL/src/rsa/rsa_pkcs1_sig_pad.c
+build $obj/BearSSL/src/rsa/rsa_pkcs1_sig_unpad.o: extcc BearSSL/src/rsa/rsa_pkcs1_sig_unpad.c
+build $obj/BearSSL/src/rsa/rsa_ssl_decrypt.o: extcc BearSSL/src/rsa/rsa_ssl_decrypt.c
+build $obj/BearSSL/src/settings.o: extcc BearSSL/src/settings.c
+build $obj/BearSSL/src/ssl/prf.o: extcc BearSSL/src/ssl/prf.c
+build $obj/BearSSL/src/ssl/prf_md5sha1.o: extcc BearSSL/src/ssl/prf_md5sha1.c
+build $obj/BearSSL/src/ssl/prf_sha256.o: extcc BearSSL/src/ssl/prf_sha256.c
+build $obj/BearSSL/src/ssl/prf_sha384.o: extcc BearSSL/src/ssl/prf_sha384.c
+build $obj/BearSSL/src/ssl/ssl_ccert_single_ec.o: extcc BearSSL/src/ssl/ssl_ccert_single_ec.c
+build $obj/BearSSL/src/ssl/ssl_ccert_single_rsa.o: extcc BearSSL/src/ssl/ssl_ccert_single_rsa.c
+build $obj/BearSSL/src/ssl/ssl_client.o: extcc BearSSL/src/ssl/ssl_client.c
+build $obj/BearSSL/src/ssl/ssl_client_default_rsapub.o: extcc BearSSL/src/ssl/ssl_client_default_rsapub.c
+build $obj/BearSSL/src/ssl/ssl_client_full.o: extcc BearSSL/src/ssl/ssl_client_full.c
+build $obj/BearSSL/src/ssl/ssl_engine.o: extcc BearSSL/src/ssl/ssl_engine.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_aescbc.o: extcc BearSSL/src/ssl/ssl_engine_default_aescbc.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_aesgcm.o: extcc BearSSL/src/ssl/ssl_engine_default_aesgcm.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_chapol.o: extcc BearSSL/src/ssl/ssl_engine_default_chapol.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_descbc.o: extcc BearSSL/src/ssl/ssl_engine_default_descbc.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_ec.o: extcc BearSSL/src/ssl/ssl_engine_default_ec.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_ecdsa.o: extcc BearSSL/src/ssl/ssl_engine_default_ecdsa.c
+build $obj/BearSSL/src/ssl/ssl_engine_default_rsavrfy.o: extcc BearSSL/src/ssl/ssl_engine_default_rsavrfy.c
+build $obj/BearSSL/src/ssl/ssl_hashes.o: extcc BearSSL/src/ssl/ssl_hashes.c
+build $obj/BearSSL/src/ssl/ssl_hs_client.o: extcc BearSSL/src/ssl/ssl_hs_client.c
+build $obj/BearSSL/src/ssl/ssl_hs_server.o: extcc BearSSL/src/ssl/ssl_hs_server.c
+build $obj/BearSSL/src/ssl/ssl_io.o: extcc BearSSL/src/ssl/ssl_io.c
+build $obj/BearSSL/src/ssl/ssl_keyexport.o: extcc BearSSL/src/ssl/ssl_keyexport.c
+build $obj/BearSSL/src/ssl/ssl_lru.o: extcc BearSSL/src/ssl/ssl_lru.c
+build $obj/BearSSL/src/ssl/ssl_rec_cbc.o: extcc BearSSL/src/ssl/ssl_rec_cbc.c
+build $obj/BearSSL/src/ssl/ssl_rec_chapol.o: extcc BearSSL/src/ssl/ssl_rec_chapol.c
+build $obj/BearSSL/src/ssl/ssl_rec_gcm.o: extcc BearSSL/src/ssl/ssl_rec_gcm.c
+build $obj/BearSSL/src/ssl/ssl_scert_single_ec.o: extcc BearSSL/src/ssl/ssl_scert_single_ec.c
+build $obj/BearSSL/src/ssl/ssl_scert_single_rsa.o: extcc BearSSL/src/ssl/ssl_scert_single_rsa.c
+build $obj/BearSSL/src/ssl/ssl_server.o: extcc BearSSL/src/ssl/ssl_server.c
+build $obj/BearSSL/src/ssl/ssl_server_full_ec.o: extcc BearSSL/src/ssl/ssl_server_full_ec.c
+build $obj/BearSSL/src/ssl/ssl_server_full_rsa.o: extcc BearSSL/src/ssl/ssl_server_full_rsa.c
+build $obj/BearSSL/src/ssl/ssl_server_mine2c.o: extcc BearSSL/src/ssl/ssl_server_mine2c.c
+build $obj/BearSSL/src/ssl/ssl_server_mine2g.o: extcc BearSSL/src/ssl/ssl_server_mine2g.c
+build $obj/BearSSL/src/ssl/ssl_server_minf2c.o: extcc BearSSL/src/ssl/ssl_server_minf2c.c
+build $obj/BearSSL/src/ssl/ssl_server_minf2g.o: extcc BearSSL/src/ssl/ssl_server_minf2g.c
+build $obj/BearSSL/src/ssl/ssl_server_minr2g.o: extcc BearSSL/src/ssl/ssl_server_minr2g.c
+build $obj/BearSSL/src/ssl/ssl_server_minu2g.o: extcc BearSSL/src/ssl/ssl_server_minu2g.c
+build $obj/BearSSL/src/ssl/ssl_server_minv2g.o: extcc BearSSL/src/ssl/ssl_server_minv2g.c
+build $obj/BearSSL/src/symcipher/aes_big_cbcdec.o: extcc BearSSL/src/symcipher/aes_big_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_big_cbcenc.o: extcc BearSSL/src/symcipher/aes_big_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_big_ctr.o: extcc BearSSL/src/symcipher/aes_big_ctr.c
+build $obj/BearSSL/src/symcipher/aes_big_ctrcbc.o: extcc BearSSL/src/symcipher/aes_big_ctrcbc.c
+build $obj/BearSSL/src/symcipher/aes_big_dec.o: extcc BearSSL/src/symcipher/aes_big_dec.c
+build $obj/BearSSL/src/symcipher/aes_big_enc.o: extcc BearSSL/src/symcipher/aes_big_enc.c
+build $obj/BearSSL/src/symcipher/aes_common.o: extcc BearSSL/src/symcipher/aes_common.c
+build $obj/BearSSL/src/symcipher/aes_ct.o: extcc BearSSL/src/symcipher/aes_ct.c
+build $obj/BearSSL/src/symcipher/aes_ct_cbcdec.o: extcc BearSSL/src/symcipher/aes_ct_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_ct_cbcenc.o: extcc BearSSL/src/symcipher/aes_ct_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_ct_ctr.o: extcc BearSSL/src/symcipher/aes_ct_ctr.c
+build $obj/BearSSL/src/symcipher/aes_ct_ctrcbc.o: extcc BearSSL/src/symcipher/aes_ct_ctrcbc.c
+build $obj/BearSSL/src/symcipher/aes_ct_dec.o: extcc BearSSL/src/symcipher/aes_ct_dec.c
+build $obj/BearSSL/src/symcipher/aes_ct_enc.o: extcc BearSSL/src/symcipher/aes_ct_enc.c
+build $obj/BearSSL/src/symcipher/aes_ct64.o: extcc BearSSL/src/symcipher/aes_ct64.c
+build $obj/BearSSL/src/symcipher/aes_ct64_cbcdec.o: extcc BearSSL/src/symcipher/aes_ct64_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_ct64_cbcenc.o: extcc BearSSL/src/symcipher/aes_ct64_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_ct64_ctr.o: extcc BearSSL/src/symcipher/aes_ct64_ctr.c
+build $obj/BearSSL/src/symcipher/aes_ct64_ctrcbc.o: extcc BearSSL/src/symcipher/aes_ct64_ctrcbc.c
+build $obj/BearSSL/src/symcipher/aes_ct64_dec.o: extcc BearSSL/src/symcipher/aes_ct64_dec.c
+build $obj/BearSSL/src/symcipher/aes_ct64_enc.o: extcc BearSSL/src/symcipher/aes_ct64_enc.c
+build $obj/BearSSL/src/symcipher/aes_pwr8.o: extcc BearSSL/src/symcipher/aes_pwr8.c
+build $obj/BearSSL/src/symcipher/aes_pwr8_cbcdec.o: extcc BearSSL/src/symcipher/aes_pwr8_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_pwr8_cbcenc.o: extcc BearSSL/src/symcipher/aes_pwr8_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_pwr8_ctr.o: extcc BearSSL/src/symcipher/aes_pwr8_ctr.c
+build $obj/BearSSL/src/symcipher/aes_small_cbcdec.o: extcc BearSSL/src/symcipher/aes_small_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_small_cbcenc.o: extcc BearSSL/src/symcipher/aes_small_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_small_ctr.o: extcc BearSSL/src/symcipher/aes_small_ctr.c
+build $obj/BearSSL/src/symcipher/aes_small_ctrcbc.o: extcc BearSSL/src/symcipher/aes_small_ctrcbc.c
+build $obj/BearSSL/src/symcipher/aes_small_dec.o: extcc BearSSL/src/symcipher/aes_small_dec.c
+build $obj/BearSSL/src/symcipher/aes_small_enc.o: extcc BearSSL/src/symcipher/aes_small_enc.c
+build $obj/BearSSL/src/symcipher/aes_x86ni.o: extcc BearSSL/src/symcipher/aes_x86ni.c
+build $obj/BearSSL/src/symcipher/aes_x86ni_cbcdec.o: extcc BearSSL/src/symcipher/aes_x86ni_cbcdec.c
+build $obj/BearSSL/src/symcipher/aes_x86ni_cbcenc.o: extcc BearSSL/src/symcipher/aes_x86ni_cbcenc.c
+build $obj/BearSSL/src/symcipher/aes_x86ni_ctr.o: extcc BearSSL/src/symcipher/aes_x86ni_ctr.c
+build $obj/BearSSL/src/symcipher/aes_x86ni_ctrcbc.o: extcc BearSSL/src/symcipher/aes_x86ni_ctrcbc.c
+build $obj/BearSSL/src/symcipher/chacha20_ct.o: extcc BearSSL/src/symcipher/chacha20_ct.c
+build $obj/BearSSL/src/symcipher/chacha20_sse2.o: extcc BearSSL/src/symcipher/chacha20_sse2.c
+build $obj/BearSSL/src/symcipher/des_ct.o: extcc BearSSL/src/symcipher/des_ct.c
+build $obj/BearSSL/src/symcipher/des_ct_cbcdec.o: extcc BearSSL/src/symcipher/des_ct_cbcdec.c
+build $obj/BearSSL/src/symcipher/des_ct_cbcenc.o: extcc BearSSL/src/symcipher/des_ct_cbcenc.c
+build $obj/BearSSL/src/symcipher/des_support.o: extcc BearSSL/src/symcipher/des_support.c
+build $obj/BearSSL/src/symcipher/des_tab.o: extcc BearSSL/src/symcipher/des_tab.c
+build $obj/BearSSL/src/symcipher/des_tab_cbcdec.o: extcc BearSSL/src/symcipher/des_tab_cbcdec.c
+build $obj/BearSSL/src/symcipher/des_tab_cbcenc.o: extcc BearSSL/src/symcipher/des_tab_cbcenc.c
+build $obj/BearSSL/src/symcipher/poly1305_ctmul.o: extcc BearSSL/src/symcipher/poly1305_ctmul.c
+build $obj/BearSSL/src/symcipher/poly1305_ctmul32.o: extcc BearSSL/src/symcipher/poly1305_ctmul32.c
+build $obj/BearSSL/src/symcipher/poly1305_ctmulq.o: extcc BearSSL/src/symcipher/poly1305_ctmulq.c
+build $obj/BearSSL/src/symcipher/poly1305_i15.o: extcc BearSSL/src/symcipher/poly1305_i15.c
+build $obj/BearSSL/src/x509/skey_decoder.o: extcc BearSSL/src/x509/skey_decoder.c
+build $obj/BearSSL/src/x509/x509_decoder.o: extcc BearSSL/src/x509/x509_decoder.c
+build $obj/BearSSL/src/x509/x509_knownkey.o: extcc BearSSL/src/x509/x509_knownkey.c
+build $obj/BearSSL/src/x509/x509_minimal.o: extcc BearSSL/src/x509/x509_minimal.c
+build $obj/BearSSL/src/x509/x509_minimal_full.o: extcc BearSSL/src/x509/x509_minimal_full.c
+
+build $obj/bearssl.lib: lib $
+ $obj/BearSSL/src/aead/ccm.o $
+ $obj/BearSSL/src/aead/eax.o $
+ $obj/BearSSL/src/aead/gcm.o $
+ $obj/BearSSL/src/codec/ccopy.o $
+ $obj/BearSSL/src/codec/dec16be.o $
+ $obj/BearSSL/src/codec/dec16le.o $
+ $obj/BearSSL/src/codec/dec32be.o $
+ $obj/BearSSL/src/codec/dec32le.o $
+ $obj/BearSSL/src/codec/dec64be.o $
+ $obj/BearSSL/src/codec/dec64le.o $
+ $obj/BearSSL/src/codec/enc16be.o $
+ $obj/BearSSL/src/codec/enc16le.o $
+ $obj/BearSSL/src/codec/enc32be.o $
+ $obj/BearSSL/src/codec/enc32le.o $
+ $obj/BearSSL/src/codec/enc64be.o $
+ $obj/BearSSL/src/codec/enc64le.o $
+ $obj/BearSSL/src/codec/pemdec.o $
+ $obj/BearSSL/src/ec/ec_all_m15.o $
+ $obj/BearSSL/src/ec/ec_all_m31.o $
+ $obj/BearSSL/src/ec/ec_c25519_i15.o $
+ $obj/BearSSL/src/ec/ec_c25519_i31.o $
+ $obj/BearSSL/src/ec/ec_c25519_m15.o $
+ $obj/BearSSL/src/ec/ec_c25519_m31.o $
+ $obj/BearSSL/src/ec/ec_curve25519.o $
+ $obj/BearSSL/src/ec/ec_default.o $
+ $obj/BearSSL/src/ec/ec_p256_m15.o $
+ $obj/BearSSL/src/ec/ec_p256_m31.o $
+ $obj/BearSSL/src/ec/ec_prime_i15.o $
+ $obj/BearSSL/src/ec/ec_prime_i31.o $
+ $obj/BearSSL/src/ec/ec_secp256r1.o $
+ $obj/BearSSL/src/ec/ec_secp384r1.o $
+ $obj/BearSSL/src/ec/ec_secp521r1.o $
+ $obj/BearSSL/src/ec/ecdsa_atr.o $
+ $obj/BearSSL/src/ec/ecdsa_default_sign_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_default_sign_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_default_vrfy_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_default_vrfy_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_i15_bits.o $
+ $obj/BearSSL/src/ec/ecdsa_i15_sign_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_i15_sign_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_i15_vrfy_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_i15_vrfy_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_i31_bits.o $
+ $obj/BearSSL/src/ec/ecdsa_i31_sign_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_i31_sign_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_i31_vrfy_asn1.o $
+ $obj/BearSSL/src/ec/ecdsa_i31_vrfy_raw.o $
+ $obj/BearSSL/src/ec/ecdsa_rta.o $
+ $obj/BearSSL/src/hash/dig_oid.o $
+ $obj/BearSSL/src/hash/dig_size.o $
+ $obj/BearSSL/src/hash/ghash_ctmul.o $
+ $obj/BearSSL/src/hash/ghash_ctmul32.o $
+ $obj/BearSSL/src/hash/ghash_ctmul64.o $
+ $obj/BearSSL/src/hash/ghash_pclmul.o $
+ $obj/BearSSL/src/hash/ghash_pwr8.o $
+ $obj/BearSSL/src/hash/md5.o $
+ $obj/BearSSL/src/hash/md5sha1.o $
+ $obj/BearSSL/src/hash/multihash.o $
+ $obj/BearSSL/src/hash/sha1.o $
+ $obj/BearSSL/src/hash/sha2big.o $
+ $obj/BearSSL/src/hash/sha2small.o $
+ $obj/BearSSL/src/int/i15_add.o $
+ $obj/BearSSL/src/int/i15_bitlen.o $
+ $obj/BearSSL/src/int/i15_decmod.o $
+ $obj/BearSSL/src/int/i15_decode.o $
+ $obj/BearSSL/src/int/i15_decred.o $
+ $obj/BearSSL/src/int/i15_encode.o $
+ $obj/BearSSL/src/int/i15_fmont.o $
+ $obj/BearSSL/src/int/i15_iszero.o $
+ $obj/BearSSL/src/int/i15_modpow.o $
+ $obj/BearSSL/src/int/i15_modpow2.o $
+ $obj/BearSSL/src/int/i15_montmul.o $
+ $obj/BearSSL/src/int/i15_mulacc.o $
+ $obj/BearSSL/src/int/i15_muladd.o $
+ $obj/BearSSL/src/int/i15_ninv15.o $
+ $obj/BearSSL/src/int/i15_reduce.o $
+ $obj/BearSSL/src/int/i15_rshift.o $
+ $obj/BearSSL/src/int/i15_sub.o $
+ $obj/BearSSL/src/int/i15_tmont.o $
+ $obj/BearSSL/src/int/i31_add.o $
+ $obj/BearSSL/src/int/i31_bitlen.o $
+ $obj/BearSSL/src/int/i31_decmod.o $
+ $obj/BearSSL/src/int/i31_decode.o $
+ $obj/BearSSL/src/int/i31_decred.o $
+ $obj/BearSSL/src/int/i31_encode.o $
+ $obj/BearSSL/src/int/i31_fmont.o $
+ $obj/BearSSL/src/int/i31_iszero.o $
+ $obj/BearSSL/src/int/i31_modpow.o $
+ $obj/BearSSL/src/int/i31_modpow2.o $
+ $obj/BearSSL/src/int/i31_montmul.o $
+ $obj/BearSSL/src/int/i31_mulacc.o $
+ $obj/BearSSL/src/int/i31_muladd.o $
+ $obj/BearSSL/src/int/i31_ninv31.o $
+ $obj/BearSSL/src/int/i31_reduce.o $
+ $obj/BearSSL/src/int/i31_rshift.o $
+ $obj/BearSSL/src/int/i31_sub.o $
+ $obj/BearSSL/src/int/i31_tmont.o $
+ $obj/BearSSL/src/int/i32_add.o $
+ $obj/BearSSL/src/int/i32_bitlen.o $
+ $obj/BearSSL/src/int/i32_decmod.o $
+ $obj/BearSSL/src/int/i32_decode.o $
+ $obj/BearSSL/src/int/i32_decred.o $
+ $obj/BearSSL/src/int/i32_div32.o $
+ $obj/BearSSL/src/int/i32_encode.o $
+ $obj/BearSSL/src/int/i32_fmont.o $
+ $obj/BearSSL/src/int/i32_iszero.o $
+ $obj/BearSSL/src/int/i32_modpow.o $
+ $obj/BearSSL/src/int/i32_montmul.o $
+ $obj/BearSSL/src/int/i32_mulacc.o $
+ $obj/BearSSL/src/int/i32_muladd.o $
+ $obj/BearSSL/src/int/i32_ninv32.o $
+ $obj/BearSSL/src/int/i32_reduce.o $
+ $obj/BearSSL/src/int/i32_sub.o $
+ $obj/BearSSL/src/int/i32_tmont.o $
+ $obj/BearSSL/src/int/i62_modpow2.o $
+ $obj/BearSSL/src/mac/hmac.o $
+ $obj/BearSSL/src/mac/hmac_ct.o $
+ $obj/BearSSL/src/rand/hmac_drbg.o $
+ $obj/BearSSL/src/rand/sysrng.o $
+ $obj/BearSSL/src/rsa/rsa_default_pkcs1_sign.o $
+ $obj/BearSSL/src/rsa/rsa_default_pkcs1_vrfy.o $
+ $obj/BearSSL/src/rsa/rsa_default_priv.o $
+ $obj/BearSSL/src/rsa/rsa_default_pub.o $
+ $obj/BearSSL/src/rsa/rsa_i15_pkcs1_sign.o $
+ $obj/BearSSL/src/rsa/rsa_i15_pkcs1_vrfy.o $
+ $obj/BearSSL/src/rsa/rsa_i15_priv.o $
+ $obj/BearSSL/src/rsa/rsa_i15_pub.o $
+ $obj/BearSSL/src/rsa/rsa_i31_pkcs1_sign.o $
+ $obj/BearSSL/src/rsa/rsa_i31_pkcs1_vrfy.o $
+ $obj/BearSSL/src/rsa/rsa_i31_priv.o $
+ $obj/BearSSL/src/rsa/rsa_i31_pub.o $
+ $obj/BearSSL/src/rsa/rsa_i32_pkcs1_sign.o $
+ $obj/BearSSL/src/rsa/rsa_i32_pkcs1_vrfy.o $
+ $obj/BearSSL/src/rsa/rsa_i32_priv.o $
+ $obj/BearSSL/src/rsa/rsa_i32_pub.o $
+ $obj/BearSSL/src/rsa/rsa_i62_pkcs1_sign.o $
+ $obj/BearSSL/src/rsa/rsa_i62_pkcs1_vrfy.o $
+ $obj/BearSSL/src/rsa/rsa_i62_priv.o $
+ $obj/BearSSL/src/rsa/rsa_i62_pub.o $
+ $obj/BearSSL/src/rsa/rsa_pkcs1_sig_pad.o $
+ $obj/BearSSL/src/rsa/rsa_pkcs1_sig_unpad.o $
+ $obj/BearSSL/src/rsa/rsa_ssl_decrypt.o $
+ $obj/BearSSL/src/settings.o $
+ $obj/BearSSL/src/ssl/prf.o $
+ $obj/BearSSL/src/ssl/prf_md5sha1.o $
+ $obj/BearSSL/src/ssl/prf_sha256.o $
+ $obj/BearSSL/src/ssl/prf_sha384.o $
+ $obj/BearSSL/src/ssl/ssl_ccert_single_ec.o $
+ $obj/BearSSL/src/ssl/ssl_ccert_single_rsa.o $
+ $obj/BearSSL/src/ssl/ssl_client.o $
+ $obj/BearSSL/src/ssl/ssl_client_default_rsapub.o $
+ $obj/BearSSL/src/ssl/ssl_client_full.o $
+ $obj/BearSSL/src/ssl/ssl_engine.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_aescbc.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_aesgcm.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_chapol.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_descbc.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_ec.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_ecdsa.o $
+ $obj/BearSSL/src/ssl/ssl_engine_default_rsavrfy.o $
+ $obj/BearSSL/src/ssl/ssl_hashes.o $
+ $obj/BearSSL/src/ssl/ssl_hs_client.o $
+ $obj/BearSSL/src/ssl/ssl_hs_server.o $
+ $obj/BearSSL/src/ssl/ssl_io.o $
+ $obj/BearSSL/src/ssl/ssl_keyexport.o $
+ $obj/BearSSL/src/ssl/ssl_lru.o $
+ $obj/BearSSL/src/ssl/ssl_rec_cbc.o $
+ $obj/BearSSL/src/ssl/ssl_rec_chapol.o $
+ $obj/BearSSL/src/ssl/ssl_rec_gcm.o $
+ $obj/BearSSL/src/ssl/ssl_scert_single_ec.o $
+ $obj/BearSSL/src/ssl/ssl_scert_single_rsa.o $
+ $obj/BearSSL/src/ssl/ssl_server.o $
+ $obj/BearSSL/src/ssl/ssl_server_full_ec.o $
+ $obj/BearSSL/src/ssl/ssl_server_full_rsa.o $
+ $obj/BearSSL/src/ssl/ssl_server_mine2c.o $
+ $obj/BearSSL/src/ssl/ssl_server_mine2g.o $
+ $obj/BearSSL/src/ssl/ssl_server_minf2c.o $
+ $obj/BearSSL/src/ssl/ssl_server_minf2g.o $
+ $obj/BearSSL/src/ssl/ssl_server_minr2g.o $
+ $obj/BearSSL/src/ssl/ssl_server_minu2g.o $
+ $obj/BearSSL/src/ssl/ssl_server_minv2g.o $
+ $obj/BearSSL/src/symcipher/aes_big_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_big_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_big_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_big_ctrcbc.o $
+ $obj/BearSSL/src/symcipher/aes_big_dec.o $
+ $obj/BearSSL/src/symcipher/aes_big_enc.o $
+ $obj/BearSSL/src/symcipher/aes_common.o $
+ $obj/BearSSL/src/symcipher/aes_ct.o $
+ $obj/BearSSL/src/symcipher/aes_ct_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_ct_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_ct_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_ct_ctrcbc.o $
+ $obj/BearSSL/src/symcipher/aes_ct_dec.o $
+ $obj/BearSSL/src/symcipher/aes_ct_enc.o $
+ $obj/BearSSL/src/symcipher/aes_ct64.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_ctrcbc.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_dec.o $
+ $obj/BearSSL/src/symcipher/aes_ct64_enc.o $
+ $obj/BearSSL/src/symcipher/aes_pwr8.o $
+ $obj/BearSSL/src/symcipher/aes_pwr8_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_pwr8_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_pwr8_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_small_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_small_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_small_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_small_ctrcbc.o $
+ $obj/BearSSL/src/symcipher/aes_small_dec.o $
+ $obj/BearSSL/src/symcipher/aes_small_enc.o $
+ $obj/BearSSL/src/symcipher/aes_x86ni.o $
+ $obj/BearSSL/src/symcipher/aes_x86ni_cbcdec.o $
+ $obj/BearSSL/src/symcipher/aes_x86ni_cbcenc.o $
+ $obj/BearSSL/src/symcipher/aes_x86ni_ctr.o $
+ $obj/BearSSL/src/symcipher/aes_x86ni_ctrcbc.o $
+ $obj/BearSSL/src/symcipher/chacha20_ct.o $
+ $obj/BearSSL/src/symcipher/chacha20_sse2.o $
+ $obj/BearSSL/src/symcipher/des_ct.o $
+ $obj/BearSSL/src/symcipher/des_ct_cbcdec.o $
+ $obj/BearSSL/src/symcipher/des_ct_cbcenc.o $
+ $obj/BearSSL/src/symcipher/des_support.o $
+ $obj/BearSSL/src/symcipher/des_tab.o $
+ $obj/BearSSL/src/symcipher/des_tab_cbcdec.o $
+ $obj/BearSSL/src/symcipher/des_tab_cbcenc.o $
+ $obj/BearSSL/src/symcipher/poly1305_ctmul.o $
+ $obj/BearSSL/src/symcipher/poly1305_ctmul32.o $
+ $obj/BearSSL/src/symcipher/poly1305_ctmulq.o $
+ $obj/BearSSL/src/symcipher/poly1305_i15.o $
+ $obj/BearSSL/src/x509/skey_decoder.o $
+ $obj/BearSSL/src/x509/x509_decoder.o $
+ $obj/BearSSL/src/x509/x509_knownkey.o $
+ $obj/BearSSL/src/x509/x509_minimal.o $
+ $obj/BearSSL/src/x509/x509_minimal_full.o $
+
+build $TGT/check: phony
+build $TGT: phony $
+ $bin/brssl.exe $
+ $bin/download-txz.exe $
+ $obj/xz.lib $
+
+
+build $obj/xz-embedded/linux/lib/xz/xz_crc32.o: extcc xz-embedded/linux/lib/xz/xz_crc32.c
+build $obj/xz-embedded/linux/lib/xz/xz_crc64.o: extcc xz-embedded/linux/lib/xz/xz_crc64.c
+build $obj/xz-embedded/linux/lib/xz/xz_dec_bcj.o: extcc xz-embedded/linux/lib/xz/xz_dec_bcj.c
+build $obj/xz-embedded/linux/lib/xz/xz_dec_lzma2.o: extcc xz-embedded/linux/lib/xz/xz_dec_lzma2.c
+build $obj/xz-embedded/linux/lib/xz/xz_dec_stream.o: extcc xz-embedded/linux/lib/xz/xz_dec_stream.c
+
+build $obj/xz.lib: lib $
+ $obj/xz-embedded/linux/lib/xz/xz_crc32.o $
+ $obj/xz-embedded/linux/lib/xz/xz_crc64.o $
+ $obj/xz-embedded/linux/lib/xz/xz_dec_bcj.o $
+ $obj/xz-embedded/linux/lib/xz/xz_dec_lzma2.o $
+ $obj/xz-embedded/linux/lib/xz/xz_dec_stream.o $
+
+

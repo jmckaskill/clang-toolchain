@@ -11,3 +11,12 @@
 
 /closure-compiler.jar
 /closure-compiler-build.txt
+*.db
+*.user
+/download-txz/bin
+*.opendb
+Debug
+Release
+.vs
+.ninja_deps
+.ninja_log
