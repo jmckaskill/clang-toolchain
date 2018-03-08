@@ -142,8 +142,20 @@ static void print_other(FILE *f, const char *dir, const char *file) {
 
 typedef void(*print_fn)(FILE*, const char *dir, const char *file);
 
+static size_t cap_files;
+static size_t num_files;
+static char **all_files;
+
+static void add_file(const char *file) {
+	if (num_files == cap_files) {
+		cap_files = (cap_files + 16) * 3 / 2;
+		all_files = (char**)realloc(all_files, cap_files * sizeof(char*));
+	}
+	all_files[num_files++] = strdup(file);
+}
+
 #ifdef _WIN32
-static void list_directory(FILE *f, print_fn fn, const char *dir) {
+static void list_directory(const char *dir) {
 	char *str = malloc(strlen(dir) + 2 + 1);
 	strcpy(str, dir);
 	strcat(str, "\\*");
@@ -151,25 +163,39 @@ static void list_directory(FILE *f, print_fn fn, const char *dir) {
 	HANDLE h = FindFirstFileA(str, &fd);
 	if (h != INVALID_HANDLE_VALUE) {
 		do {
-			if (fd.dwFileAttributes & FILE_ATTRIBUTE_NORMAL) {
-				fn(f, dir, fd.cFileName);
+			if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0) {
+				add_file(fd.cFileName);
 			}
 		} while (FindNextFileA(h, &fd));
 		FindClose(h);
 	}
 }
 #else
-static void list_directory(FILE *f, print_fn fn, const char *dir) {
+static void list_directory(const char *dir) {
 	DIR *dirp = opendir(dir);
 	struct dirent *d;
 	while ((d = readdir(dirp)) != NULL) {
 		if (d->d_type == DT_REG) {
-			fn(f, dir, d->d_name);
+			add_file(d->d_name);
 		}
 	}
 	closedir(dirp);
 }
 #endif
+
+static int compare_file(const void *a, const void *b) {
+	return strcmp(*(char**)a, *(char**)b);
+}
+
+static void print_files(FILE *f, print_fn fn, const char *dir) {
+	list_directory(dir);
+	qsort(all_files, num_files, sizeof(char*), &compare_file);
+	for (size_t i = 0; i < num_files; i++) {
+		fn(f, dir, all_files[i]);
+		free(all_files[i]);
+	}
+	num_files = 0;
+}
 
 static void generate_uuid(char *buf, const char *file) {
 	static const unsigned char nsuuid[] = {
@@ -206,21 +232,31 @@ static void change_to_backslash(char *p) {
 }
 
 static char *dup_with_replacement(const char *src, const char *test, const char *replacement) {
-	const char *found = strstr(src, test);
-	if (!found) {
-		return strdup(src);
+	size_t sz = 0;
+	const char *next, *prev = src;
+	while ((next = strstr(prev, test)) != NULL) {
+		sz += next - prev;
+		sz += strlen(replacement);
+		prev = next + strlen(test);
+	}
+	sz += strlen(prev);
+
+	char *ret = (char*)malloc(sz + 1);
+	char *p = ret;
+	prev = src;
+	while ((next = strstr(prev, test)) != NULL) {
+		memcpy(p, prev, next - prev);
+		p += next - prev;
+		strcpy(p, replacement);
+		p += strlen(replacement);
+		prev = next + strlen(test);
 	}
 
-	const char *tail = found + strlen(test);
-	size_t sz = (found - src) + strlen(replacement) + strlen(tail);
-	char *ret = (char*) malloc(sz + 1);
-	memcpy(ret, src, found - src);
-	strcpy(ret + (found - src), replacement);
-	strcat(ret + (found - src), tail);
+	strcpy(p, prev);
 	return ret;
 }
 
-static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *argv0) {
+static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *install) {
 	fprint(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
@@ -232,20 +268,24 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 			"    </ProjectConfiguration>\r\n");
 	}
 
+	for (string_list *s = p->dirs; s != NULL; s = s->next) {
+		change_to_backslash(s->str);
+	}
+
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		list_directory(f, &print_cfile, s->str);
+		print_files(f, &print_cfile, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		list_directory(f, &print_hfile, s->str);
+		print_files(f, &print_hfile, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		list_directory(f, &print_other, s->str);
+		print_files(f, &print_other, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 		"  <PropertyGroup Label=\"Globals\">\r\n");
@@ -282,12 +322,13 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 		char *vstgt = strdup(njtgt);
 		change_to_backslash(vstgt);
 
+		const char *sep = *install ? " &amp;&amp; " : "";
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>%s</NMakePreprocessorDefinitions>\r\n", t->defines);
-		fprintf(f, "    <NMakeBuildCommandLine>%s &amp;&amp; ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n", argv0, njtgt);
-		fprintf(f, "    <NMakeReBuildCommandLine>%s &amp;&amp; ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n", argv0, njtgt, njtgt);
-		fprintf(f, "    <NMakeCleanCommandLine>%s &amp;&amp; ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n", argv0, njtgt);
+		fprintf(f, "    <NMakeBuildCommandLine>%s%s$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n", install, sep, njtgt);
+		fprintf(f, "    <NMakeReBuildCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; $(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n", install, sep, njtgt, njtgt);
+		fprintf(f, "    <NMakeCleanCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n", install, sep, njtgt);
 
 		fprint(f, "    <NMakeIncludeSearchPath>$(ProjectDir)");
 		for (string_list *inc = includes; inc != NULL; inc = inc->next) {
@@ -422,18 +463,14 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 }
 
 int main(int argc, char *argv[]) {
-	const char *argv0 = argv[0];
 	if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
 		fprintf(stderr, "usage: generate-vcxproj.exe config.toml\n");
 		return 2;
 	}
+	char *cmd = (char*)malloc(strlen(argv[0]) + 1 + strlen(argv[1]) + 1);
+	sprintf(cmd, "%s %s", argv[0], argv[1]);
 
-	FILE *f = fopen(argv[1], "r");
-	if (f == NULL) {
-		fprintf(stderr, "failed to open config file %s\n", argv[1]);
-		return 3;
-	}
-
+	FILE *f = must_fopen(argv[1], "r");
 	char errbuf[128];
 	toml_table_t *root = toml_parse_file(f, errbuf, sizeof(errbuf));
 	if (root == NULL) {
@@ -474,6 +511,7 @@ int main(int argc, char *argv[]) {
 
 	string_list *includes = get_string_list(root, "includes");
 	const char *slnfile = must_get_string(root, "solution");
+	const char *install = get_string(root, "install", "");
 
 	for (string_list *inc = includes; inc != NULL; inc = inc->next) {
 		change_to_backslash(inc->str);
@@ -481,9 +519,9 @@ int main(int argc, char *argv[]) {
 
 
 	char build[256], rebuild[256], clean[256];
-	snprintf(build, sizeof(build), "%s &amp;&amp; ninja.exe -f msvc.ninja {DEFAULT}", argv0);
-	snprintf(rebuild, sizeof(rebuild), "%s &amp;&amp; ninja.exe -f msvc.ninja -t clean {DEFAULT} &amp;&amp; ninja.exe -f msvc.ninja {DEFAULT}", argv0);
-	snprintf(clean, sizeof(clean), "%s &amp;&amp; ninja.exe -f msvc.ninja -t clean {DEFAULT}", argv0);
+	snprintf(build, sizeof(build), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja {DEFAULT}", install, *install ? " &amp;&amp; " : "");
+	snprintf(rebuild, sizeof(rebuild), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja -t clean {DEFAULT} &amp;&amp; $(SolutionDir)\\ninja.exe -f msvc.ninja {DEFAULT}", install, *install ? " &amp;&amp; " : "");
+	snprintf(clean, sizeof(clean), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja -t clean {DEFAULT}", install, *install ? " &amp;&amp; " : "");
 
 	command def;
 	def.name = "_DEFAULT";
@@ -494,8 +532,8 @@ int main(int argc, char *argv[]) {
 
 	command gen;
 	gen.name = "_GENERATE_VCXPROJ";
-	gen.build = argv0;
-	gen.rebuild = argv0;
+	gen.build = cmd;
+	gen.rebuild = cmd;
 	gen.clean = "";
 	generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
 
@@ -503,17 +541,17 @@ int main(int argc, char *argv[]) {
 	write_solution(f, projects, targets, &def, &gen);
 	fclose(f);
 
-	f = must_fopen("_DEFAULT.vcxproj", "wb");
+	f = must_fopen("_DEFAULT2.vcxproj", "wb");
 	write_command(f, &def, targets);
 	fclose(f);
 
-	f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
+	f = must_fopen("_GENERATE_VCXPROJ2.vcxproj", "wb");
 	write_command(f, &gen, targets);
 	fclose(f);
 
 	for (project *p = projects; p != NULL; p = p->next) {
 		f = must_fopen(p->file, "wb");
-		write_project(f, p, targets, includes, argv0);
+		write_project(f, p, targets, includes, install);
 		fclose(f);
 	}
 

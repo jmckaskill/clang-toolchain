@@ -1,10 +1,10 @@
-solution = "clang-toolchain.sln"
+solution = "clang-toolchain2.sln"
 includes = [
 	"xz-embedded/linux/include/linux",
 	"xz-embedded/userspace",
 	"BearSSL/inc",
 	"BearSSL/src",
-	"",
+	".",
 ]
 
 [[target]]
@@ -21,13 +21,13 @@ defines = "_WIN32;NDEBUG"
 
 [[project]]
 name = "download-txz"
-file = "download-txz.vcxproj"
+file = "download-txz/download-txz2.vcxproj"
 target = "bin/{TGT}/download-txz.exe"
-dirs = ["."]
+dirs = ["download-txz"]
 
 [[project]]
 name = "bearssl"
-file = "bearssl.vcxproj"
+file = "bearssl2.vcxproj"
 target = "bin/obj/{TGT}/bearssl.lib"
 dirs = [
 	"BearSSL/inc",
@@ -47,7 +47,7 @@ dirs = [
 
 [[project]]
 name = "xz"
-file = "xz.vcxproj"
+file = "xz2.vcxproj"
 target = "bin/obj/{TGT}/xz.lib"
 dirs = [
 	"xz-embedded/linux/lib/xz",

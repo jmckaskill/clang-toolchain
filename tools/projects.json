@@ -11,13 +11,13 @@
         {
             "VS": "Debug",
             "Ninja": "win32-debug",
-            "Default": "win32-debug win32-debug/check",
+            "Default": "win32-debug",
             "Defines": "_WIN32;DEBUG"
         },
         {
             "VS": "Release",
             "Ninja": "win32-release",
-            "Default": "win32-release win32-release/check",
+            "Default": "win32-release",
             "Defines": "_WIN32;NDEBUG"
         }
     ],
@@ -27,7 +27,15 @@
             "File": "download-txz.vcxproj",
             "Target": "bin/{TGT}/download-txz.exe",
             "Dirs": [
-                "."
+                "download-txz"
+            ]
+        },
+        {
+            "Name": "generate-vcxproj",
+            "File": "generate-vcxproj.vcxproj",
+            "Target": "bin/{TGT}/generate-vcxproj.exe",
+            "Dirs": [
+                "generate-vcxproj"
             ]
         },
         {
