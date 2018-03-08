@@ -1,15 +1,27 @@
 obj = bin/obj/$TGT
 bin = bin/$TGT
 
-build $obj/download.o: cc download.c
-build $obj/decode.o: cc decode.c
-build $obj/main.o: cc main.c
+build $TGT: phony $
+ $bin/brssl.exe $
+ $bin/download-txz.exe $
+ $bin/generate-vcxproj.exe $
+
+build $obj/download-txz/download.o: cc download-txz/download.c
+build $obj/download-txz/decode.o: cc download-txz/decode.c
+build $obj/download-txz/main.o: cc download-txz/main.c
 build $bin/download-txz.exe: clink $
- $obj/main.o $
- $obj/decode.o $
- $obj/download.o $
+ $obj/download-txz/main.o $
+ $obj/download-txz/decode.o $
+ $obj/download-txz/download.o $
  $obj/bearssl.lib $
  $obj/xz.lib $
+
+build $obj/generate-vcxproj/generate.o: cc generate-vcxproj/generate.c
+build $obj/tomlc99/toml.o: extcc tomlc99/toml.c
+build $bin/generate-vcxproj.exe: clink $
+ $obj/generate-vcxproj/generate.o $
+ $obj/tomlc99/toml.o $
+ $obj/bearssl.lib $
 
 build $obj/BearSSL/tools/brssl.o: extcc BearSSL/tools/brssl.c
 build $obj/BearSSL/tools/certs.o: extcc BearSSL/tools/certs.c
@@ -521,12 +533,6 @@ build $obj/bearssl.lib: lib $
  $obj/BearSSL/src/x509/x509_knownkey.o $
  $obj/BearSSL/src/x509/x509_minimal.o $
  $obj/BearSSL/src/x509/x509_minimal_full.o $
-
-build $TGT/check: phony
-build $TGT: phony $
- $bin/brssl.exe $
- $bin/download-txz.exe $
- $obj/xz.lib $
 
 
 build $obj/xz-embedded/linux/lib/xz/xz_crc32.o: extcc xz-embedded/linux/lib/xz/xz_crc32.c

@@ -13,7 +13,7 @@
 /closure-compiler-build.txt
 *.db
 *.user
-/download-txz/bin
+/tools/bin
 *.opendb
 Debug
 Release
