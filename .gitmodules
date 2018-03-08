@@ -4,3 +4,6 @@
 [submodule "download-txz/xz-embedded"]
 	path = tools/xz-embedded
 	url = http://git.tukaani.org/xz-embedded.git
+[submodule "tools/tomlc99"]
+	path = tools/tomlc99
+	url = https://github.com/cktan/tomlc99.git

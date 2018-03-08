@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\tomlc99\toml.c" />
+    <ClCompile Include="..\tomlc99\toml_cat.c" />
+    <ClCompile Include="..\tomlc99\toml_json.c" />
+    <ClCompile Include="main.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\tomlc99\toml.h" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F1732B3D-3094-5E00-9DA8-209ACA0BEB6C}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>generate-vcxproj</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-debug\generate-vcxproj.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/win32-debug/generate-vcxproj.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/generate-vcxproj.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/win32-debug/generate-vcxproj.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/generate-vcxproj.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-release\generate-vcxproj.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/win32-release/generate-vcxproj.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/generate-vcxproj.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/win32-release/generate-vcxproj.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/generate-vcxproj.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
