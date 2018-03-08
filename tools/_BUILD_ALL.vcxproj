@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{70B14E82-21E2-5842-A4A3-2358F8E7E30B}</ProjectGuid>
+    <ProjectGuid>{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
-    <ProjectName>_DEFAULT</ProjectName>
+    <ProjectName>_BUILD_ALL</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

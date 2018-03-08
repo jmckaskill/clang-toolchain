@@ -191,12 +191,14 @@ static void list_directory(const char *dir) {
 static void list_directory(const char *dir) {
 	DIR *dirp = opendir(dir);
 	struct dirent *d;
-	while ((d = readdir(dirp)) != NULL) {
-		if (d->d_type == DT_REG) {
-			add_file(d->d_name);
+	if (dirp) {
+		while ((d = readdir(dirp)) != NULL) {
+			if (d->d_type == DT_REG) {
+				add_file(d->d_name);
+			}
 		}
+		closedir(dirp);
 	}
-	closedir(dirp);
 }
 #endif
 
@@ -204,9 +206,20 @@ static int compare_file(const void *a, const void *b) {
 	return strcmp(*(char**)a, *(char**)b);
 }
 
-static void print_files(FILE *f, print_fn fn, const char *vcxfile, const char *dir) {
+static void replace_char(char *p, char from, char to) {
+	while (*p) {
+		if (*p == from) {
+			*p = to;
+		}
+		p++;
+	}
+}
+
+static void print_files(FILE *f, print_fn fn, const char *vcxfile, char *dir) {
+	replace_char(dir, '\\', '/');
 	list_directory(dir);
 	qsort(all_files, num_files, sizeof(char*), &compare_file);
+	replace_char(dir, '/', '\\');
 	for (size_t i = 0; i < num_files; i++) {
 		fn(f, vcxfile, dir, all_files[i]);
 		free(all_files[i]);
@@ -237,15 +250,6 @@ static void generate_uuid(char *buf, const char *file) {
 		h[6], h[7],
 		h[8], h[9],
 		h[10], h[11], h[12], h[13], h[14], h[15]);
-}
-
-static void change_to_backslash(char *p) {
-	while (*p) {
-		if (*p == '/') {
-			*p = '\\';
-		}
-		p++;
-	}
 }
 
 static char *dup_with_replacement(const char *src, const char *test, const char *replacement) {
@@ -333,7 +337,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 	for (target *t = tgts; t != NULL; t = t->next) {
 		char *njtgt = dup_with_replacement(p->target, "{TGT}", t->ninja);
 		char *vstgt = strdup(njtgt);
-		change_to_backslash(vstgt);
+		replace_char(vstgt, '/', '\\');
 
 		const char *sep = *install ? " &amp;&amp; " : "";
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
@@ -439,7 +443,7 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 		"VisualStudioVersion = 14.0.25420.1\r\n"
 		"MinimumVisualStudioVersion = 10.0.40219.1\r\n");
 
-	fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_DEFAULT", "_DEFAULT.vcxproj", defcmd->uuid);
+	fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_BUILD_ALL", "_BUILD_ALL.vcxproj", defcmd->uuid);
 	fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", gencmd->uuid);
 
 	for (project *p = projects; p != NULL; p = p->next) {
@@ -476,6 +480,10 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 }
 
 int main(int argc, char *argv[]) {
+	if (argc == 1) {
+		argv[1] = "projects.toml";
+		argc = 2;
+	}
 	if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
 		fprintf(stderr, "usage: generate-vcxproj.exe config.toml\n");
 		return 2;
@@ -503,11 +511,6 @@ int main(int argc, char *argv[]) {
 		p->file = must_get_string(tbl, "file");
 		p->target = must_get_string(tbl, "target");
 		p->dirs = get_string_list(tbl, "dirs");
-		change_to_backslash(p->file);
-		generate_uuid(p->uuid, p->file);
-		for (string_list *s = p->dirs; s != NULL; s = s->next) {
-			change_to_backslash(s->str);
-		}
 		*pproj = p;
 		pproj = &p->next;
 	}
@@ -531,7 +534,7 @@ int main(int argc, char *argv[]) {
 	const char *install = get_string(root, "install", "");
 
 	for (string_list *inc = includes; inc != NULL; inc = inc->next) {
-		change_to_backslash(inc->str);
+		replace_char(inc->str, '/', '\\');
 	}
 
 
@@ -541,11 +544,17 @@ int main(int argc, char *argv[]) {
 	snprintf(clean, sizeof(clean), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja -t clean {DEFAULT}", install, *install ? " &amp;&amp; " : "");
 
 	command def;
-	def.name = "_DEFAULT";
+	def.name = "_BUILD_ALL";
 	def.build = build;
 	def.rebuild = rebuild;
 	def.clean = clean;
-	generate_uuid(def.uuid, "_DEFAULT.vcxproj");
+	generate_uuid(def.uuid, "_BUILD_ALL.vcxproj");
+
+
+	fprintf(stderr, "generating _BUILD_ALL.vcxproj\n");
+	f = must_fopen("_BUILD_ALL.vcxproj", "wb");
+	write_command(f, &def, targets);
+	fclose(f);
 
 	command gen;
 	gen.name = "_GENERATE_VCXPROJ";
@@ -553,16 +562,6 @@ int main(int argc, char *argv[]) {
 	gen.rebuild = cmd;
 	gen.clean = "";
 	generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
-
-	fprintf(stderr, "generating %s\n", slnfile);
-	f = must_fopen(slnfile, "wb");
-	write_solution(f, projects, targets, &def, &gen);
-	fclose(f);
-
-	fprintf(stderr, "generating _DEFAULT.vcxproj\n");
-	f = must_fopen("_DEFAULT.vcxproj", "wb");
-	write_command(f, &def, targets);
-	fclose(f);
 
 	fprintf(stderr, "generating _GENERATE_VCXPROJ.vcxproj\n");
 	f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
@@ -572,9 +571,16 @@ int main(int argc, char *argv[]) {
 	for (project *p = projects; p != NULL; p = p->next) {
 		fprintf(stderr, "generating %s\n", p->file);
 		f = must_fopen(p->file, "wb");
+		replace_char(p->file, '/', '\\');
+		generate_uuid(p->uuid, p->file);
 		write_project(f, p, targets, includes, install);
 		fclose(f);
 	}
+
+	fprintf(stderr, "generating %s\n", slnfile);
+	f = must_fopen(slnfile, "wb");
+	write_solution(f, projects, targets, &def, &gen);
+	fclose(f);
 
 	return 0;
 }

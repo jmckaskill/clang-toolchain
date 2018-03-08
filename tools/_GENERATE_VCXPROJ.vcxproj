@@ -39,13 +39,13 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>C:\c\clang-toolchain\tools\bin\win32-debug\generate-vcxproj.exe projects.toml</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>C:\c\clang-toolchain\tools\bin\win32-debug\generate-vcxproj.exe projects.toml</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>bin/clang-debug/generate-vcxproj.exe projects.toml</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>bin/clang-debug/generate-vcxproj.exe projects.toml</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>C:\c\clang-toolchain\tools\bin\win32-debug\generate-vcxproj.exe projects.toml</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>C:\c\clang-toolchain\tools\bin\win32-debug\generate-vcxproj.exe projects.toml</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>bin/clang-debug/generate-vcxproj.exe projects.toml</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>bin/clang-debug/generate-vcxproj.exe projects.toml</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
