@@ -7,9 +7,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_DEFAULT", "_DEFAULT.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", "{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "download-txz", "download-txz.vcxproj", "{EAAE1F23-5C1D-521E-909B-8A0727324D5F}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "download-txz", "download-txz\download-txz.vcxproj", "{87713BE7-927B-57CF-93FC-6C5BC33CCC30}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "generate-vcxproj", "generate-vcxproj.vcxproj", "{26712049-BB5C-5488-80FC-FBF813906828}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "generate-vcxproj", "generate-vcxproj\generate-vcxproj.vcxproj", "{B82CE67B-5CBB-5AA0-A279-94162360CC28}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bearssl", "bearssl.vcxproj", "{76160DE2-E43F-54FF-8574-4234B74B3E0E}"
 EndProject
@@ -21,10 +21,10 @@ Global
 		Release|ALL = Release|ALL
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{EAAE1F23-5C1D-521E-909B-8A0727324D5F}.Debug|ALL.ActiveCfg = Debug|Win32
-		{EAAE1F23-5C1D-521E-909B-8A0727324D5F}.Release|ALL.ActiveCfg = Release|Win32
-		{26712049-BB5C-5488-80FC-FBF813906828}.Debug|ALL.ActiveCfg = Debug|Win32
-		{26712049-BB5C-5488-80FC-FBF813906828}.Release|ALL.ActiveCfg = Release|Win32
+		{87713BE7-927B-57CF-93FC-6C5BC33CCC30}.Debug|ALL.ActiveCfg = Debug|Win32
+		{87713BE7-927B-57CF-93FC-6C5BC33CCC30}.Release|ALL.ActiveCfg = Release|Win32
+		{B82CE67B-5CBB-5AA0-A279-94162360CC28}.Debug|ALL.ActiveCfg = Debug|Win32
+		{B82CE67B-5CBB-5AA0-A279-94162360CC28}.Release|ALL.ActiveCfg = Release|Win32
 		{76160DE2-E43F-54FF-8574-4234B74B3E0E}.Debug|ALL.ActiveCfg = Debug|Win32
 		{76160DE2-E43F-54FF-8574-4234B74B3E0E}.Release|ALL.ActiveCfg = Release|Win32
 		{7E2BE08C-E887-5763-BB3D-57C866C6BF63}.Debug|ALL.ActiveCfg = Debug|Win32

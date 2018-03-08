@@ -109,25 +109,40 @@ static const char *extension(const char *file) {
 	return ext ? ext : "";
 }
 
-static void print_cfile(FILE *f, const char *dir, const char *file) {
+static void goto_root(FILE *f, const char *file) {
+	const char *next, *prev = file;
+	while ((next = strchr(prev, '\\')) != NULL) {
+		fprint(f, "..\\");
+		while (*next == '\\') {
+			next++;
+		}
+		prev = next;
+	}
+}
+
+static void print_cfile(FILE *f, const char *vcxfile, const char *dir, const char *file) {
 	const char *ext = extension(file);
 	if (!strcasecmp(ext, ".c")
 		|| !strcasecmp(ext, ".cpp")
 		|| !strcasecmp(ext, ".s")
 		|| !strcasecmp(ext, ".asm")) {
-		fprintf(f, "    <ClCompile Include=\"%s\\%s\" />\r\n", dir, file);
+		fprint(f, "    <ClCompile Include=\"");
+		goto_root(f, vcxfile);
+		fprintf(f, "%s\\%s\" />\r\n", dir, file);
 	}
 }
 
-static void print_hfile(FILE *f, const char *dir, const char *file) {
+static void print_hfile(FILE *f, const char *vcxfile, const char *dir, const char *file) {
 	const char *ext = extension(file);
 	if (!strcasecmp(ext, ".h")
 		|| !strcasecmp(ext, ".hpp")) {
-		fprintf(f, "    <ClInclude Include=\"%s\\%s\" />\r\n", dir, file);
+		fprint(f, "    <ClInclude Include=\"");
+		goto_root(f, vcxfile);
+		fprintf(f, "%s\\%s\" />\r\n", dir, file);
 	}
 }
 
-static void print_other(FILE *f, const char *dir, const char *file) {
+static void print_other(FILE *f, const char *vcxfile, const char *dir, const char *file) {
 	const char *ext = extension(file);
 	if (!strcasecmp(ext, ".proto")
 		|| !strcasecmp(ext, ".txt")
@@ -136,11 +151,13 @@ static void print_other(FILE *f, const char *dir, const char *file) {
 		|| !strcasecmp(ext, ".html")
 		|| !strcasecmp(ext, ".sh")
 		|| !strcasecmp(ext, ".json")) {
-		fprintf(f, "    <None Include=\"%s\\%s\" />\r\n", dir, file);
+		fprint(f, "    <None Include=\"");
+		goto_root(f, vcxfile);
+		fprintf(f, "%s\\%s\" />\r\n", dir, file);
 	}
 }
 
-typedef void(*print_fn)(FILE*, const char *dir, const char *file);
+typedef void(*print_fn)(FILE*, const char *vcxfile, const char *dir, const char *file);
 
 static size_t cap_files;
 static size_t num_files;
@@ -187,11 +204,11 @@ static int compare_file(const void *a, const void *b) {
 	return strcmp(*(char**)a, *(char**)b);
 }
 
-static void print_files(FILE *f, print_fn fn, const char *dir) {
+static void print_files(FILE *f, print_fn fn, const char *vcxfile, const char *dir) {
 	list_directory(dir);
 	qsort(all_files, num_files, sizeof(char*), &compare_file);
 	for (size_t i = 0; i < num_files; i++) {
-		fn(f, dir, all_files[i]);
+		fn(f, vcxfile, dir, all_files[i]);
 		free(all_files[i]);
 	}
 	num_files = 0;
@@ -268,24 +285,20 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 			"    </ProjectConfiguration>\r\n");
 	}
 
-	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		change_to_backslash(s->str);
-	}
-
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		print_files(f, &print_cfile, s->str);
+		print_files(f, &print_cfile, p->file, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		print_files(f, &print_hfile, s->str);
+		print_files(f, &print_hfile, p->file, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
 	for (string_list *s = p->dirs; s != NULL; s = s->next) {
-		print_files(f, &print_other, s->str);
+		print_files(f, &print_other, p->file, s->str);
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 		"  <PropertyGroup Label=\"Globals\">\r\n");
@@ -490,7 +503,11 @@ int main(int argc, char *argv[]) {
 		p->file = must_get_string(tbl, "file");
 		p->target = must_get_string(tbl, "target");
 		p->dirs = get_string_list(tbl, "dirs");
+		change_to_backslash(p->file);
 		generate_uuid(p->uuid, p->file);
+		for (string_list *s = p->dirs; s != NULL; s = s->next) {
+			change_to_backslash(s->str);
+		}
 		*pproj = p;
 		pproj = &p->next;
 	}
@@ -537,19 +554,23 @@ int main(int argc, char *argv[]) {
 	gen.clean = "";
 	generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
 
+	fprintf(stderr, "generating %s\n", slnfile);
 	f = must_fopen(slnfile, "wb");
 	write_solution(f, projects, targets, &def, &gen);
 	fclose(f);
 
-	f = must_fopen("_DEFAULT2.vcxproj", "wb");
+	fprintf(stderr, "generating _DEFAULT.vcxproj\n");
+	f = must_fopen("_DEFAULT.vcxproj", "wb");
 	write_command(f, &def, targets);
 	fclose(f);
 
-	f = must_fopen("_GENERATE_VCXPROJ2.vcxproj", "wb");
+	fprintf(stderr, "generating _GENERATE_VCXPROJ.vcxproj\n");
+	f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
 	write_command(f, &gen, targets);
 	fclose(f);
 
 	for (project *p = projects; p != NULL; p = p->next) {
+		fprintf(stderr, "generating %s\n", p->file);
 		f = must_fopen(p->file, "wb");
 		write_project(f, p, targets, includes, install);
 		fclose(f);

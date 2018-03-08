@@ -153,7 +153,6 @@
     <ClCompile Include="BearSSL\src\rsa\rsa_pkcs1_sig_pad.c" />
     <ClCompile Include="BearSSL\src\rsa\rsa_pkcs1_sig_unpad.c" />
     <ClCompile Include="BearSSL\src\rsa\rsa_ssl_decrypt.c" />
-    <ClCompile Include="BearSSL\src\settings.c" />
     <ClCompile Include="BearSSL\src\ssl\prf.c" />
     <ClCompile Include="BearSSL\src\ssl\prf_md5sha1.c" />
     <ClCompile Include="BearSSL\src\ssl\prf_sha256.c" />
@@ -246,6 +245,7 @@
     <ClCompile Include="BearSSL\src\x509\x509_knownkey.c" />
     <ClCompile Include="BearSSL\src\x509\x509_minimal.c" />
     <ClCompile Include="BearSSL\src\x509\x509_minimal_full.c" />
+    <ClCompile Include="BearSSL\src\settings.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BearSSL\inc\bearssl.h" />
@@ -273,7 +273,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -296,10 +296,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\obj\win32-debug\bearssl.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/bearssl.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/bearssl.lib &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/bearssl.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/bearssl.lib</NMakeCleanCommandLine>
-    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\</NMakeIncludeSearchPath>
+    <NMakeBuildCommandLine>$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/bearssl.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/bearssl.lib &amp;&amp; $(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/bearssl.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/bearssl.lib</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
     <ExcludePath />
@@ -307,10 +307,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\obj\win32-release\bearssl.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/bearssl.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/bearssl.lib &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/bearssl.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/bearssl.lib</NMakeCleanCommandLine>
-    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\</NMakeIncludeSearchPath>
+    <NMakeBuildCommandLine>$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/bearssl.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/bearssl.lib &amp;&amp; $(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/bearssl.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/bearssl.lib</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
     <ExcludePath />

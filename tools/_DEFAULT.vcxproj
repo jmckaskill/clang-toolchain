@@ -39,14 +39,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-debug</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-debug &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-debug</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-debug</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja win32-debug</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -t clean win32-debug &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja win32-debug</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -t clean win32-debug</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-release</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-release &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja win32-release</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\..\install\install.exe &amp;&amp; $(SolutionDir)\..\host\bin\ninja.exe -f msvc.ninja -t clean win32-release</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja win32-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -t clean win32-release &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja win32-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -t clean win32-release</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
