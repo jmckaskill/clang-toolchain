@@ -6,13 +6,15 @@ build $TGT: phony $
  $bin/download-txz.exe $
  $bin/generate-vcxproj.exe $
 
-build $obj/download-txz/download.o: cc download-txz/download.c
-build $obj/download-txz/decode.o: cc download-txz/decode.c
-build $obj/download-txz/main.o: cc download-txz/main.c
-build $bin/download-txz.exe: clink $
- $obj/download-txz/main.o $
- $obj/download-txz/decode.o $
- $obj/download-txz/download.o $
+build $obj/download/filter-decode-xz.o: cc download/filter-decode-xz.c
+build $obj/download/source-http.o: cc download/source-http.c
+build $obj/download/source-file.o: cc download/source-file.c
+build $obj/download/download.o: cc download/download.c
+build $bin/download.exe: clink $
+ $obj/download/filter-decode-xz.o $
+ $obj/download/source-http.o $
+ $obj/download/source-file.o $
+ $obj/download/download.o $
  $obj/bearssl.lib $
  $obj/xz.lib $
 

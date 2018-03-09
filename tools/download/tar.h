@@ -1,6 +1,8 @@
 #pragma once
 
-struct posix_header
+typedef struct tar_posix_header tar_posix_header;
+
+struct tar_posix_header
 {                              /* byte offset */
   char name[100];               /*   0 */
   char mode[8];                 /* 100 */
@@ -55,3 +57,4 @@ struct posix_header
 #define TOREAD   00004          /* read by other */
 #define TOWRITE  00002          /* write by other */
 #define TOEXEC   00001          /* execute/search by other */
+
