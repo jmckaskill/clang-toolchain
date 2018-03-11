@@ -342,7 +342,21 @@ static void delete_path(const char *path) {
 }
 #endif
 
+#ifdef _WIN32
+#else
+static int is_done_newer() {
+	struct stat in, out;
+	return !stat("download.manifest", &in)
+		&& !stat("download.done", &out)
+		&& out.st_mtimespec.tv_sec > in.st_mtimespec.tv_sec;
+}
+#endif
+
 int main() {
+	if (is_done_newer()) {
+		fprintf(stderr, "download.exe: no work to do\n");
+		return 0;
+	}
 	FILE *inf = fopen("download.manifest", "r");
 	if (inf == NULL) {
 		fprintf(stderr, "could not open download.manifest\n");
@@ -421,6 +435,12 @@ int main() {
 		if (update_done(path, url)) {
 			return 7;
 		}
+	}
+
+	// touch the download file so next time we take the shortcut
+	FILE *donef = fopen("download.done", "a");
+	if (donef) {
+		fclose(donef);
 	}
 
 	return 0;
