@@ -78,7 +78,7 @@ struct https_stream {
 	br_sslio_context ctx;
 	br_ssl_client_context sc;
 	br_x509_minimal_context xc;
-	int fd, consumed, avail;
+	int fd, consumed, avail, port;
 	unsigned is_https;
 	char *host;
 	int64_t length_remaining;
@@ -188,21 +188,32 @@ stream *open_http_downloader(const char *url) {
 		path = "/";
 	}
 
-	if (gos.host && !strcmp(host, gos.host) && gos.is_https == is_https) {
+	int port = is_https ? 443 : 80;
+	char *colon = strchr(host, ':');
+	if (colon) {
+		port = atoi(colon + 1);
+		*colon = 0;
+	}
+
+	if (gos.host && !strcmp(host, gos.host) && gos.is_https == is_https && gos.port == port) {
 		// we can reuse the existing connection
 		free(host);
 		host = gos.host;
 	} else {
-		int fd = open_client_socket(host, is_https ? 443 : 80);
+		int fd = open_client_socket(host, port);
 		if (fd < 0) {
 			fprintf(stderr, "failed to connect to %s\n", host);
 			free(host);
 			return NULL;
 		}
-		free(gos.host);
-		closesocket(gos.fd);
+		if (gos.host) {
+			free(gos.host);
+			closesocket(gos.fd);
+		}
+		gos.port = port;
 		gos.host = host;
 		gos.fd = fd;
+		gos.is_https = is_https;
 
 		if (is_https) {
 			br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
