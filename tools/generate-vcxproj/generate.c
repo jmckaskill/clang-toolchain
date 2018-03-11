@@ -9,6 +9,7 @@
 #include <windows.h>
 #else
 #include <dirent.h>
+#include <unistd.h>
 #endif
 
 #ifdef _MSC_VER
@@ -66,7 +67,7 @@ static char *get_string(toml_table_t *t, const char *key, const char *defstr) {
 	const char *val = toml_raw_in(t, key);
 	char *ret;
 	if (toml_rtos(val, &ret)) {
-		return strdup(defstr);
+		return defstr ? strdup(defstr) : NULL;
 	}
 	return ret;
 }
@@ -343,7 +344,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>%s</NMakePreprocessorDefinitions>\r\n", t->defines);
-		fprintf(f, "    <NMakeBuildCommandLine>%s%s$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n", install, sep, njtgt);
+		fprintf(f, "    <NMakeBuildCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n", install, sep, njtgt);
 		fprintf(f, "    <NMakeReBuildCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; $(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n", install, sep, njtgt, njtgt);
 		fprintf(f, "    <NMakeCleanCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n", install, sep, njtgt);
 
@@ -444,7 +445,9 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 		"MinimumVisualStudioVersion = 10.0.40219.1\r\n");
 
 	fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_BUILD_ALL", "_BUILD_ALL.vcxproj", defcmd->uuid);
-	fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", gencmd->uuid);
+	if (gencmd) {
+		fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", gencmd->uuid);
+	}
 
 	for (project *p = projects; p != NULL; p = p->next) {
 		fprintf(f, "Project(\"{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}\") = \"%s\", \"%s\", \"%s\"\r\nEndProject\r\n", p->name, p->file, p->uuid);
@@ -463,8 +466,10 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 		}
 	}
 
-	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", gencmd->uuid, t->vs, t->vs);
+	if (gencmd) {
+		for (target *t = targets; t != NULL; t = t->next) {
+			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", gencmd->uuid, t->vs, t->vs);
+		}
 	}
 
 	for (target *t = targets; t != NULL; t = t->next) {
@@ -480,22 +485,16 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 }
 
 int main(int argc, char *argv[]) {
-	if (argc == 1) {
-		argv[1] = "projects.toml";
-		argc = 2;
+	if (argc > 1 && chdir(argv[1])) {
+		fprintf(stderr, "failed to change directory to %s\n", argv[1]);
+		return 1;
 	}
-	if (argc < 2 || !strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
-		fprintf(stderr, "usage: generate-vcxproj.exe config.toml\n");
-		return 2;
-	}
-	char *cmd = (char*)malloc(strlen(argv[0]) + 1 + strlen(argv[1]) + 1);
-	sprintf(cmd, "%s %s", argv[0], argv[1]);
 
-	FILE *f = must_fopen(argv[1], "r");
+	FILE *f = must_fopen("projects.toml", "r");
 	char errbuf[128];
 	toml_table_t *root = toml_parse_file(f, errbuf, sizeof(errbuf));
 	if (root == NULL) {
-		fprintf(stderr, "parse error with config file %s: %s\n", argv[1], errbuf);
+		fprintf(stderr, "parse error with config file projects.toml: %s\n", errbuf);
 		return 4;
 	}
 	fclose(f);
@@ -532,6 +531,7 @@ int main(int argc, char *argv[]) {
 	string_list *includes = get_string_list(root, "includes");
 	const char *slnfile = must_get_string(root, "solution");
 	const char *install = get_string(root, "install", "");
+	const char *generate = get_string(root, "generate", NULL);
 
 	for (string_list *inc = includes; inc != NULL; inc = inc->next) {
 		replace_char(inc->str, '/', '\\');
@@ -550,36 +550,37 @@ int main(int argc, char *argv[]) {
 	def.clean = clean;
 	generate_uuid(def.uuid, "_BUILD_ALL.vcxproj");
 
-
 	fprintf(stderr, "generating _BUILD_ALL.vcxproj\n");
 	f = must_fopen("_BUILD_ALL.vcxproj", "wb");
 	write_command(f, &def, targets);
 	fclose(f);
 
 	command gen;
-	gen.name = "_GENERATE_VCXPROJ";
-	gen.build = cmd;
-	gen.rebuild = cmd;
-	gen.clean = "";
-	generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
+	if (generate) {
+		gen.name = "_GENERATE_VCXPROJ";
+		gen.build = generate;
+		gen.rebuild = generate;
+		gen.clean = "";
+		generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
 
-	fprintf(stderr, "generating _GENERATE_VCXPROJ.vcxproj\n");
-	f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
-	write_command(f, &gen, targets);
-	fclose(f);
+		fprintf(stderr, "generating _GENERATE_VCXPROJ.vcxproj\n");
+		f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
+		write_command(f, &gen, targets);
+		fclose(f);
+	}
 
 	for (project *p = projects; p != NULL; p = p->next) {
 		fprintf(stderr, "generating %s\n", p->file);
 		f = must_fopen(p->file, "wb");
-		replace_char(p->file, '/', '\\');
 		generate_uuid(p->uuid, p->file);
+		replace_char(p->file, '/', '\\');
 		write_project(f, p, targets, includes, install);
 		fclose(f);
 	}
 
 	fprintf(stderr, "generating %s\n", slnfile);
 	f = must_fopen(slnfile, "wb");
-	write_solution(f, projects, targets, &def, &gen);
+	write_solution(f, projects, targets, &def, generate ? &gen : NULL);
 	fclose(f);
 
 	return 0;

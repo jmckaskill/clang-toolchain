@@ -352,7 +352,11 @@ static int is_done_newer() {
 }
 #endif
 
-int main() {
+int main(int argc, char *argv[]) {
+	if (argc > 1 && chdir(argv[1])) {
+		fprintf(stderr, "failed to change directory to %s\n", argv[1]);
+		return 1;
+	}
 	if (is_done_newer()) {
 		fprintf(stderr, "download.exe: no work to do\n");
 		return 0;

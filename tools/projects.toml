@@ -1,4 +1,5 @@
 solution = "clang-toolchain.sln"
+generate = "$(SolutionDir)\\bin\\win32-debug\\generate-vcxproj.exe $(SolutionDir)"
 includes = [
 	"xz-embedded/linux/include/linux",
 	"xz-embedded/userspace",
