@@ -22,7 +22,7 @@
 #define strcasecmp(a,b) _stricmp(a,b)
 #endif
 
-#include "google-ca.h"
+#include "ssl-roots.h"
 
 static int open_client_socket(const char *host, int port) {
 #ifdef _WIN32

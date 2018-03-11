@@ -2,14 +2,14 @@
 /llvm-build
 /host
 /compiler-rt-4.0.1.src/lib/builtins/disabled
-/lib
+lib
 *~
 *.swp
 ._*
 /install/install
 /generate-vcxproj/generate-vcxproj
 
-/closure-compiler.jar
+closure-compiler.jar
 /closure-compiler-build.txt
 *.db
 *.user
