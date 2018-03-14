@@ -1,5 +1,6 @@
 # Test download file
 
 # lib, http://localhost:8080/lib.txz
+ninja, https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-mac.zip, mac
 lib, https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02-2.txz
 closure-compiler.jar, https://storage.googleapis.com/ctct-clang-toolchain/closure-compiler-v20180204.jar

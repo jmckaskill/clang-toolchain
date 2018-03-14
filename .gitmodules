@@ -7,3 +7,6 @@
 [submodule "tools/tomlc99"]
 	path = tools/tomlc99
 	url = https://github.com/cktan/tomlc99.git
+[submodule "tools/zlib"]
+	path = tools/zlib
+	url = https://github.com/madler/zlib.git

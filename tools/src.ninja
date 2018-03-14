@@ -7,15 +7,20 @@ build $TGT: phony $
  $bin/generate-vcxproj.exe $
 
 build $obj/download/filter-decode-xz.o: cc download/filter-decode-xz.c
+build $obj/download/filter-deflate.o: cc download/filter-deflate.c
+build $obj/download/filter-limit.o: cc download/filter-limit.c
 build $obj/download/source-http.o: cc download/source-http.c
 build $obj/download/source-file.o: cc download/source-file.c
 build $obj/download/download.o: cc download/download.c
 build $bin/download.exe: clink $
  $obj/download/filter-decode-xz.o $
+ $obj/download/filter-deflate.o $
+ $obj/download/filter-limit.o $
  $obj/download/source-http.o $
  $obj/download/source-file.o $
  $obj/download/download.o $
  $obj/bearssl.lib $
+ $obj/zlib.lib $
  $obj/xz.lib $
 
 build $obj/generate-vcxproj/generate.o: cc generate-vcxproj/generate.c
@@ -24,6 +29,30 @@ build $bin/generate-vcxproj.exe: clink $
  $obj/generate-vcxproj/generate.o $
  $obj/tomlc99/toml.o $
  $obj/bearssl.lib $
+
+build $obj/zlib/adler32.o: cc zlib/adler32.c
+build $obj/zlib/compress.o: cc zlib/compress.c
+build $obj/zlib/crc32.o: cc zlib/crc32.c
+build $obj/zlib/deflate.o: cc zlib/deflate.c
+build $obj/zlib/inflate.o: cc zlib/inflate.c
+build $obj/zlib/infback.o: cc zlib/infback.c
+build $obj/zlib/inftrees.o: cc zlib/inftrees.c
+build $obj/zlib/inffast.o: cc zlib/inffast.c
+build $obj/zlib/trees.o: cc zlib/trees.c
+build $obj/zlib/uncompr.o: cc zlib/uncompr.c
+build $obj/zlib/zutil.o: cc zlib/zutil.c
+build $obj/zlib.lib: lib $
+ $obj/zlib/adler32.o $
+ $obj/zlib/compress.o $
+ $obj/zlib/crc32.o $
+ $obj/zlib/deflate.o $
+ $obj/zlib/inflate.o $
+ $obj/zlib/infback.o $
+ $obj/zlib/inftrees.o $
+ $obj/zlib/inffast.o $
+ $obj/zlib/trees.o $
+ $obj/zlib/uncompr.o $
+ $obj/zlib/zutil.o $
 
 build $obj/BearSSL/tools/brssl.o: extcc BearSSL/tools/brssl.c
 build $obj/BearSSL/tools/certs.o: extcc BearSSL/tools/certs.c

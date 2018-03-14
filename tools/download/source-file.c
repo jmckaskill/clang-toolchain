@@ -39,11 +39,9 @@ static int read_more(stream *s) {
 
 	if (ferror(fs->f)) {
 		fprintf(stderr, "error on read\n");
-		fclose(fs->f);
 		fs->f = NULL;
 		return -1;
 	} else if (feof(fs->f)) {
-		fclose(fs->f);
 		fs->f = NULL;
 	}
 
@@ -52,13 +50,7 @@ static int read_more(stream *s) {
 
 static file_stream gfs;
 
-stream *open_file_downloader(const char *path) {
-	FILE *f = fopen(path, "rb");
-	if (f == NULL) {
-		fprintf(stderr, "failed to open %s\n", path);
-		return NULL;
-	}
-
+stream *open_file_source(FILE *f) {
 	gfs.f = f;
 	gfs.consumed = 0;
 	gfs.avail = 0;

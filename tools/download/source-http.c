@@ -107,7 +107,6 @@ static void consume_https(struct stream *s, int consumed) {
 
 static int download_https(struct stream *s) {
 	https_stream *os = (https_stream*) s;
-	fprintf(stderr, "download_https %d %d\n", os->avail, os->consumed);
 	if (!os->length_remaining) {
 		fprintf(stderr, "calling download more after the download is finished");
 		return -1;
@@ -132,7 +131,6 @@ static int download_https(struct stream *s) {
 		}
 	}
 	os->avail += r;
-	fprintf(stderr, "downloaded %d\n", r);
 	return 0;
 }
 
@@ -162,136 +160,188 @@ static char *get_line(struct https_stream *os) {
 	}
 }
 
+static int is_space(char ch) {
+	return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n';
+}
+
+static char *trim(char *str) {
+	while (is_space(*str)) {
+		str++;
+	}
+	char *end = str + strlen(str);
+	while (end > str && is_space(end[-1])) {
+		end--;
+	}
+	*end = 0;
+	return str;
+}
+
 static struct https_stream gos;
 
 stream *open_http_downloader(const char *url) {
-	unsigned is_https;
-
-	if (!strncmp(url, "https://", strlen("https://"))) {
-		is_https = 1;
-		url += strlen("https://");
-	} else if (!strncmp(url, "http://", strlen("http://"))) {
-		is_https = 0;
-		url += strlen("http://");
-	} else {
-		return NULL;
-	}
-
-	const char *path = strchr(url, '/');
-	char *host;
-	if (path) {
-		host = (char*) malloc(path - url + 1);
-		memcpy(host, url, path - url);
-		host[path - url] = 0;
-	} else {
-		host = strdup(url);
-		path = "/";
-	}
-
-	int port = is_https ? 443 : 80;
-	char *colon = strchr(host, ':');
-	if (colon) {
-		port = atoi(colon + 1);
-		*colon = 0;
-	}
-
-	if (gos.host && !strcmp(host, gos.host) && gos.is_https == is_https && gos.port == port) {
-		// we can reuse the existing connection
-		free(host);
-		host = gos.host;
-	} else {
-		int fd = open_client_socket(host, port);
-		if (fd < 0) {
-			fprintf(stderr, "failed to connect to %s\n", host);
-			free(host);
+	int redirects = 0;
+	char *free_url = NULL;
+	for (;;) {
+		if (++redirects == 5) {
+			fprintf(stderr, "too many redirects\n");
 			return NULL;
 		}
-		if (gos.host) {
-			free(gos.host);
-			closesocket(gos.fd);
+
+		unsigned is_https;
+
+		if (!strncmp(url, "https://", strlen("https://"))) {
+			is_https = 1;
+			url += strlen("https://");
+		} else if (!strncmp(url, "http://", strlen("http://"))) {
+			is_https = 0;
+			url += strlen("http://");
+		} else {
+			return NULL;
 		}
-		gos.port = port;
-		gos.host = host;
-		gos.fd = fd;
-		gos.is_https = is_https;
+
+		const char *path = strchr(url, '/');
+		char *host;
+		if (path) {
+			host = (char*) malloc(path - url + 1);
+			memcpy(host, url, path - url);
+			host[path - url] = 0;
+		} else {
+			host = strdup(url);
+			path = "/";
+		}
+
+		int port = is_https ? 443 : 80;
+		char *colon = strchr(host, ':');
+		if (colon) {
+			port = atoi(colon + 1);
+			*colon = 0;
+		}
+
+		if (gos.host && !strcmp(host, gos.host) && gos.is_https == is_https && gos.port == port) {
+			// we can reuse the existing connection
+			free(host);
+			host = gos.host;
+		} else {
+			int fd = open_client_socket(host, port);
+			if (fd < 0) {
+				fprintf(stderr, "failed to connect to %s\n", host);
+				free(host);
+				return NULL;
+			}
+			if (gos.host) {
+				free(gos.host);
+				closesocket(gos.fd);
+			}
+			gos.port = port;
+			gos.host = host;
+			gos.fd = fd;
+			gos.is_https = is_https;
+			gos.consumed = 0;
+			gos.avail = 0;
+
+			if (is_https) {
+				br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
+				br_ssl_engine_set_buffers_bidi(&gos.sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
+				br_ssl_client_reset(&gos.sc, host, 0);
+				br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, (void*)(intptr_t)fd, &do_write, (void*)(intptr_t)fd);
+			}
+		}
+
+		char request[1024];
+		int reqsz = snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost:%s\r\n\r\n", path, host);
 
 		if (is_https) {
-			br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
-			br_ssl_engine_set_buffers_bidi(&gos.sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
-			br_ssl_client_reset(&gos.sc, host, 0);
-			br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, (void*)(intptr_t)fd, &do_write, (void*)(intptr_t)fd);
-		}
-	}
-
-	char request[256];
-	int reqsz = snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost:%s\r\n\r\n", path, host);
-
-	if (is_https) {
-		int w = br_sslio_write_all(&gos.ctx, request, reqsz);
-		int f = br_sslio_flush(&gos.ctx);
-		if (w < 0 || f < 0) {
-			fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&gos.sc.eng));
-			goto err;
-		}
-	} else {
-		char *p = request;
-		while (reqsz) {
-			int w = send(gos.fd, p, reqsz, 0);
-			if (w <= 0) {
-				fprintf(stderr, "write error\n");
+			int w = br_sslio_write_all(&gos.ctx, request, reqsz);
+			int f = br_sslio_flush(&gos.ctx);
+			if (w < 0 || f < 0) {
+				fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&gos.sc.eng));
 				goto err;
 			}
-			reqsz -= w;
+		} else {
+			char *p = request;
+			while (reqsz) {
+				int w = send(gos.fd, p, reqsz, 0);
+				if (w <= 0) {
+					fprintf(stderr, "write error\n");
+					goto err;
+				}
+				reqsz -= w;
+			}
 		}
-	}
 
-	char *hdr = get_line(&gos);
-	if (!hdr) {
-		goto err;
-	}
-	char *httpcode = strchr(hdr, ' ');
-	if (!httpcode) {
-		fprintf(stderr, "invalid header %s\n", hdr);
-		goto err;
-	}
-	int httperr = atoi(httpcode);
-	if (httperr / 100 != 2) {
-		fprintf(stderr, "http error %d\n", httperr);
-		goto err;
-	}
-
-	int64_t content_length = -1;
-
-	for (;;) {
-		char *p = get_line(&gos);
-		if (!p) {
+		char *hdr = get_line(&gos);
+		if (!hdr) {
 			goto err;
-		} else if (*p == 0) {
-			break;
 		}
-		char *colon = strchr(p, ':');
-		if (!colon) {
+		char *httpcode = strchr(hdr, ' ');
+		if (!httpcode) {
+			fprintf(stderr, "invalid header %s\n", hdr);
+			goto err;
+		}
+		int httperr = atoi(httpcode);
+		if (httperr / 100 > 3) {
+			fprintf(stderr, "http error %d\n", httperr);
+			goto err;
+		}
+
+		int64_t content_length = -1;
+		unsigned have_location = 0;
+
+		for (;;) {
+			char *p = get_line(&gos);
+			if (!p) {
+				goto err;
+			} else if (*p == 0) {
+				break;
+			}
+			char *colon = strchr(p, ':');
+			if (!colon) {
+				continue;
+			}
+			*colon = 0;
+			char *key = trim(p);
+			char *value = trim(colon + 1);
+
+			if (!strcasecmp(key, "content-length")) {
+				content_length = strtoll(value, NULL, 0);
+			} else if (!strcasecmp(key, "location")) {
+				free(free_url);
+				free_url = strdup(value);
+				have_location = 1;
+			}
+		}
+
+		switch (httperr) {
+		case 302:
+			// redirect
+			if (!have_location) {
+				fprintf(stderr, "redirect without new url\n");
+				goto err;
+			}
+			url = free_url;
 			continue;
-		}
-		*colon = 0;
 
-		if (!strcasecmp(p, "content-length")) {
-			content_length = strtoll(colon + 1, NULL, 0);
+		case 200:
+			// success
+			if (content_length < 0) {
+				fprintf(stderr, "content length not specified\n");
+				goto err;
+			}
+			free(free_url);
+			gos.iface.get_more = &download_https;
+			gos.iface.buffered = &https_data;
+			gos.iface.consume = &consume_https;
+			gos.length_remaining = content_length;
+			return &gos.iface;
+
+		default:
+			fprintf(stderr, "http error %d\n", httperr);
+			goto err;
 		}
 	}
-
-	if (content_length < 0) {
-		fprintf(stderr, "content length not specified\n");
-		goto err;
-	}
-
-	gos.iface.get_more = &download_https;
-	gos.iface.buffered = &https_data;
-	gos.iface.consume = &consume_https;
-	gos.length_remaining = content_length;
-	return &gos.iface;
 
 err:
+	free(free_url);
 	closesocket(gos.fd);
 	free(gos.host);
 	gos.host = NULL;

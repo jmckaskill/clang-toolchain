@@ -21,3 +21,4 @@ Release
 .ninja_deps
 .ninja_log
 download.done
+.DS_Store
