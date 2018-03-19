@@ -10,6 +10,7 @@
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
+#pragma comment(lib, "shell32.lib")
 #else
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -124,7 +125,7 @@ static int download_https(struct stream *s) {
 			return -1;
 		}
 	} else {
-		r = recv(os->fd, os->buf + os->avail, sizeof(os->buf) - os->avail, 0);
+		r = recv(os->fd, (char*)os->buf + os->avail, sizeof(os->buf) - os->avail, 0);
 		if (r <= 0) {
 			fprintf(stderr, "error on read\n");
 			return -1;
@@ -294,13 +295,13 @@ stream *open_http_downloader(const char *url) {
 			} else if (*p == 0) {
 				break;
 			}
-			char *colon = strchr(p, ':');
-			if (!colon) {
+			char *keysep = strchr(p, ':');
+			if (!keysep) {
 				continue;
 			}
-			*colon = 0;
+			*keysep = 0;
 			char *key = trim(p);
-			char *value = trim(colon + 1);
+			char *value = trim(keysep + 1);
 
 			if (!strcasecmp(key, "content-length")) {
 				content_length = strtoll(value, NULL, 0);

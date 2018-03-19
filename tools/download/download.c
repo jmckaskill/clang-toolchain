@@ -7,7 +7,9 @@
 #include <inttypes.h>
 
 #ifdef _WIN32
+#include <windows.h>
 #include <direct.h>
+#include <shellapi.h>
 #else
 #include <fcntl.h>
 #include <dirent.h>
@@ -61,33 +63,26 @@ static uint64_t get_file_size(FILE *f) {
 	return sz;
 }
 
-static int make_directory(char *file) {
+static void make_directory(char *file) {
 	char *next = file;
 	for (;;) {
 		char *slash = strchr(next, '/');
 		if (!slash) {
-			return 0;
+			return;
 		}
 		*slash = 0;
 		#ifdef _WIN32
-		int err = _mkdir(file);
+		_mkdir(file);
 		#else
-		int err = mkdir(file, 0755);
+		mkdir(file, 0755);
 		#endif
 		*slash = '/';
-		if (err) {
-			return -1;
-		}
 		next = slash + 1;
 	}
 }
 
 static int extract_file(char *path, stream *s) {
-	if (make_directory(path)) {
-		fprintf(stderr, "failed to create directory for %s\n", path);
-		return -1;
-	}
-
+	make_directory(path);
 	fprintf(stderr, "extracting %s\n", path);
 
 	FILE *f = fopen(path, "wb");
@@ -103,7 +98,7 @@ static int extract_file(char *path, stream *s) {
 		if (len) {
 			total += len;
 			fprintf(stderr, "downloaded %"PRIu64 "\n", total);
-			if (fwrite(p, 1, len, f) != len) {
+			if ((int) fwrite(p, 1, len, f) != len) {
 				fprintf(stderr, "failed to write output file\n");
 				fclose(f);
 				return -1;
@@ -143,7 +138,7 @@ static int64_t find_central_dir(FILE *f, int off) {
 		fprintf(stderr, "invalid zip file\n");
 		return -2;
 	}
-	if (fseek(f, -off, SEEK_END) || fread(buf, 1, off, f) != off) {
+	if (fseek(f, -off, SEEK_END) || (int)fread(buf, 1, off, f) != off) {
 		fprintf(stderr, "failed to read footer in zip\n");
 		return -2;
 	}
@@ -151,7 +146,7 @@ static int64_t find_central_dir(FILE *f, int off) {
 	for (int p = off - sizeof(zip_central_dir_end); p >= 0; p--) {
 		zip_central_dir_end *c = (zip_central_dir_end*) &buf[p];
 		if (little_32(c->sig) == ZIP_CENTRAL_DIR_END_SIG
-		&& p + sizeof(*c) + little_16(c->comment_len) == off) {
+		&& p + sizeof(*c) + little_16(c->comment_len) == (size_t)off) {
 			uint32_t dir_offset = little_32(c->dir_offset);
 			if (dir_offset == 0xFFFFFFFF) {
 				return find_central_dir_64(f, p);
@@ -402,8 +397,8 @@ static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
 	while (extra) {
 		int len, atend;
 		s->buffered(s, &len, &atend);
-		if (len > extra) {
-			len = extra;
+		if ((uint64_t)len > extra) {
+			len = (int)extra;
 		}
 		if (len) {
 			s->consume(s, len);
@@ -563,6 +558,18 @@ static int update_done(const char *addpath, const char *addurl) {
 }
 
 #ifdef _WIN32
+static void delete_path(const char *path) {
+	int bufsz = MultiByteToWideChar(CP_UTF8, 0, path, -1, NULL, 0);
+	wchar_t *paths = (wchar_t*)malloc((bufsz + 1) * 2);
+	MultiByteToWideChar(CP_UTF8, 0, path, -1, paths, bufsz);
+	paths[bufsz] = 0;
+	SHFILEOPSTRUCTW op = { 0 };
+	op.wFunc = FO_DELETE;
+	op.pFrom = paths;
+	op.fFlags = FOF_NO_UI;
+	SHFileOperationW(&op);
+	free(paths);
+}
 #else
 static void delete_dir(int dirfd) {
 	DIR *dirp = fdopendir(dirfd);
@@ -606,6 +613,23 @@ static void delete_path(const char *path) {
 #endif
 
 #ifdef _WIN32
+static uint64_t get_file_time(const char *path) {
+	HANDLE h = CreateFileA(path, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	uint64_t ret = 0;
+	if (h != INVALID_HANDLE_VALUE) {
+		FILETIME mtime;
+		if (GetFileTime(h, NULL, NULL, &mtime)) {
+			ret = (uint64_t)mtime.dwLowDateTime | (((uint64_t)mtime.dwHighDateTime) << 32);
+		}
+		CloseHandle(h);
+	}
+	return ret;
+}
+static int is_done_newer() {
+	uint64_t tmanifest = get_file_time("download.manifest");
+	uint64_t tdone = get_file_time("download.done");
+	return tmanifest && tdone && tdone > tmanifest;
+}
 #else
 static int is_done_newer() {
 	struct stat in, out;
@@ -682,10 +706,10 @@ int main(int argc, char *argv[]) {
 			s = open_http_downloader(url);
 
 		} else if (!strncmp(url, "file:", strlen("file:"))) {
-			const char *path = url + strlen("file:");
-			f = fopen(path, "rb");
+			const char *source = url + strlen("file:");
+			f = fopen(source, "rb");
 			if (!f) {
-				fprintf(stderr, "failed to open file %s\n", path);
+				fprintf(stderr, "failed to open file %s\n", source);
 				return 6;
 			}
 			s = open_file_source(f);

@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="zlib\adler32.c" />
+    <ClCompile Include="zlib\compress.c" />
+    <ClCompile Include="zlib\crc32.c" />
+    <ClCompile Include="zlib\deflate.c" />
+    <ClCompile Include="zlib\gzclose.c" />
+    <ClCompile Include="zlib\gzlib.c" />
+    <ClCompile Include="zlib\gzread.c" />
+    <ClCompile Include="zlib\gzwrite.c" />
+    <ClCompile Include="zlib\infback.c" />
+    <ClCompile Include="zlib\inffast.c" />
+    <ClCompile Include="zlib\inflate.c" />
+    <ClCompile Include="zlib\inftrees.c" />
+    <ClCompile Include="zlib\trees.c" />
+    <ClCompile Include="zlib\uncompr.c" />
+    <ClCompile Include="zlib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="zlib\crc32.h" />
+    <ClInclude Include="zlib\deflate.h" />
+    <ClInclude Include="zlib\gzguts.h" />
+    <ClInclude Include="zlib\inffast.h" />
+    <ClInclude Include="zlib\inffixed.h" />
+    <ClInclude Include="zlib\inflate.h" />
+    <ClInclude Include="zlib\inftrees.h" />
+    <ClInclude Include="zlib\trees.h" />
+    <ClInclude Include="zlib\zconf.h" />
+    <ClInclude Include="zlib\zlib.h" />
+    <ClInclude Include="zlib\zutil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="zlib\CMakeLists.txt" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{82458CC4-FE72-5361-BD3B-206A96121D31}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>zlib</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\obj\win32-debug\zlib.lib</NMakeOutput>
+    <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/zlib.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/zlib.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/zlib.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/zlib.lib</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\obj\win32-release\zlib.lib</NMakeOutput>
+    <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-release/zlib.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-release/zlib.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-release/zlib.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-release/zlib.lib</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

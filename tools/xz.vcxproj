@@ -65,9 +65,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\obj\win32-debug\xz.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/xz.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/xz.lib &amp;&amp; $(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-debug/xz.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-debug/xz.lib</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/xz.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/xz.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/xz.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/xz.lib</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
@@ -76,9 +76,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\obj\win32-release\xz.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/xz.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/xz.lib &amp;&amp; $(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/obj/win32-release/xz.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean bin/obj/win32-release/xz.lib</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-release/xz.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-release/xz.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-release/xz.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-release/xz.lib</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />

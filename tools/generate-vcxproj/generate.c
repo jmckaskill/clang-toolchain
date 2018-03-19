@@ -7,6 +7,8 @@
 
 #ifdef _WIN32
 #include <windows.h>
+#include <direct.h>
+#define chdir(x) _chdir(x)
 #else
 #include <dirent.h>
 #include <unistd.h>
@@ -278,7 +280,7 @@ static char *dup_with_replacement(const char *src, const char *test, const char 
 	return ret;
 }
 
-static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *install) {
+static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *build) {
 	fprint(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
@@ -340,13 +342,12 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 		char *vstgt = strdup(njtgt);
 		replace_char(vstgt, '/', '\\');
 
-		const char *sep = *install ? " &amp;&amp; " : "";
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>%s</NMakePreprocessorDefinitions>\r\n", t->defines);
-		fprintf(f, "    <NMakeBuildCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeBuildCommandLine>\r\n", install, sep, njtgt);
-		fprintf(f, "    <NMakeReBuildCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s &amp;&amp; $(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja %s</NMakeReBuildCommandLine>\r\n", install, sep, njtgt, njtgt);
-		fprintf(f, "    <NMakeCleanCommandLine>%s%s$(SolutionDir)\\ninja.exe -C $(SolutionDir) -f msvc.ninja -t clean %s</NMakeCleanCommandLine>\r\n", install, sep, njtgt);
+		fprintf(f, "    <NMakeBuildCommandLine>%s %s</NMakeBuildCommandLine>\r\n", build, njtgt);
+		fprintf(f, "    <NMakeReBuildCommandLine>%s -t clean %s &amp;&amp; %s %s</NMakeReBuildCommandLine>\r\n", build, njtgt, build, njtgt);
+		fprintf(f, "    <NMakeCleanCommandLine>%s -t clean %s</NMakeCleanCommandLine>\r\n", build, njtgt);
 
 		fprint(f, "    <NMakeIncludeSearchPath>$(ProjectDir)");
 		for (string_list *inc = includes; inc != NULL; inc = inc->next) {
@@ -530,7 +531,7 @@ int main(int argc, char *argv[]) {
 
 	string_list *includes = get_string_list(root, "includes");
 	const char *slnfile = must_get_string(root, "solution");
-	const char *install = get_string(root, "install", "");
+	const char *build = must_get_string(root, "build");
 	const char *generate = get_string(root, "generate", NULL);
 
 	for (string_list *inc = includes; inc != NULL; inc = inc->next) {
@@ -538,16 +539,16 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	char build[256], rebuild[256], clean[256];
-	snprintf(build, sizeof(build), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja {DEFAULT}", install, *install ? " &amp;&amp; " : "");
-	snprintf(rebuild, sizeof(rebuild), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja -t clean {DEFAULT} &amp;&amp; $(SolutionDir)\\ninja.exe -f msvc.ninja {DEFAULT}", install, *install ? " &amp;&amp; " : "");
-	snprintf(clean, sizeof(clean), "%s%s$(SolutionDir)\\ninja.exe -f msvc.ninja -t clean {DEFAULT}", install, *install ? " &amp;&amp; " : "");
+	char buildall[256], rebuildall[256], cleanall[256];
+	snprintf(buildall, sizeof(buildall), "%s {DEFAULT}", build);
+	snprintf(rebuildall, sizeof(rebuildall), "%s -t clean {DEFAULT} &amp;&amp; %s {DEFAULT}", build, build);
+	snprintf(cleanall, sizeof(cleanall), "%s -t clean {DEFAULT}", build);
 
 	command def;
 	def.name = "_BUILD_ALL";
-	def.build = build;
-	def.rebuild = rebuild;
-	def.clean = clean;
+	def.build = buildall;
+	def.rebuild = rebuildall;
+	def.clean = cleanall;
 	generate_uuid(def.uuid, "_BUILD_ALL.vcxproj");
 
 	fprintf(stderr, "generating _BUILD_ALL.vcxproj\n");
@@ -574,7 +575,7 @@ int main(int argc, char *argv[]) {
 		f = must_fopen(p->file, "wb");
 		generate_uuid(p->uuid, p->file);
 		replace_char(p->file, '/', '\\');
-		write_project(f, p, targets, includes, install);
+		write_project(f, p, targets, includes, build);
 		fclose(f);
 	}
 

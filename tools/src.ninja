@@ -3,7 +3,7 @@ bin = bin/$TGT
 
 build $TGT: phony $
  $bin/brssl.exe $
- $bin/download-txz.exe $
+ $bin/download.exe $
  $bin/generate-vcxproj.exe $
 
 build $obj/download/filter-decode-xz.o: cc download/filter-decode-xz.c
@@ -24,23 +24,25 @@ build $bin/download.exe: clink $
  $obj/xz.lib $
 
 build $obj/generate-vcxproj/generate.o: cc generate-vcxproj/generate.c
-build $obj/tomlc99/toml.o: extcc tomlc99/toml.c
 build $bin/generate-vcxproj.exe: clink $
  $obj/generate-vcxproj/generate.o $
- $obj/tomlc99/toml.o $
+ $obj/tomlc99.lib $
  $obj/bearssl.lib $
 
-build $obj/zlib/adler32.o: cc zlib/adler32.c
-build $obj/zlib/compress.o: cc zlib/compress.c
-build $obj/zlib/crc32.o: cc zlib/crc32.c
-build $obj/zlib/deflate.o: cc zlib/deflate.c
-build $obj/zlib/inflate.o: cc zlib/inflate.c
-build $obj/zlib/infback.o: cc zlib/infback.c
-build $obj/zlib/inftrees.o: cc zlib/inftrees.c
-build $obj/zlib/inffast.o: cc zlib/inffast.c
-build $obj/zlib/trees.o: cc zlib/trees.c
-build $obj/zlib/uncompr.o: cc zlib/uncompr.c
-build $obj/zlib/zutil.o: cc zlib/zutil.c
+build $obj/tomlc99/toml.o: extcc tomlc99/toml.c
+build $obj/tomlc99.lib: lib $obj/tomlc99/toml.o
+
+build $obj/zlib/adler32.o: extcc zlib/adler32.c
+build $obj/zlib/compress.o: extcc zlib/compress.c
+build $obj/zlib/crc32.o: extcc zlib/crc32.c
+build $obj/zlib/deflate.o: extcc zlib/deflate.c
+build $obj/zlib/inflate.o: extcc zlib/inflate.c
+build $obj/zlib/infback.o: extcc zlib/infback.c
+build $obj/zlib/inftrees.o: extcc zlib/inftrees.c
+build $obj/zlib/inffast.o: extcc zlib/inffast.c
+build $obj/zlib/trees.o: extcc zlib/trees.c
+build $obj/zlib/uncompr.o: extcc zlib/uncompr.c
+build $obj/zlib/zutil.o: extcc zlib/zutil.c
 build $obj/zlib.lib: lib $
  $obj/zlib/adler32.o $
  $obj/zlib/compress.o $

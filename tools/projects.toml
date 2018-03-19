@@ -1,5 +1,6 @@
-solution = "clang-toolchain.sln"
+solution = "tools.sln"
 generate = "$(SolutionDir)\\bin\\win32-debug\\generate-vcxproj.exe $(SolutionDir)"
+build = "$(SolutionDir)\\ninja.exe -f msvc.ninja -C $(SolutionDir)"
 includes = [
 	"xz-embedded/linux/include/linux",
 	"xz-embedded/userspace",
@@ -21,16 +22,28 @@ default = "win32-release"
 defines = "_WIN32;NDEBUG"
 
 [[project]]
-name = "download-txz"
-file = "download-txz/download-txz.vcxproj"
-target = "bin/{TGT}/download-txz.exe"
-dirs = ["download-txz"]
+name = "download"
+file = "download/download.vcxproj"
+target = "bin/{TGT}/download.exe"
+dirs = ["download"]
 
 [[project]]
 name = "generate-vcxproj"
 file = "generate-vcxproj/generate-vcxproj.vcxproj"
 target = "bin/{TGT}/generate-vcxproj.exe"
 dirs = ["generate-vcxproj"]
+
+[[project]]
+name = "tomlc99"
+file = "tomlc99.vcxproj"
+target = "bin/obj/{TGT}/tomlc99.lib"
+dirs = ["tomlc99"]
+
+[[project]]
+name = "zlib"
+file = "zlib.vcxproj"
+target = "bin/obj/{TGT}/zlib.lib"
+dirs = ["zlib"]
 
 [[project]]
 name = "bearssl"
