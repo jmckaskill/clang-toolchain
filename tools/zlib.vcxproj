@@ -51,7 +51,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -73,7 +73,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\obj\win32-debug\zlib.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>_WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/zlib.lib</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/zlib.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/win32-debug/zlib.lib</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/win32-debug/zlib.lib</NMakeCleanCommandLine>

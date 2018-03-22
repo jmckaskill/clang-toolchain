@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\generate-vcxproj\generate.c" />
+    <ClCompile Include="generate.c" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -25,7 +25,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -47,7 +47,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\win32-debug\generate-vcxproj.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>_WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-debug/generate-vcxproj.exe</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-debug/generate-vcxproj.exe &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-debug/generate-vcxproj.exe</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-debug/generate-vcxproj.exe</NMakeCleanCommandLine>

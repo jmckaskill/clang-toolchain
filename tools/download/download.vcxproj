@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\download\download.c" />
-    <ClCompile Include="..\download\filter-decode-xz.c" />
-    <ClCompile Include="..\download\filter-deflate.c" />
-    <ClCompile Include="..\download\filter-limit.c" />
-    <ClCompile Include="..\download\source-file.c" />
-    <ClCompile Include="..\download\source-http.c" />
+    <ClCompile Include="download.c" />
+    <ClCompile Include="filter-decode-xz.c" />
+    <ClCompile Include="filter-deflate.c" />
+    <ClCompile Include="filter-limit.c" />
+    <ClCompile Include="source-file.c" />
+    <ClCompile Include="source-http.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\download\ssl-roots.h" />
-    <ClInclude Include="..\download\stream.h" />
-    <ClInclude Include="..\download\tar.h" />
-    <ClInclude Include="..\download\zip.h" />
+    <ClInclude Include="ssl-roots.h" />
+    <ClInclude Include="stream.h" />
+    <ClInclude Include="tar.h" />
+    <ClInclude Include="zip.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
@@ -34,7 +34,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -56,7 +56,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\win32-debug\download.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions>_WIN32;DEBUG</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>_WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-debug/download.exe</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-debug/download.exe &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-debug/download.exe</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-debug/download.exe</NMakeCleanCommandLine>

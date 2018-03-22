@@ -13,13 +13,13 @@ includes = [
 vs = "Debug"
 ninja = "win32-debug"
 default = "win32-debug"
-defines = "_WIN32;DEBUG"
+defines = ["_WIN32", "DEBUG", "_DEBUG"]
 
 [[target]]
 vs = "Release"
 ninja = "win32-release"
 default = "win32-release"
-defines = "_WIN32;NDEBUG"
+defines = ["_WIN32", "NDEBUG"]
 
 [[project]]
 name = "download"

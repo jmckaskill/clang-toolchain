@@ -53,7 +53,7 @@ struct target {
 	char *vs;
 	char *ninja;
 	char *default_target;
-	char *defines;
+	string_list *defines;
 };
 
 static FILE *must_fopen(const char *name, const char *mode) {
@@ -112,14 +112,35 @@ static const char *extension(const char *file) {
 	return ext ? ext : "";
 }
 
-static void goto_root(FILE *f, const char *file) {
-	const char *next, *prev = file;
+static void goto_directory(FILE *f, const char *vcxfile, const char *dir) {
+	// vcxfile is the path to the vcxproj file e.g. a\b\c.vcxproj
+	// dir is the directory we want to go to e.g. a\d\e
+	// in this case we want to provide the shortest relative path e.g. ..\d\e
+
+	// remove common directories from both paths
+	const char *next;
+	while ((next = strchr(vcxfile, '\\')) != NULL) {
+		size_t flen = next - vcxfile;
+		if (strncmp(vcxfile, dir, flen) || (dir[flen] && dir[flen] != '\\')) {
+			break;
+		}
+		dir += dir[flen] ? (flen+1) : flen;
+		vcxfile = next + 1;
+	}
+
+	// then go up to the common ancestor
+	const char *prev = vcxfile;
 	while ((next = strchr(prev, '\\')) != NULL) {
 		fprint(f, "..\\");
 		while (*next == '\\') {
 			next++;
 		}
 		prev = next;
+	}
+
+	// then back down into the target directory
+	if (*dir) {
+		fprintf(f, "%s\\", dir);
 	}
 }
 
@@ -130,8 +151,8 @@ static void print_cfile(FILE *f, const char *vcxfile, const char *dir, const cha
 		|| !strcasecmp(ext, ".s")
 		|| !strcasecmp(ext, ".asm")) {
 		fprint(f, "    <ClCompile Include=\"");
-		goto_root(f, vcxfile);
-		fprintf(f, "%s\\%s\" />\r\n", dir, file);
+		goto_directory(f, vcxfile, dir);
+		fprintf(f, "%s\" />\r\n", file);
 	}
 }
 
@@ -140,8 +161,8 @@ static void print_hfile(FILE *f, const char *vcxfile, const char *dir, const cha
 	if (!strcasecmp(ext, ".h")
 		|| !strcasecmp(ext, ".hpp")) {
 		fprint(f, "    <ClInclude Include=\"");
-		goto_root(f, vcxfile);
-		fprintf(f, "%s\\%s\" />\r\n", dir, file);
+		goto_directory(f, vcxfile, dir);
+		fprintf(f, "%s\" />\r\n", file);
 	}
 }
 
@@ -155,8 +176,8 @@ static void print_other(FILE *f, const char *vcxfile, const char *dir, const cha
 		|| !strcasecmp(ext, ".sh")
 		|| !strcasecmp(ext, ".json")) {
 		fprint(f, "    <None Include=\"");
-		goto_root(f, vcxfile);
-		fprintf(f, "%s\\%s\" />\r\n", dir, file);
+		goto_directory(f, vcxfile, dir);
+		fprintf(f, "%s\" />\r\n", file);
 	}
 }
 
@@ -280,6 +301,15 @@ static char *dup_with_replacement(const char *src, const char *test, const char 
 	return ret;
 }
 
+static int is_debug_target(target *t) {
+	for (string_list *def = t->defines; def != NULL; def = def->next) {
+		if (!strcmp(def->str, "_DEBUG") || !strcmp(def->str, "DEBUG")) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
 static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *build) {
 	fprint(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
@@ -317,9 +347,9 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 
 	for (target *t = tgts; t != NULL; t = t->next) {
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\" Label=\"Configuration\">\r\n", t->vs);
-		fprintf(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n"
-			"    <UseDebugLibraries>false</UseDebugLibraries>\r\n"
-			"    <PlatformToolset>v140</PlatformToolset>\r\n"
+		fprintf(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n");
+		fprintf(f, "    <UseDebugLibraries>%s</UseDebugLibraries>\r\n", is_debug_target(t) ? "true" : "false");
+		fprintf(f, "    <PlatformToolset>v140</PlatformToolset>\r\n"
 			"  </PropertyGroup>\r\n");
 	}
 
@@ -344,7 +374,14 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
-		fprintf(f, "    <NMakePreprocessorDefinitions>%s</NMakePreprocessorDefinitions>\r\n", t->defines);
+		fprintf(f, "    <NMakePreprocessorDefinitions>");
+		for (string_list *def = t->defines; def != NULL; def = def->next) {
+			if (def != t->defines) {
+				fputc(';', f);
+			}
+			fputs(def->str, f);
+		}
+		fprintf(f, "</NMakePreprocessorDefinitions>\r\n");
 		fprintf(f, "    <NMakeBuildCommandLine>%s %s</NMakeBuildCommandLine>\r\n", build, njtgt);
 		fprintf(f, "    <NMakeReBuildCommandLine>%s -t clean %s &amp;&amp; %s %s</NMakeReBuildCommandLine>\r\n", build, njtgt, build, njtgt);
 		fprintf(f, "    <NMakeCleanCommandLine>%s -t clean %s</NMakeCleanCommandLine>\r\n", build, njtgt);
@@ -524,7 +561,7 @@ int main(int argc, char *argv[]) {
 		t->vs = must_get_string(tbl, "vs");
 		t->ninja = must_get_string(tbl, "ninja");
 		t->default_target = must_get_string(tbl, "default");
-		t->defines = get_string(tbl, "defines", "");
+		t->defines = get_string_list(tbl, "defines");
 		*ptarg = t;
 		ptarg = &t->next;
 	}
