@@ -1,4 +1,4 @@
-CFLAGS = $INCLUDES -DNDEBUG -O2 -Wall
+CFLAGS = $INCLUDES -DNDEBUG -O2 -Wall -Wno-missing-braces
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -lpthread -lm
 
