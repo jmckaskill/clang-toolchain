@@ -1,10 +1,10 @@
-HOST_BASE = clang
 EXE_EXT =
+HOST = cc-release
 
 rule run
  command = $in -o $out
  description = RUN $in -o $out
- 
+
 rule copy
  command = cp $in $out
  description = COPY $in $out

@@ -50,7 +50,7 @@ static int read_more(stream *s) {
 
 static file_stream gfs;
 
-stream *open_file_source(FILE *f) {
+stream *open_file(FILE *f) {
 	gfs.f = f;
 	gfs.consumed = 0;
 	gfs.avail = 0;

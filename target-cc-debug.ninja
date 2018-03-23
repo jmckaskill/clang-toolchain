@@ -1,36 +1,35 @@
-CFLAGS = $INCLUDES -g -D_GNU_SOURCE  -fdiagnostics-format=msvc -Wall -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -Werror
+CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -Werror
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -g -lpthread -lm
 
-HOST = clang-debug
-TGT = clang-debug
+TGT = cc-debug
 
 rule cc
- command = clang -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS
+ command = cc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS
  deps = gcc
  depfile = $out.d
  description = CC $in
 
 rule extcc
- command = clang -MMD -MF $out.d -c $in -o $out -g $EXT_INCLUDES $INCLUDES
+ command = cc -MMD -MF $out.d -c $in -o $out -g $EXT_INCLUDES $INCLUDES
  deps = gcc
  depfile = $out.d
  description = CC $in
 
 rule ccdll
- command = clang -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS -Wall -Werror
+ command = cc -std=c11 -fPIC -MMD -MF $out.d -c $in -o $out $CFLAGS -Wall -Werror
  deps = gcc
  depfile = $out.d
  description = CC $in
 
 rule cxx
- command = clang++ $CXXFLAGS -MMD -MF $out.d -c $in -o $out
+ command = c++ $CXXFLAGS -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
  description = CXX $in
 
 rule cxxdll
- command = clang++ $CXXFLAGS -fPIC -MMD -MF $out.d -c $in -o $out
+ command = c++ $CXXFLAGS -fPIC -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
  description = CXX $in
@@ -40,15 +39,15 @@ rule lib
  description = AR $out
 
 rule clinkdll
- command = clang++ -shared $in -o $out $LDFLAGS
+ command = c++ -shared $in -o $out $LDFLAGS
  description = AR $out
 
 rule clink
- command = clang $in -o $out $LDFLAGS
+ command = cc $in -o $out $LDFLAGS
  description = EXE $out
 
 rule cxxlink
- command = clang++ $in -o $out $LDFLAGS
+ command = c++ $in -o $out $LDFLAGS
  description = EXE $out
 
 rule js-compile

@@ -1,0 +1,24 @@
+solution = "test.sln"
+generate = "generate-vcxproj.exe $(SolutionDir)"
+build = "ninja.exe -f msvc.ninja -C $(SolutionDir)"
+includes = ["."]
+
+[[target]]
+vs = "Release"
+ninja = "win32-release"
+default = "win32-release"
+defines = ["_WIN32", "NDEBUG"]
+
+[[target]]
+vs = "ARMV7"
+ninja = "armv7-release"
+default = "armv7-release"
+defines = ["__linux__", "__arm__", "NDEBUG"]
+
+[[project]]
+name = "cmain"
+file = "cmain.vcxproj"
+target = "bin/{TGT}/cmain.exe"
+dirs = ["main.c"]
+
+

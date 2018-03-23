@@ -1,22 +1,16 @@
 TOOLCHAIN_DIR = ..
 SRC_NINJA = src.ninja
 
-include ../host-clang.ninja
-subninja ../target-clang-debug.ninja
-subninja ../target-clang-release.ninja
-subninja ../target-armv5-debug.ninja
-subninja ../target-armv5-release.ninja
-subninja ../target-armv7-debug.ninja
+include ../host-cc.ninja
+subninja ../target-cc-release.ninja
+
+LIB = libarm/armv7
+CLANG_DIR = clang
 subninja ../target-armv7-release.ninja
 
 default $
- bin/${HOST_BASE}-release/cmain.exe $
- bin/${HOST_BASE}-release/cppmain.exe $
- bin/${HOST_BASE}-debug/cmain.exe $
- bin/${HOST_BASE}-release/cppmain.exe $
- bin/armv5-debug/cmain.exe $
- bin/armv5-release/cmain.exe $
- bin/armv7-debug/cmain.exe $
+ bin/cc-release/cmain.exe $
+ bin/cc-release/cppmain.exe $
  bin/armv7-release/cmain.exe $
 
 

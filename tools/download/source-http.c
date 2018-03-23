@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #ifdef _WIN32
 #include <winsock2.h>
@@ -83,6 +84,7 @@ struct https_stream {
 	unsigned is_https;
 	char *host;
 	int64_t length_remaining;
+	int last_percent_report;
 	uint8_t inrec[32 * 1024];
 	uint8_t outrec[32 * 1024];
 	uint8_t buf[32 * 1024];
@@ -179,7 +181,7 @@ static char *trim(char *str) {
 
 static struct https_stream gos;
 
-stream *open_http_downloader(const char *url) {
+stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 	int redirects = 0;
 	char *free_url = NULL;
 	for (;;) {
@@ -329,10 +331,12 @@ stream *open_http_downloader(const char *url) {
 				goto err;
 			}
 			free(free_url);
+			*ptotal = content_length;
 			gos.iface.get_more = &download_https;
 			gos.iface.buffered = &https_data;
 			gos.iface.consume = &consume_https;
 			gos.length_remaining = content_length;
+			gos.last_percent_report = 0;
 			return &gos.iface;
 
 		default:

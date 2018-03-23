@@ -2,3 +2,5 @@
 /obj
 /.ninja_deps
 /.ninja_log
+/clang
+/libarm

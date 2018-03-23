@@ -1,4 +1,4 @@
-HOST_BASE = win32
+HOST = win32-debug
 EXE_EXT = .exe
 
 rule run

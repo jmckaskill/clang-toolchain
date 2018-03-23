@@ -6,18 +6,28 @@ build $TGT: phony $
  $bin/download.exe $
  $bin/generate-vcxproj.exe $
 
+build $obj/download/extract-file.o: cc download/extract-file.c
+build $obj/download/extract-tar.o: cc download/extract-tar.c
+build $obj/download/extract-zip.o: cc download/extract-zip.c
 build $obj/download/filter-decode-xz.o: cc download/filter-decode-xz.c
 build $obj/download/filter-deflate.o: cc download/filter-deflate.c
 build $obj/download/filter-limit.o: cc download/filter-limit.c
+build $obj/download/filter-sha256.o: cc download/filter-sha256.c
 build $obj/download/source-http.o: cc download/source-http.c
 build $obj/download/source-file.o: cc download/source-file.c
+build $obj/download/path.o: cc download/path.c
 build $obj/download/download.o: cc download/download.c
 build $bin/download.exe: clink $
+ $obj/download/extract-file.o $
+ $obj/download/extract-tar.o $
+ $obj/download/extract-zip.o $
  $obj/download/filter-decode-xz.o $
  $obj/download/filter-deflate.o $
  $obj/download/filter-limit.o $
+ $obj/download/filter-sha256.o $
  $obj/download/source-http.o $
  $obj/download/source-file.o $
+ $obj/download/path.o $
  $obj/download/download.o $
  $obj/bearssl.lib $
  $obj/zlib.lib $

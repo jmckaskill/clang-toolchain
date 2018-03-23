@@ -1,13 +1,11 @@
-CC = $TOOLCHAIN_DIR/host/bin/clang
-CPP = $TOOLCHAIN_DIR/host/bin/clang++
-AR = $TOOLCHAIN_DIR/host/bin/llvm-ar
-LD = $TOOLCHAIN_DIR/host/bin/ld.lld${EXE_EXT}
+CC = $CLANG_DIR/bin/clang
+CPP = $CLANG_DIR/bin/clang++
+AR = $CLANG_DIR/bin/llvm-ar
+LD = $CLANG_DIR/bin/ld.lld${EXE_EXT}
 
 CFLAGSCMN = $CROSS_CFLAGS -mstrict-align $INCLUDES -I $LIB/include -flto --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
 CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces -Wno-unused-function
 CXXFLAGS = -std=c++11 -I $LIB/include/c++ $CFLAGSCMN  -Wall -Werror -Wno-missing-braces
-
-HOST = ${HOST_BASE}-debug
 
 rule extcc
  command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
@@ -28,7 +26,7 @@ rule ccdll
  description = ARM-CC $in
 
 rule cxx
- command = $CPP $CXXFLAGS -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out 
+ command = $CPP $CXXFLAGS -fdata-sections -ffunction-sections -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
  description = ARM-CXX $in

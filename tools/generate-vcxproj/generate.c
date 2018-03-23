@@ -112,7 +112,7 @@ static const char *extension(const char *file) {
 	return ext ? ext : "";
 }
 
-static void goto_directory(FILE *f, const char *vcxfile, const char *dir) {
+static void print_relative_path(FILE *f, const char *vcxfile, const char *dir) {
 	// vcxfile is the path to the vcxproj file e.g. a\b\c.vcxproj
 	// dir is the directory we want to go to e.g. a\d\e
 	// in this case we want to provide the shortest relative path e.g. ..\d\e
@@ -151,7 +151,7 @@ static void print_cfile(FILE *f, const char *vcxfile, const char *dir, const cha
 		|| !strcasecmp(ext, ".s")
 		|| !strcasecmp(ext, ".asm")) {
 		fprint(f, "    <ClCompile Include=\"");
-		goto_directory(f, vcxfile, dir);
+		print_relative_path(f, vcxfile, dir);
 		fprintf(f, "%s\" />\r\n", file);
 	}
 }
@@ -161,7 +161,7 @@ static void print_hfile(FILE *f, const char *vcxfile, const char *dir, const cha
 	if (!strcasecmp(ext, ".h")
 		|| !strcasecmp(ext, ".hpp")) {
 		fprint(f, "    <ClInclude Include=\"");
-		goto_directory(f, vcxfile, dir);
+		print_relative_path(f, vcxfile, dir);
 		fprintf(f, "%s\" />\r\n", file);
 	}
 }
@@ -176,7 +176,7 @@ static void print_other(FILE *f, const char *vcxfile, const char *dir, const cha
 		|| !strcasecmp(ext, ".sh")
 		|| !strcasecmp(ext, ".json")) {
 		fprint(f, "    <None Include=\"");
-		goto_directory(f, vcxfile, dir);
+		print_relative_path(f, vcxfile, dir);
 		fprintf(f, "%s\" />\r\n", file);
 	}
 }
@@ -244,9 +244,21 @@ static void print_files(FILE *f, print_fn fn, const char *vcxfile, char *dir) {
 	list_directory(dir);
 	qsort(all_files, num_files, sizeof(char*), &compare_file);
 	replace_char(dir, '/', '\\');
-	for (size_t i = 0; i < num_files; i++) {
-		fn(f, vcxfile, dir, all_files[i]);
-		free(all_files[i]);
+	if (num_files) {
+		for (size_t i = 0; i < num_files; i++) {
+			fn(f, vcxfile, dir, all_files[i]);
+			free(all_files[i]);
+		}
+	} else {
+		// maybe we are trying to add just a single file
+		char *slash = strrchr(dir, '\\');
+		if (slash) {
+			*slash = '\0';
+			fn(f, vcxfile, dir, slash+1);
+			*slash = '\\';
+		} else {
+			fn(f, vcxfile, "", dir);
+		}
 	}
 	num_files = 0;
 }

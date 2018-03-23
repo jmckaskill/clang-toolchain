@@ -1,5 +1,4 @@
 CROSS_CFLAGS = --target=armv5---linux-eabi -DDEBUG -g
-LIB = $TOOLCHAIN_DIR/lib/armv5
 TGT = armv5-debug
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libgcc.a $LIB/libclang-rt.a

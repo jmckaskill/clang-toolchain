@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.h>
+
 typedef struct tar_posix_header tar_posix_header;
 
 struct tar_posix_header
@@ -21,7 +23,10 @@ struct tar_posix_header
   char devminor[8];             /* 337 */
   char prefix[155];             /* 345 */
                                 /* 500 */
+  char rest[12];
 };
+
+static_assert(sizeof(tar_posix_header) == 512, "padding");
 
 #define TMAGIC   "ustar"        /* ustar and a null */
 #define TMAGLEN  6

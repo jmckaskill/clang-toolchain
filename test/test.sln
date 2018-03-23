@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_BUILD_ALL", "_BUILD_ALL.vcxproj", "{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_GENERATE_VCXPROJ", "_GENERATE_VCXPROJ.vcxproj", "{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cmain", "cmain.vcxproj", "{029472AE-EC6B-5EE4-AB6C-C3002541D0A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|ALL = Release|ALL
+		ARMV7|ALL = ARMV7|ALL
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{029472AE-EC6B-5EE4-AB6C-C3002541D0A4}.Release|ALL.ActiveCfg = Release|Win32
+		{029472AE-EC6B-5EE4-AB6C-C3002541D0A4}.ARMV7|ALL.ActiveCfg = ARMV7|Win32
+		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.Release|ALL.ActiveCfg = Release|Win32
+		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.ARMV7|ALL.ActiveCfg = ARMV7|Win32
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.ActiveCfg = Release|Win32
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.Build.0 = Release|Win32
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.ARMV7|ALL.ActiveCfg = ARMV7|Win32
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.ARMV7|ALL.Build.0 = ARMV7|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
