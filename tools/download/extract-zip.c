@@ -251,10 +251,15 @@ int extract_zip(FILE *f, const char *dir) {
 			break;
 		}
 
-		fprintf(stderr, "extracting %s\n", zf.path);
 		// save off where we got to in the directory, for the next loop
 		diroff = ftell64(f);
-		// extract off the file, this will reseek in the zip file
+
+		if (zf.path[strlen(zf.path)-1] == '/') {
+			continue;
+		}
+
+		// extract the file, this will reseek in the zip file
+		fprintf(stderr, "extracting %s\n", zf.path);
 		if (extract_zip_file(f, &zf)) {
 			goto err;
 		}
