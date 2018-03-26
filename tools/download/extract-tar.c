@@ -29,9 +29,11 @@ static const char *clean_tar_linkname(const char *dir, tar_posix_header *t) {
 #define TAR_BLOCK_SIZE UINT64_C(512)
 
 static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
+#ifndef _WIN32
 	// terminate the mode field
 	t->uid[0] = 0;
 	int mode = strtol(t->mode, NULL, 8);
+#endif
 
 	char *path = clean_tar_name(dir, t);
 	if (!path) {

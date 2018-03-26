@@ -5,7 +5,8 @@
 #include <inttypes.h>
 
 #ifdef _WIN32
-#include <windows.h>
+#include <winsock2.h>
+#include <WS2tcpip.h>
 #include <direct.h>
 #include <shellapi.h>
 #else
