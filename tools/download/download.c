@@ -135,33 +135,6 @@ static void delete_path(const char *path) {
 }
 #endif
 
-#ifdef _WIN32
-static uint64_t get_file_time(const char *path) {
-	HANDLE h = CreateFileA(path, 0, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-	uint64_t ret = 0;
-	if (h != INVALID_HANDLE_VALUE) {
-		FILETIME mtime;
-		if (GetFileTime(h, NULL, NULL, &mtime)) {
-			ret = (uint64_t)mtime.dwLowDateTime | (((uint64_t)mtime.dwHighDateTime) << 32);
-		}
-		CloseHandle(h);
-	}
-	return ret;
-}
-static int is_done_newer() {
-	uint64_t tmanifest = get_file_time("download.manifest");
-	uint64_t tdone = get_file_time("download.done");
-	return tmanifest && tdone && tdone > tmanifest;
-}
-#else
-static int is_done_newer() {
-	struct stat in, out;
-	return !stat("download.manifest", &in)
-		&& !stat("download.done", &out)
-		&& out.st_mtimespec.tv_sec > in.st_mtimespec.tv_sec;
-}
-#endif
-
 static inline int ends_with(const char *s, size_t sz, const char *test) {
 	return sz >= strlen(test)
 		&& !strcmp(s + sz - strlen(test), test);
@@ -171,10 +144,6 @@ int main(int argc, char *argv[]) {
 	if (argc > 1 && chdir(argv[1])) {
 		fprintf(stderr, "failed to change directory to %s\n", argv[1]);
 		return 1;
-	}
-	if (is_done_newer()) {
-		fprintf(stderr, "download.exe: no work to do\n");
-		return 0;
 	}
 	FILE *inf = fopen("download.manifest", "r");
 	if (inf == NULL) {
@@ -296,12 +265,6 @@ int main(int argc, char *argv[]) {
 		if (err || update_map("download.done", path, url)) {
 			return 7;
 		}
-	}
-
-	// touch the download file so next time we take the shortcut
-	FILE *donef = fopen("download.done", "a");
-	if (donef) {
-		fclose(donef);
 	}
 
 	return 0;
