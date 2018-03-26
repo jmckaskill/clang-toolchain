@@ -30,11 +30,11 @@ int extract_file(stream *s, char *path, uint64_t progress_size) {
 	uint64_t recvd = 0;
 	int last_percent = 0;
 	if (progress_size > 1024 * 1024) {
-		fprintf(stderr, "downloading %"PRIu64" MB 00%%", progress_size / 1024 / 1024);
+		fprintf(stderr, "downloading %"PRIu64" MB  0%%", progress_size / 1024 / 1024);
 	} else if (progress_size > 1024) {
-		fprintf(stderr, "downloading %"PRIu64" kB 00%%", progress_size / 1024);
+		fprintf(stderr, "downloading %"PRIu64" kB  0%%", progress_size / 1024);
 	} else if (progress_size) {
-		fprintf(stderr, "downloading %"PRIu64" B 00%%", progress_size);
+		fprintf(stderr, "downloading %"PRIu64" B  0%%", progress_size);
 	}
 
 	for (;;) {
@@ -51,7 +51,7 @@ int extract_file(stream *s, char *path, uint64_t progress_size) {
 			if (progress_size) {
 				int percent = (int)(recvd * 100 / progress_size);
 				if (percent != last_percent) {
-					fprintf(stderr, "\b\b\b%02d%%", percent);
+					fprintf(stderr, "\b\b\b%2d%%", percent);
 					last_percent = percent;
 				}
 			}
