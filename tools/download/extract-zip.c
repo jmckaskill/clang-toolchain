@@ -102,6 +102,7 @@ struct zip_file {
 	uint64_t compressed_len;
 	uint16_t compression_method;
 	char *path;
+	unsigned executable : 1;
 };
 
 static int extract_zip_file(FILE *f, const zip_file *zf) {
@@ -125,7 +126,17 @@ static int extract_zip_file(FILE *f, const zip_file *zf) {
 		break;
 	}
 
-	return extract_file(s, zf->path, 0);
+	if (extract_file(s, zf->path, 0)) {
+		return -1;
+	}
+
+#ifndef _WIN32
+	if (zf->executable) {
+		chmod(zf->path, 0755);
+	}
+#endif
+
+	return 0;
 }
 
 static int read_zip_file_header(FILE *f, const char *dir, zip_file *zf) {
@@ -140,6 +151,7 @@ static int read_zip_file_header(FILE *f, const char *dir, zip_file *zf) {
 	zf->compressed_len = little_32(fh.compressed_len);
 	zf->uncompressed_len = little_32(fh.uncompressed_len);
 	zf->compression_method = little_16(fh.compression_method);
+	zf->executable = (little_32(fh.external_attributes) & (0100 << 16)) != 0;
 
 	uint16_t namelen = little_16(fh.name_len);
 
