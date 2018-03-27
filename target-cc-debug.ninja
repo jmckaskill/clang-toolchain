@@ -3,6 +3,7 @@ CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -g -lpthread -lm
 
 TGT = cc-debug
+HOST = cc-debug
 
 rule cc
  command = cc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS

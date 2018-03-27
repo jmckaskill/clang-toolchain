@@ -2,5 +2,6 @@ CROSS_CFLAGS = --target=armv5---linux-eabi -DNDEBUG -Os
 TGT = armv5-release
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libgcc.a $LIB/libclang-rt.a
+HOST = ${HOST_BASE}-release
 
 include $TOOLCHAIN_DIR/target-cross.ninja

@@ -3,6 +3,7 @@ CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -lpthread -lm
 
 TGT = cc-release
+HOST = cc-release
 
 rule cc
  command = cc -std=c11 -MMD -MF $out.d -c $in -o $out $CFLAGS

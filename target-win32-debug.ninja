@@ -5,6 +5,7 @@ LINKFLAGS = /DEBUG
 LIBFLAGS = /LTCG
 
 TGT = win32-debug
+HOST = win32-debug
 
 rule cc
  command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS /W4 /WX
@@ -46,10 +47,5 @@ rule clink
 rule cxxlink
  command = link $in /nologo /out:$out $LINKFLAGS
  description = EXE $out
-
-
-rule js-compile
- command = java -jar $TOOLCHAIN_DIR/closure-compiler.jar -O BUNDLE --rewrite_polyfills=false --js_output_file $out $in
- description = JS-COMPILE $out
 
 include $SRC_NINJA

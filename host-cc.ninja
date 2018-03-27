@@ -1,5 +1,6 @@
 EXE_EXT =
 HOST = cc-release
+HOST_BASE = cc
 
 rule run
  command = $in -o $out

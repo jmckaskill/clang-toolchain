@@ -2,5 +2,6 @@ CROSS_CFLAGS = --target=armv7---linux-eabi -Xclang -target-feature -Xclang -neon
 TGT = armv7-release
 LIBS_SO = $LIB/libcpp.so $LIB/libc.so $LIB/libclang-rt.so
 LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
+HOST = ${HOST_BASE}-release
 
 include $TOOLCHAIN_DIR/target-cross.ninja
