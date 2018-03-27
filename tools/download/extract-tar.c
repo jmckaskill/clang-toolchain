@@ -40,7 +40,7 @@ static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
 		fprintf(stderr, "invalid tar path %s\n", t->name);
 		return -1;
 	}
-	fprintf(stderr, "extracting %s\n", path);
+	printf("extracting %s\n", path);
 
 	// terminate the size field
 	t->mtime[0] = 0;
@@ -94,7 +94,7 @@ static int extract_tar_link(tar_posix_header *t, const char *dir) {
 		fprintf(stderr, "invalid link target %s\n", t->linkname);
 		return -1;
 	}
-	fprintf(stderr, "extracting %s -> %s\n", path, lnk);
+	printf("extracting %s -> %s\n", path, lnk);
 	make_directory(path);
 	int err = symlink(lnk, path);
 	free(path);

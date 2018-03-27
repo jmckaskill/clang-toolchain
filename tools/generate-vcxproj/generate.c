@@ -600,7 +600,7 @@ int main(int argc, char *argv[]) {
 	def.clean = cleanall;
 	generate_uuid(def.uuid, "_BUILD_ALL.vcxproj");
 
-	fprintf(stderr, "generating _BUILD_ALL.vcxproj\n");
+	printf("generating _BUILD_ALL.vcxproj\n");
 	f = must_fopen("_BUILD_ALL.vcxproj", "wb");
 	write_command(f, &def, targets);
 	fclose(f);
@@ -613,14 +613,14 @@ int main(int argc, char *argv[]) {
 		gen.clean = "";
 		generate_uuid(gen.uuid, "_GENERATE_VCXPROJ.vcxproj");
 
-		fprintf(stderr, "generating _GENERATE_VCXPROJ.vcxproj\n");
+		printf("generating _GENERATE_VCXPROJ.vcxproj\n");
 		f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
 		write_command(f, &gen, targets);
 		fclose(f);
 	}
 
 	for (project *p = projects; p != NULL; p = p->next) {
-		fprintf(stderr, "generating %s\n", p->file);
+		printf("generating %s\n", p->file);
 		f = must_fopen(p->file, "wb");
 		generate_uuid(p->uuid, p->file);
 		replace_char(p->file, '/', '\\');
@@ -628,7 +628,7 @@ int main(int argc, char *argv[]) {
 		fclose(f);
 	}
 
-	fprintf(stderr, "generating %s\n", slnfile);
+	printf("generating %s\n", slnfile);
 	f = must_fopen(slnfile, "wb");
 	write_solution(f, projects, targets, &def, generate ? &gen : NULL);
 	fclose(f);

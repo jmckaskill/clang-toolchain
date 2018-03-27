@@ -181,13 +181,13 @@ int main(int argc, char *argv[]) {
 		path = trim(path);
 		url = trim(url);
 
-		fprintf(stderr, "checking %s\n", path);
+		printf("checking %s\n", path);
 
 		if (test_map("download.done", path, url) == MATCH) {
 			continue;
 		}
 
-		fprintf(stderr, "downloading %s from %s\n", path, url);
+		printf("downloading %s from %s\n", path, url);
 		delete_path(path);
 
 		FILE *f = NULL;

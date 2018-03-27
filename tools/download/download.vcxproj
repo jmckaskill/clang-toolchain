@@ -12,9 +12,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="download.c" />
+    <ClCompile Include="extract-file.c" />
+    <ClCompile Include="extract-tar.c" />
+    <ClCompile Include="extract-zip.c" />
     <ClCompile Include="filter-decode-xz.c" />
     <ClCompile Include="filter-deflate.c" />
     <ClCompile Include="filter-limit.c" />
+    <ClCompile Include="filter-sha256.c" />
+    <ClCompile Include="path.c" />
     <ClCompile Include="source-file.c" />
     <ClCompile Include="source-http.c" />
   </ItemGroup>

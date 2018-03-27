@@ -218,7 +218,7 @@ static int read_zip_file_header(FILE *f, const char *dir, zip_file *zf) {
 }
 
 int extract_zip(FILE *f, const char *dir) {
-	fprintf(stderr, "extracting zip into %s\n", dir);
+	printf("extracting zip into %s\n", dir);
 
 	fseek(f, 0, SEEK_END);
 	uint64_t zip_size = ftell64(f);
@@ -271,7 +271,7 @@ int extract_zip(FILE *f, const char *dir) {
 		}
 
 		// extract the file, this will reseek in the zip file
-		fprintf(stderr, "extracting %s\n", zf.path);
+		printf("extracting %s\n", zf.path);
 		if (extract_zip_file(f, &zf)) {
 			goto err;
 		}
