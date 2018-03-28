@@ -51,4 +51,8 @@ rule cxxlink
  command = c++ $in -o $out $LDFLAGS
  description = EXE $out
 
+rule js-compile
+ command = java -jar $CLOSURE_JAR -O BUNDLE --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE-BUNDLE $out
+
 include $SRC_NINJA

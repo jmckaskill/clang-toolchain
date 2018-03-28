@@ -48,4 +48,8 @@ rule cxxlink
  command = link $in /nologo /out:$out $LINKFLAGS
  description = EXE $out
 
+rule js-compile
+ command = java -jar $CLOSURE_JAR -O ADVANCED --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE-ADVANCED $out
+
 include $SRC_NINJA

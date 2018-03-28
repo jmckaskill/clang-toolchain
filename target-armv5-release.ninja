@@ -5,3 +5,7 @@ LIBS_A = $LIB/libc.a $LIB/libgcc.a $LIB/libclang-rt.a
 HOST = ${HOST_BASE}-release
 
 include $TOOLCHAIN_DIR/target-cross.ninja
+
+rule js-compile
+ command = java -jar $CLOSURE_JAR -O ADVANCED --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE-ADVANCED $out

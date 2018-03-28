@@ -5,3 +5,7 @@ LIBS_A = $LIB/libc.a $LIB/libclang-rt.a
 HOST = ${HOST_BASE}-debug
 
 include $TOOLCHAIN_DIR/target-cross.ninja
+
+rule js-compile
+ command = java -jar $CLOSURE_JAR -O BUNDLE --rewrite_polyfills=false --js_output_file $out $in
+ description = JS-COMPILE-BUNDLE $out
