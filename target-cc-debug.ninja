@@ -12,7 +12,7 @@ rule cc
  description = CC $in
 
 rule extcc
- command = cc -MMD -MF $out.d -c $in -o $out -g $EXT_INCLUDES $INCLUDES
+ command = cc -std=gnu89 -MMD -MF $out.d -c $in -o $out -g $EXT_INCLUDES $INCLUDES
  deps = gcc
  depfile = $out.d
  description = CC $in
