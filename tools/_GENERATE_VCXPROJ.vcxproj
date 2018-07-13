@@ -10,6 +10,8 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>

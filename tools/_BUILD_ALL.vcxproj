@@ -10,6 +10,13 @@
       <Platform>Win32</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <None Include=".\build.ninja" />
+    <None Include=".\download.manifest" />
+    <None Include=".\msvc.ninja" />
+    <None Include=".\projects.toml" />
+    <None Include=".\src.ninja" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}</ProjectGuid>
     <Keyword>MakeFileProj</Keyword>
