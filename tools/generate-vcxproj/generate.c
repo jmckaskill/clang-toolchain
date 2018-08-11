@@ -602,7 +602,7 @@ int main(int argc, char *argv[]) {
 	}
 
 
-	char buildall[256], rebuildall[256], cleanall[256];
+	char buildall[1024], rebuildall[2048], cleanall[1024];
 	snprintf(buildall, sizeof(buildall), "%s {DEFAULT}", build);
 	snprintf(rebuildall, sizeof(rebuildall), "%s -t clean {DEFAULT} &amp;&amp; %s {DEFAULT}", build, build);
 	snprintf(cleanall, sizeof(cleanall), "%s -t clean {DEFAULT}", build);
