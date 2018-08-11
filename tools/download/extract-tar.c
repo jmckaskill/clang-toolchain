@@ -1,6 +1,10 @@
 #include "stream.h"
 #include "tar.h"
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
 static const char *strip_top_dir(const char *name) {
 	const char *slash = strchr(name, '/');
 	return slash ? (slash + 1) : (name + strlen(name));

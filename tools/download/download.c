@@ -2,6 +2,10 @@
 #include "tar.h"
 #include "zip.h"
 
+#ifndef _WIN32
+#include <sys/types.h>
+#include <dirent.h>
+#endif
 
 static char *trim(char *s) {
 	while (*s == ' ' || *s == '\t') {
@@ -118,7 +122,7 @@ static void delete_dir(int dirfd) {
 	closedir(dirp);
 }
 static void delete_path(const char *path) {
-	int fd = open(path, O_RDONLY | O_SYMLINK);
+	int fd = open(path, O_RDONLY);
 	if (fd < 0) {
 		return;
 	}
