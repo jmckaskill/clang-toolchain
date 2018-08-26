@@ -2,7 +2,7 @@
 #include "tar.h"
 #include "zip.h"
 
-#ifndef _WIN32
+#ifndef WIN32
 #include <sys/types.h>
 #include <dirent.h>
 #endif
@@ -24,7 +24,7 @@ static int is_host_platform(char *platform) {
 		return 1;
 	}
 	platform = trim(platform);
-#if defined _WIN32
+#if defined WIN32
 	return !strcmp(platform, "windows");
 #elif defined __MACH__
 	return !strcmp(platform, "mac");
@@ -84,7 +84,7 @@ static int update_map(const char *file, const char *key, const char *val) {
 	return 0;
 }
 
-#ifdef _WIN32
+#ifdef WIN32
 static void delete_path(const char *path) {
 	int bufsz = MultiByteToWideChar(CP_UTF8, 0, path, -1, NULL, 0);
 	wchar_t *paths = (wchar_t*)malloc((bufsz + 1) * 2);

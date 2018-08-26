@@ -8,7 +8,7 @@ void make_directory(char *file) {
 			return;
 		}
 		*slash = 0;
-#ifdef _WIN32
+#ifdef WIN32
 		_mkdir(file);
 #else
 		mkdir(file, 0755);
@@ -36,16 +36,16 @@ int extract_file(stream *s, char *path, uint64_t progress_size) {
 	} else if (progress_size) {
 		printf("downloading %"PRIu64" B  0%%", progress_size);
 	}
-#ifdef _WIN32
+#ifdef WIN32
 	printf("\n");
 #endif
 	fflush(stdout);
 
 	for (;;) {
-		int len, atend;
+		size_t len, atend;
 		uint8_t *p = s->buffered(s, &len, &atend);
 		if (len) {
-			if ((int) fwrite(p, 1, len, f) != len) {
+			if (fwrite(p, 1, len, f) != len) {
 				fprintf(stderr, "failed to write output file\n");
 				fclose(f);
 				return -1;
@@ -55,7 +55,7 @@ int extract_file(stream *s, char *path, uint64_t progress_size) {
 			if (progress_size) {
 				int percent = (int)(recvd * 100 / progress_size);
 				if (percent != last_percent) {
-#ifdef _WIN32
+#ifdef WIN32
 					printf("%2d%%\n", percent);
 #else
 					printf("\b\b\b%2d%%", percent);
@@ -65,7 +65,7 @@ int extract_file(stream *s, char *path, uint64_t progress_size) {
 				}
 			}
 		} else if (atend) {
-#ifndef _WIN32
+#ifndef WIN32
 			if (progress_size) {
 				printf("\n");
 				fflush(stdout);

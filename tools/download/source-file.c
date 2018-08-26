@@ -7,18 +7,18 @@ typedef struct file_stream file_stream;
 struct file_stream {
 	stream iface;
 	FILE *f;
-	int consumed, avail;
+	size_t consumed, avail;
 	uint8_t buf[256*1024];
 };
 
-static uint8_t *file_data(stream *s, int *plen, int *atend) {
+static uint8_t *file_data(stream *s, size_t *plen, size_t *atend) {
 	file_stream *fs = (file_stream*) s;
 	*plen = fs->avail - fs->consumed;
 	*atend = (fs->f == NULL);
 	return fs->buf + fs->consumed;
 }
 
-static void consume_file(stream *s, int consumed) {
+static void consume_file(stream *s, size_t consumed) {
 	file_stream *fs = (file_stream*) s;
 	fs->consumed += consumed;
 }

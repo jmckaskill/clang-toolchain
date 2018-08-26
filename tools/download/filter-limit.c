@@ -8,19 +8,19 @@ struct limit_stream {
 	stream *source;
 };
 
-static uint8_t *limit_data(stream *s, int *plen, int *atend) {
+static uint8_t *limit_data(stream *s, size_t *plen, size_t *atend) {
 	limit_stream *ls = (limit_stream*) s;
 	uint8_t *ret = ls->source->buffered(ls->source, plen, atend);
 	if ((uint64_t) *plen >= ls->left) {
 		*atend = 1;
-		*plen = (int) ls->left;
+		*plen = (size_t) ls->left;
 	} else {
 		*atend = 0;
 	}
 	return ret;
 }
 
-static void consume_limit(stream *s, int consumed) {
+static void consume_limit(stream *s, size_t consumed) {
 	limit_stream *ls = (limit_stream*) s;
 	ls->left -= consumed;
 	ls->source->consume(ls->source, consumed);

@@ -9,19 +9,19 @@ struct xz_stream {
 	stream iface;
 	struct xz_dec *xz;
 	uint8_t buf[256 * 1024];
-	int consumed, avail;
+	size_t consumed, avail;
 	int finished;
 	stream *source;
 };
 
-static uint8_t *xz_data(stream *s, int *plen, int *atend) {
+static uint8_t *xz_data(stream *s, size_t *plen, size_t *atend) {
 	xz_stream *ds = (xz_stream*) s;
 	*plen = ds->avail - ds->consumed;
 	*atend = ds->finished;
 	return ds->buf + ds->consumed;
 }
 
-static void consume_xz(stream *s, int consumed) {
+static void consume_xz(stream *s, size_t consumed) {
 	xz_stream *ds = (xz_stream*) s;
 	ds->consumed += consumed;
 }
@@ -40,7 +40,7 @@ static int decode_xz(stream *s) {
 	ds->consumed = 0;
 
 	for (;;) {
-		int len, atend;
+		size_t len, atend;
 		uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
 
 		if (len) {

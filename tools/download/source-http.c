@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
@@ -27,7 +27,7 @@
 #include "ssl-roots.h"
 
 static int open_client_socket(const char *host, int port) {
-#ifdef _WIN32
+#ifdef WIN32
 	WSADATA wsa;
 	WSAStartup(MAKEWORD(2, 2), &wsa);
 #endif
@@ -47,12 +47,12 @@ static int open_client_socket(const char *host, int port) {
 	}
 
 	for (rp = result; rp != NULL; rp = rp->ai_next) {
-		fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+		fd = (int)socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
 		if (fd == -1) {
 			continue;
 		}
 
-		if (!connect(fd, rp->ai_addr, rp->ai_addrlen)) {
+		if (!connect(fd, rp->ai_addr, (int)rp->ai_addrlen)) {
 			break;
 		}
 
@@ -64,13 +64,13 @@ static int open_client_socket(const char *host, int port) {
 }
 
 static int do_read(void *read_context, unsigned char *data, size_t len) {
-	int fd = (uintptr_t)read_context;
-	return recv(fd, (char*) data, len, 0);
+	int fd = *(int*)read_context;
+	return recv(fd, (char*) data, len > INT_MAX ? INT_MAX : (int)len, 0);
 }
 
 static int do_write(void *write_context, const unsigned char *data, size_t len) {
-	int fd = (uintptr_t)write_context;
-	return send(fd, (const char*) data, len, 0);
+	int fd = *(int*)write_context;
+	return send(fd, (const char*) data, len > INT_MAX ? INT_MAX : (int)len, 0);
 }
 
 typedef struct https_stream https_stream;
@@ -80,7 +80,8 @@ struct https_stream {
 	br_sslio_context ctx;
 	br_ssl_client_context sc;
 	br_x509_minimal_context xc;
-	int fd, consumed, avail, port;
+	int fd, port;
+	size_t consumed, avail;
 	unsigned is_https;
 	char *host;
 	int64_t length_remaining;
@@ -90,11 +91,11 @@ struct https_stream {
 	uint8_t buf[32 * 1024];
 };
 
-static uint8_t *https_data(struct stream *s, int *plen, int *atend) {
+static uint8_t *https_data(struct stream *s, size_t *plen, size_t *atend) {
 	https_stream *os = (https_stream*) s;
 	*plen = os->avail - os->consumed;
 	if ((int64_t) *plen > os->length_remaining) {
-		*plen = (int) os->length_remaining;
+		*plen = (size_t) os->length_remaining;
 	}
 	if (atend) {
 		*atend = (os->length_remaining == 0);
@@ -102,7 +103,7 @@ static uint8_t *https_data(struct stream *s, int *plen, int *atend) {
 	return os->buf + os->consumed;
 }
 
-static void consume_https(struct stream *s, int consumed) {
+static void consume_https(struct stream *s, size_t consumed) {
 	https_stream *os = (https_stream*) s;
 	os->consumed += consumed;
 	os->length_remaining -= consumed;
@@ -127,7 +128,7 @@ static int download_https(struct stream *s) {
 			return -1;
 		}
 	} else {
-		r = recv(os->fd, (char*)os->buf + os->avail, sizeof(os->buf) - os->avail, 0);
+		r = recv(os->fd, (char*)os->buf + os->avail, (int) (sizeof(os->buf) - os->avail), 0);
 		if (r <= 0) {
 			fprintf(stderr, "error on read\n");
 			return -1;
@@ -140,7 +141,7 @@ static int download_https(struct stream *s) {
 static char *get_line(struct https_stream *os) {
 	for (;;) {
 		os->length_remaining = INT64_MAX;
-		int bufsz;
+		size_t bufsz;
 		char *line = (char*) https_data(&os->iface, &bufsz, NULL);
 		char *nl = memchr(line, '\n', bufsz);
 		if (!nl) {
@@ -246,7 +247,7 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 				br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
 				br_ssl_engine_set_buffers_bidi(&gos.sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
 				br_ssl_client_reset(&gos.sc, host, 0);
-				br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, (void*)(intptr_t)fd, &do_write, (void*)(intptr_t)fd);
+				br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, &gos.fd, &do_write, &gos.fd);
 			}
 		}
 

@@ -1,5 +1,5 @@
-HOST = win32-debug
-HOST_BASE = win32
+HOST = msvc-debug
+HOST_BASE = msvc
 EXE_EXT = .exe
 
 rule run

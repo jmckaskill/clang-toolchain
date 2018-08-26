@@ -130,7 +130,7 @@ static int extract_zip_file(FILE *f, const zip_file *zf) {
 		return -1;
 	}
 
-#ifndef _WIN32
+#ifndef WIN32
 	if (zf->executable) {
 		chmod(zf->path, 0755);
 	}

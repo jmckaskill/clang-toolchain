@@ -10,7 +10,7 @@ struct sha256_stream {
 	stream *source;
 };
 
-static uint8_t *sha256_data(stream *s, int *plen, int *atend) {
+static uint8_t *sha256_data(stream *s, size_t *plen, size_t *atend) {
 	sha256_stream *ls = (sha256_stream*) s;
 	uint8_t *p = ls->source->buffered(ls->source, plen, atend);
 	if (*plen == 0 && *atend) {
@@ -24,9 +24,9 @@ static uint8_t *sha256_data(stream *s, int *plen, int *atend) {
 	return p;
 }
 
-static void consume_sha256(stream *s, int consumed) {
+static void consume_sha256(stream *s, size_t consumed) {
 	sha256_stream *ls = (sha256_stream*) s;
-	int atend, len;
+	size_t atend, len;
 	uint8_t *p = ls->source->buffered(ls->source, &len, &atend);
 	br_sha256_update(&ls->ctx, p, len);
 	ls->source->consume(ls->source, consumed);

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <windows.h>
 #include <direct.h>
 #define chdir(x) _chdir(x)
@@ -219,7 +219,7 @@ static void add_file(const char *file) {
 	all_files[num_files++] = strdup(file);
 }
 
-#ifdef _WIN32
+#ifdef WIN32
 static void list_directory(const char *dir) {
 	char *str = malloc(strlen(dir) + 2 + 1);
 	strcpy(str, dir);
@@ -352,9 +352,9 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "    <ProjectConfiguration Include=\"%s|Win32\">\r\n", t->vs);
+		fprintf(f, "    <ProjectConfiguration Include=\"%s|x64\">\r\n", t->vs);
 		fprintf(f, "      <Configuration>%s</Configuration>\r\n", t->vs);
-		fprint(f, "      <Platform>Win32</Platform>\r\n"
+		fprint(f, "      <Platform>x64</Platform>\r\n"
 			"    </ProjectConfiguration>\r\n");
 	}
 
@@ -382,7 +382,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\" Label=\"Configuration\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\" Label=\"Configuration\">\r\n", t->vs);
 		fprintf(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n");
 		fprintf(f, "    <UseDebugLibraries>%s</UseDebugLibraries>\r\n", is_debug_target(t) ? "true" : "false");
 		fprintf(f, "    <PlatformToolset>v140</PlatformToolset>\r\n"
@@ -396,7 +396,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  </ImportGroup>\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
+		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
 		fprint(f, "    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"
 			"  </ImportGroup>\r\n");
 	}
@@ -408,7 +408,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		char *vstgt = strdup(njtgt);
 		replace_char(vstgt, '/', '\\');
 
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>");
 		int first_define = 1;
@@ -462,9 +462,9 @@ static void write_command(FILE *f, command *c, target *targets, unsigned add_nin
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "    <ProjectConfiguration Include=\"%s|Win32\">\r\n", t->vs);
+		fprintf(f, "    <ProjectConfiguration Include=\"%s|x64\">\r\n", t->vs);
 		fprintf(f, "      <Configuration>%s</Configuration>\r\n", t->vs);
-		fprint(f, "      <Platform>Win32</Platform>\r\n"
+		fprint(f, "      <Platform>x64</Platform>\r\n"
 			"    </ProjectConfiguration>\r\n");
 	}
 	fprint(f, "  </ItemGroup>\r\n"
@@ -481,7 +481,7 @@ static void write_command(FILE *f, command *c, target *targets, unsigned add_nin
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\" Label=\"Configuration\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\" Label=\"Configuration\">\r\n", t->vs);
 		fprint(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n"
 			"    <UseDebugLibraries>false</UseDebugLibraries>\r\n"
 			"    <PlatformToolset>v140</PlatformToolset>\r\n"
@@ -495,7 +495,7 @@ static void write_command(FILE *f, command *c, target *targets, unsigned add_nin
 		"  </ImportGroup>\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
+		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
 		fprint(f, "    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"
 			"  </ImportGroup>\r\n");
 	}
@@ -507,7 +507,7 @@ static void write_command(FILE *f, command *c, target *targets, unsigned add_nin
 		char *rebuild = dup_with_replacement(c->rebuild, "{DEFAULT}", t->default_target);
 		char *clean = dup_with_replacement(c->clean, "{DEFAULT}", t->default_target);
 
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeBuildCommandLine>%s</NMakeBuildCommandLine>\r\n", build);
 		fprintf(f, "    <NMakeReBuildCommandLine>%s</NMakeReBuildCommandLine>\r\n", rebuild);
 		fprintf(f, "    <NMakeCleanCommandLine>%s</NMakeCleanCommandLine>\r\n", clean);
@@ -551,19 +551,19 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 
 	for (project *p = projects; p != NULL; p = p->next) {
 		for (target *t = targets; t != NULL; t = t->next) {
-			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", p->uuid, t->vs, t->vs);
+			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", p->uuid, t->vs, t->vs);
 		}
 	}
 
 	if (gencmd) {
 		for (target *t = targets; t != NULL; t = t->next) {
-			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", gencmd->uuid, t->vs, t->vs);
+			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", gencmd->uuid, t->vs, t->vs);
 		}
 	}
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|Win32\r\n", defcmd->uuid, t->vs, t->vs);
-		fprintf(f, "\t\t%s.%s|ALL.Build.0 = %s|Win32\r\n", defcmd->uuid, t->vs, t->vs);
+		fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", defcmd->uuid, t->vs, t->vs);
+		fprintf(f, "\t\t%s.%s|ALL.Build.0 = %s|x64\r\n", defcmd->uuid, t->vs, t->vs);
 	}
 
 	fprint(f, "\tEndGlobalSection\r\n"

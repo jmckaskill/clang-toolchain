@@ -1,7 +1,7 @@
 #include "stream.h"
 #include "tar.h"
 
-#ifndef _WIN32
+#ifndef WIN32
 #include <unistd.h>
 #endif
 
@@ -33,7 +33,7 @@ static const char *clean_tar_linkname(const char *dir, tar_posix_header *t) {
 #define TAR_BLOCK_SIZE UINT64_C(512)
 
 static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
-#ifndef _WIN32
+#ifndef WIN32
 	// terminate the mode field
 	t->uid[0] = 0;
 	int mode = strtol(t->mode, NULL, 8);
@@ -57,17 +57,17 @@ static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
 		return -1;
 	}
 
-#ifndef _WIN32
+#ifndef WIN32
 	chmod(path, mode);
 #endif
 
 	// tar files are padded out to the block size
 	uint64_t extra = ((sz + TAR_BLOCK_SIZE - 1) &~ (TAR_BLOCK_SIZE-1)) - sz;
 	while (extra) {
-		int len, atend;
+		size_t len, atend;
 		s->buffered(s, &len, &atend);
 		if ((uint64_t)len > extra) {
-			len = (int)extra;
+			len = (size_t)extra;
 		}
 		if (len) {
 			s->consume(s, len);
@@ -84,7 +84,7 @@ static int extract_tar_file(tar_posix_header *t, stream *s, const char *dir) {
 }
 
 static int extract_tar_link(tar_posix_header *t, const char *dir) {
-#ifdef _WIN32
+#ifdef WIN32
 	return 0;
 #else
 	char *path = clean_tar_name(dir, t);
@@ -108,7 +108,7 @@ static int extract_tar_link(tar_posix_header *t, const char *dir) {
 
 int extract_tar(stream *s, const char *dir) {
 	for (;;) {
-		int len, atend;
+		size_t len, atend;
 		uint8_t *p = s->buffered(s, &len, &atend);
 		if (len >= TAR_BLOCK_SIZE) {
 			tar_posix_header *t = (tar_posix_header*)p;

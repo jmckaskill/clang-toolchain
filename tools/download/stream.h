@@ -4,7 +4,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <winsock2.h>
 #include <WS2tcpip.h>
 #include <direct.h>
@@ -21,8 +21,8 @@ typedef struct stream stream;
 struct stream {
 	// returns non-zero on error
 	int (*get_more)(stream*);
-	uint8_t *(*buffered)(stream*, int *plen, int *atend);
-	void (*consume)(stream*, int consumed);
+	uint8_t *(*buffered)(stream*, size_t *plen, size_t *atend);
+	void (*consume)(stream*, size_t consumed);
 };
 
 #define HASH_BUFSZ 128

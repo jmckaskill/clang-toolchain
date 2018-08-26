@@ -8,19 +8,19 @@ struct inflate_stream {
 	stream iface;
 	z_stream z;
 	uint8_t buf[256*1024];
-	int consumed, avail;
-	int finished;
+	size_t consumed, avail;
+	size_t finished;
 	stream *source;
 };
 
-static uint8_t *inflate_data(stream *s, int *plen, int *atend) {
+static uint8_t *inflate_data(stream *s, size_t *plen, size_t *atend) {
 	inflate_stream *ds = (inflate_stream*) s;
 	*plen = ds->avail - ds->consumed;
 	*atend = ds->finished;
 	return ds->buf + ds->consumed;
 }
 
-static void consume_inflate(stream *s, int consume) {
+static void consume_inflate(stream *s, size_t consume) {
 	inflate_stream *ds = (inflate_stream*) s;
 	ds->consumed += consume;
 }
@@ -39,18 +39,18 @@ static int inflate_more(stream *s) {
 	ds->consumed = 0;
 
 	for (;;) {
-		int len, atend;
+		size_t len, atend;
 		uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
 
 		if (len) {
-			ds->z.avail_in = len;
+			ds->z.avail_in = len > UINT_MAX ? UINT_MAX : (unsigned) len;
 			ds->z.next_in = src;
 			ds->z.next_out = ds->buf + ds->avail;
-			ds->z.avail_out = sizeof(ds->buf) - ds->avail;
+			ds->z.avail_out = (unsigned) (sizeof(ds->buf) - ds->avail);
 
 			int res = inflate(&ds->z, 0);
-			int consumed = len - ds->z.avail_in;
-			int produced = sizeof(ds->buf) - ds->avail - ds->z.avail_out;
+			size_t consumed = len - ds->z.avail_in;
+			size_t produced = sizeof(ds->buf) - ds->avail - ds->z.avail_out;
 
 			ds->source->consume(ds->source, consumed);
 			ds->avail += produced;
