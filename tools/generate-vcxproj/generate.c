@@ -54,6 +54,7 @@ struct target {
 	char *ninja;
 	char *default_target;
 	string_list *defines;
+	string_list *includes;
 };
 
 static FILE *must_fopen(const char *name, const char *mode) {
@@ -67,9 +68,17 @@ static FILE *must_fopen(const char *name, const char *mode) {
 
 static char *get_string(toml_table_t *t, const char *key, const char *defstr) {
 	const char *val = toml_raw_in(t, key);
+	if (!val) {
+		if (toml_table_in(t, key) || toml_array_in(t, key)) {
+			fprintf(stderr, "wrong type for %s field - expected string\n", key);
+			exit(3);
+		}
+		return defstr ? strdup(defstr) : NULL;
+	}
 	char *ret;
 	if (toml_rtos(val, &ret)) {
-		return defstr ? strdup(defstr) : NULL;
+		fprintf(stderr, "malformed %s field - expected string\n", key);
+		exit(3);
 	}
 	return ret;
 }
@@ -86,6 +95,10 @@ static char *must_get_string(toml_table_t *t, const char *key) {
 static string_list *get_string_list(toml_table_t *t, const char *key) {
 	toml_array_t *array = toml_array_in(t, key);
 	if (!array) {
+		if (toml_raw_in(t, key) || toml_table_in(t, key)) {
+			fprintf(stderr, "wrong type for %s field - expected array\n", key);
+			exit(3);
+		}
 		return NULL;
 	}
 	string_list *list = NULL;
@@ -333,7 +346,7 @@ static int is_debug_target(target *t) {
 	return 0;
 }
 
-static void write_project(FILE *f, project *p, target *tgts, string_list *includes, const char *build) {
+static void write_project(FILE *f, project *p, target *tgts, string_list *sln_defines, string_list *sln_includes, const char *build) {
 	fprint(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
@@ -398,11 +411,20 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|Win32'\">\r\n", t->vs);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>");
-		for (string_list *def = t->defines; def != NULL; def = def->next) {
-			if (def != t->defines) {
+		int first_define = 1;
+		for (string_list *def = sln_defines; def != NULL; def = def->next) {
+			if (!first_define) {
 				fputc(';', f);
 			}
 			fputs(def->str, f);
+			first_define = 0;
+		}
+		for (string_list *def = t->defines; def != NULL; def = def->next) {
+			if (!first_define) {
+				fputc(';', f);
+			}
+			fputs(def->str, f);
+			first_define = 0;
 		}
 		fprintf(f, "</NMakePreprocessorDefinitions>\r\n");
 		fprintf(f, "    <NMakeBuildCommandLine>%s %s</NMakeBuildCommandLine>\r\n", build, njtgt);
@@ -410,7 +432,10 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *includ
 		fprintf(f, "    <NMakeCleanCommandLine>%s -t clean %s</NMakeCleanCommandLine>\r\n", build, njtgt);
 
 		fprint(f, "    <NMakeIncludeSearchPath>$(ProjectDir)");
-		for (string_list *inc = includes; inc != NULL; inc = inc->next) {
+		for (string_list *inc = sln_includes; inc != NULL; inc = inc->next) {
+			fprintf(f, ";$(SolutionDir)\\%s", inc->str);
+		}
+		for (string_list *inc = t->includes; inc != NULL; inc = inc->next) {
 			fprintf(f, ";$(SolutionDir)\\%s", inc->str);
 		}
 		fprintf(f, "</NMakeIncludeSearchPath>\r\n"
@@ -588,10 +613,15 @@ int main(int argc, char *argv[]) {
 		t->ninja = must_get_string(tbl, "ninja");
 		t->default_target = must_get_string(tbl, "default");
 		t->defines = get_string_list(tbl, "defines");
+		t->includes = get_string_list(tbl, "includes");
+		for (string_list *inc = t->includes; inc != NULL; inc = inc->next) {
+			replace_char(inc->str, '/', '\\');
+		}
 		*ptarg = t;
 		ptarg = &t->next;
 	}
 
+	string_list *defines = get_string_list(root, "defines");
 	string_list *includes = get_string_list(root, "includes");
 	const char *slnfile = must_get_string(root, "solution");
 	const char *build = must_get_string(root, "build");
@@ -638,7 +668,7 @@ int main(int argc, char *argv[]) {
 		f = must_fopen(p->file, "wb");
 		generate_uuid(p->uuid, p->file);
 		replace_char(p->file, '/', '\\');
-		write_project(f, p, targets, includes, build);
+		write_project(f, p, targets, defines, includes, build);
 		fclose(f);
 	}
 
