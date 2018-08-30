@@ -9,11 +9,18 @@ struct inflate_stream {
 	z_stream z;
 	uint8_t buf[256*1024];
 	size_t consumed, avail;
-	size_t finished;
+	int finished;
 	stream *source;
 };
 
-static uint8_t *inflate_data(stream *s, size_t *plen, size_t *atend) {
+static void close_inflate(stream *s) {
+	inflate_stream *ds = (inflate_stream*)s;
+	ds->source->close(ds->source);
+	inflateEnd(&ds->z);
+	free(ds);
+}
+
+static const uint8_t *inflate_data(stream *s, size_t *plen, int *atend) {
 	inflate_stream *ds = (inflate_stream*) s;
 	*plen = ds->avail - ds->consumed;
 	*atend = ds->finished;
@@ -39,12 +46,13 @@ static int inflate_more(stream *s) {
 	ds->consumed = 0;
 
 	for (;;) {
-		size_t len, atend;
-		uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
+		size_t len;
+		int atend;
+		const uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
 
 		if (len) {
 			ds->z.avail_in = len > UINT_MAX ? UINT_MAX : (unsigned) len;
-			ds->z.next_in = src;
+			ds->z.next_in = (uint8_t*) src;
 			ds->z.next_out = ds->buf + ds->avail;
 			ds->z.avail_out = (unsigned) (sizeof(ds->buf) - ds->avail);
 
@@ -66,6 +74,7 @@ static int inflate_more(stream *s) {
 				return 0;
 			} else if (res) {
 				fprintf(stderr, "zlib inflate error %d\n", res);
+				ds->finished = 1;
 				return -1;
 			} else if (produced) {
 				// we made forward progress
@@ -80,19 +89,32 @@ static int inflate_more(stream *s) {
 	}
 }
 
-stream *open_inflate(stream *source) {
-	static inflate_stream ds;
-	if (ds.source ? inflateReset2(&ds.z, -15) : inflateInit2(&ds.z, -15)) {
-		fprintf(stderr, "failed to initialize zlib\n");
+static stream *open_zlib(stream *source, int window) {
+	inflate_stream *ds = malloc(sizeof(struct inflate_stream));
+	if (!ds) {
 		return NULL;
 	}
-	ds.source = source;
-	ds.consumed = 0;
-	ds.avail = 0;
-	ds.finished = 0;
-	ds.iface.get_more = &inflate_more;
-	ds.iface.buffered = &inflate_data;
-	ds.iface.consume = &consume_inflate;
-	return &ds.iface;
+	memset(&ds->z, 0, sizeof(ds->z));
+	if (inflateInit2(&ds->z, window)) {
+		free(ds);
+		return NULL;
+	}
+	ds->source = source;
+	ds->consumed = 0;
+	ds->avail = 0;
+	ds->finished = 0;
+	ds->iface.close = &close_inflate;
+	ds->iface.get_more = &inflate_more;
+	ds->iface.buffered = &inflate_data;
+	ds->iface.consume = &consume_inflate;
+	return &ds->iface;
+
 }
 
+stream *open_inflate(stream *source) {
+	return open_zlib(source, -15);
+}
+
+stream *open_gzip(stream *source) {
+	return open_zlib(source, 15 + 32);
+}

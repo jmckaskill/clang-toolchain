@@ -11,7 +11,12 @@ struct file_stream {
 	uint8_t buf[256*1024];
 };
 
-static uint8_t *file_data(stream *s, size_t *plen, size_t *atend) {
+static void close_file(stream *s) {
+	file_stream *fs = (file_stream*)s;
+	free(fs);
+}
+
+static const uint8_t *file_data(stream *s, size_t *plen, int *atend) {
 	file_stream *fs = (file_stream*) s;
 	*plen = fs->avail - fs->consumed;
 	*atend = (fs->f == NULL);
@@ -48,15 +53,18 @@ static int read_more(stream *s) {
 	return 0;
 }
 
-static file_stream gfs;
-
-stream *open_file(FILE *f) {
-	gfs.f = f;
-	gfs.consumed = 0;
-	gfs.avail = 0;
-	gfs.iface.get_more = &read_more;
-	gfs.iface.buffered = &file_data;
-	gfs.iface.consume = &consume_file;
-	return &gfs.iface;
+stream *open_file_stream(FILE *f) {
+	file_stream *fs = (file_stream*)malloc(sizeof(struct file_stream));
+	if (!fs) {
+		return NULL;
+	}
+	fs->f = f;
+	fs->consumed = 0;
+	fs->avail = 0;
+	fs->iface.close = &close_file;
+	fs->iface.get_more = &read_more;
+	fs->iface.buffered = &file_data;
+	fs->iface.consume = &consume_file;
+	return &fs->iface;
 }
 

@@ -81,7 +81,14 @@ struct https_stream {
 	uint8_t buf[32 * 1024];
 };
 
-static uint8_t *https_data(struct stream *s, size_t *plen, size_t *atend) {
+static void close_https(struct stream *s) {
+	https_stream *os = (https_stream*)s;
+	free(os->host);
+	closesocket(os->fd);
+	free(os);
+}
+
+static const uint8_t *https_data(struct stream *s, size_t *plen, size_t *atend) {
 	https_stream *os = (https_stream*) s;
 	*plen = os->avail - os->consumed;
 	if ((int64_t) *plen > os->length_remaining) {
@@ -170,15 +177,18 @@ static char *trim(char *str) {
 	return str;
 }
 
-static struct https_stream gos;
-
 stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 	int redirects = 0;
 	char *free_url = NULL;
+	https_stream *os = calloc(1, sizeof(https_stream));
+	if (!os) {
+		return NULL;
+	}
+	os->fd = -1;
 	for (;;) {
 		if (++redirects == 5) {
 			fprintf(stderr, "too many redirects\n");
-			return NULL;
+			goto err;
 		}
 
 		unsigned is_https;
@@ -190,7 +200,7 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			is_https = 0;
 			url += strlen("http://");
 		} else {
-			return NULL;
+			goto err;
 		}
 
 		const char *path = strchr(url, '/');
@@ -211,33 +221,31 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			*colon = 0;
 		}
 
-		if (gos.host && !strcmp(host, gos.host) && gos.is_https == is_https && gos.port == port) {
+		if (os->host && !strcmp(host, os->host) && os->is_https == is_https && os->port == port) {
 			// we can reuse the existing connection
 			free(host);
-			host = gos.host;
+			host = os->host;
 		} else {
 			int fd = open_client_socket(host, port);
 			if (fd < 0) {
 				fprintf(stderr, "failed to connect to %s\n", host);
 				free(host);
-				return NULL;
+				goto err;
 			}
-			if (gos.host) {
-				free(gos.host);
-				closesocket(gos.fd);
-			}
-			gos.port = port;
-			gos.host = host;
-			gos.fd = fd;
-			gos.is_https = is_https;
-			gos.consumed = 0;
-			gos.avail = 0;
+			free(os->host);
+			closesocket(os->fd);
+			os->port = port;
+			os->host = host;
+			os->fd = fd;
+			os->is_https = is_https;
+			os->consumed = 0;
+			os->avail = 0;
 
 			if (is_https) {
-				br_ssl_client_init_full(&gos.sc, &gos.xc, TAs, TAs_NUM);
-				br_ssl_engine_set_buffers_bidi(&gos.sc.eng, gos.inrec, sizeof(gos.inrec), gos.outrec, sizeof(gos.outrec));
-				br_ssl_client_reset(&gos.sc, host, 0);
-				br_sslio_init(&gos.ctx, &gos.sc.eng, &do_read, &gos.fd, &do_write, &gos.fd);
+				br_ssl_client_init_full(&os->sc, &os->xc, TAs, TAs_NUM);
+				br_ssl_engine_set_buffers_bidi(&os->sc.eng, os->inrec, sizeof(os->inrec), os->outrec, sizeof(os->outrec));
+				br_ssl_client_reset(&os->sc, host, 0);
+				br_sslio_init(&os->ctx, &os->sc.eng, &do_read, &os->fd, &do_write, &os->fd);
 			}
 		}
 
@@ -245,16 +253,16 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 		int reqsz = snprintf(request, sizeof(request), "GET %s HTTP/1.1\r\nHost:%s\r\n\r\n", path, host);
 
 		if (is_https) {
-			int w = br_sslio_write_all(&gos.ctx, request, reqsz);
-			int f = br_sslio_flush(&gos.ctx);
+			int w = br_sslio_write_all(&os->ctx, request, reqsz);
+			int f = br_sslio_flush(&os->ctx);
 			if (w < 0 || f < 0) {
-				fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&gos.sc.eng));
+				fprintf(stderr, "ssl error on write %d\n", br_ssl_engine_last_error(&os->sc.eng));
 				goto err;
 			}
 		} else {
 			char *p = request;
 			while (reqsz) {
-				int w = send(gos.fd, p, reqsz, 0);
+				int w = send(os->fd, p, reqsz, 0);
 				if (w <= 0) {
 					fprintf(stderr, "write error\n");
 					goto err;
@@ -263,7 +271,7 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			}
 		}
 
-		char *hdr = get_line(&gos);
+		char *hdr = get_line(os);
 		if (!hdr) {
 			goto err;
 		}
@@ -282,7 +290,7 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 		unsigned have_location = 0;
 
 		for (;;) {
-			char *p = get_line(&gos);
+			char *p = get_line(os);
 			if (!p) {
 				goto err;
 			} else if (*p == 0) {
@@ -323,12 +331,13 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			}
 			free(free_url);
 			*ptotal = content_length;
-			gos.iface.get_more = &download_https;
-			gos.iface.buffered = &https_data;
-			gos.iface.consume = &consume_https;
-			gos.length_remaining = content_length;
-			gos.last_percent_report = 0;
-			return &gos.iface;
+			os->iface.close = &close_https;
+			os->iface.get_more = &download_https;
+			os->iface.buffered = &https_data;
+			os->iface.consume = &consume_https;
+			os->length_remaining = content_length;
+			os->last_percent_report = 0;
+			return &os->iface;
 
 		default:
 			fprintf(stderr, "http error %d\n", httperr);
@@ -338,9 +347,9 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 
 err:
 	free(free_url);
-	closesocket(gos.fd);
-	free(gos.host);
-	gos.host = NULL;
+	closesocket(os->fd);
+	free(os->host);
+	free(os);
 	return NULL;
 }
 

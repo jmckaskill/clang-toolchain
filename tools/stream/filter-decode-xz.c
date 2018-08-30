@@ -14,7 +14,14 @@ struct xz_stream {
 	stream *source;
 };
 
-static uint8_t *xz_data(stream *s, size_t *plen, size_t *atend) {
+static void close_xz(stream *s) {
+	xz_stream *ds = (xz_stream*)s;
+	xz_dec_end(ds->xz);
+	ds->source->close(ds->source);
+	free(ds);
+}
+
+static const uint8_t *xz_data(stream *s, size_t *plen, int *atend) {
 	xz_stream *ds = (xz_stream*) s;
 	*plen = ds->avail - ds->consumed;
 	*atend = ds->finished;
@@ -40,8 +47,9 @@ static int decode_xz(stream *s) {
 	ds->consumed = 0;
 
 	for (;;) {
-		size_t len, atend;
-		uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
+		size_t len;
+		int atend;
+		const uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
 
 		if (len) {
 			struct xz_buf b;
@@ -67,6 +75,7 @@ static int decode_xz(stream *s) {
 				return 0;
 			} else if (err) {
 				fprintf(stderr, "xz decode failed %d\n", (int)err);
+				ds->finished = 1;
 				return -1;
 			} else if (b.out_pos) {
 				// we made forward progress
@@ -82,24 +91,21 @@ static int decode_xz(stream *s) {
 }
 
 stream *open_xz_decoder(stream *source) {
-	static struct xz_stream ds;
-	if (!ds.xz) {
-		xz_crc32_init();
-		xz_crc64_init();
-		ds.xz = xz_dec_init(XZ_DYNALLOC, 100 * 1024 * 1024);
-		if (!ds.xz) {
-			fprintf(stderr, "failed to create xz\n");
-			return NULL;
-		}
-	} else {
-		xz_dec_reset(ds.xz);
+	xz_crc32_init();
+	xz_crc64_init();
+	struct xz_dec *xz = xz_dec_init(XZ_DYNALLOC, 100 * 1024 * 1024);
+	if (!xz) {
+		return NULL;
 	}
-	ds.source = source;
-	ds.consumed = 0;
-	ds.avail = 0;
-	ds.finished = 0;
-	ds.iface.get_more = &decode_xz;
-	ds.iface.buffered = &xz_data;
-	ds.iface.consume = &consume_xz;
-	return &ds.iface;
+	xz_stream *ds = malloc(sizeof(struct xz_stream));
+	ds->xz = xz;
+	ds->source = source;
+	ds->consumed = 0;
+	ds->avail = 0;
+	ds->finished = 0;
+	ds->iface.close = &close_xz;
+	ds->iface.get_more = &decode_xz;
+	ds->iface.buffered = &xz_data;
+	ds->iface.consume = &consume_xz;
+	return &ds->iface;
 }
