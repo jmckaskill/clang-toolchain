@@ -1,4 +1,4 @@
-#include "stream.h"
+#include "extract.h"
 
 void make_directory(char *file) {
 	char *next = file;

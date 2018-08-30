@@ -1,4 +1,4 @@
-#include "stream.h"
+#include "extract.h"
 #include "tar.h"
 
 #ifndef WIN32

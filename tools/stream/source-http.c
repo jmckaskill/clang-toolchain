@@ -1,23 +1,13 @@
 #include "stream.h"
 #include "bearssl_wrapper.h"
-#include "xz.h"
-#include "tar.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
 
 #ifdef WIN32
-#include <winsock2.h>
-#include <WS2tcpip.h>
 #pragma comment(lib, "ws2_32.lib")
-#pragma comment(lib, "shell32.lib")
-#else
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <unistd.h>
-#define closesocket(fd) close(fd)
+#include <winsock2.h>
 #endif
 
 #ifdef _MSC_VER

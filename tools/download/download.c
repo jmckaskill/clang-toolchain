@@ -1,11 +1,15 @@
-#include "stream.h"
+#include "extract.h"
 #include "tar.h"
 #include "zip.h"
 
-#ifndef WIN32
+#ifdef WIN32
+#pragma comment(lib, "shell32.lib")
+#else
 #include <sys/types.h>
 #include <dirent.h>
 #endif
+
+
 
 static char *trim(char *s) {
 	while (*s == ' ' || *s == '\t') {

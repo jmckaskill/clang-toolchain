@@ -1,4 +1,4 @@
-#include "stream.h"
+#include "extract.h"
 
 
 static int valid_path(const char *name) {

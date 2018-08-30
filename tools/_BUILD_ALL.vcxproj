@@ -14,7 +14,6 @@
     <None Include=".\build.ninja" />
     <None Include=".\download.manifest" />
     <None Include=".\msvc.ninja" />
-    <None Include=".\projects.toml" />
     <None Include=".\src.ninja" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

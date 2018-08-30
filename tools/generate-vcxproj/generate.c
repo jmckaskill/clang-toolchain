@@ -197,8 +197,15 @@ static void print_other(FILE *f, const char *vcxfile, const char *dir, const cha
 static void print_ninja(FILE *f, const char *vcxfile, const char *dir, const char *file) {
 	const char *ext = extension(file);
 	if (!strcasecmp(ext, ".ninja")
-		|| !strcasecmp(file, "download.manifest")
-		|| !strcasecmp(file, "projects.toml")) {
+		|| !strcasecmp(file, "download.manifest")) {
+		fprint(f, "    <None Include=\"");
+		print_relative_path(f, vcxfile, dir);
+		fprintf(f, "%s\" />\r\n", file);
+	}
+}
+
+static void print_generate(FILE *f, const char *vcxfile, const char *dir, const char *file) {
+	if (!strcasecmp(file, "projects.toml")) {
 		fprint(f, "    <None Include=\"");
 		print_relative_path(f, vcxfile, dir);
 		fprintf(f, "%s\" />\r\n", file);
@@ -456,7 +463,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"</Project>\r\n");
 }
 
-static void write_command(FILE *f, command *c, target *targets, unsigned add_ninja_files) {
+static void write_command(FILE *f, command *c, target *targets, print_fn files_fn) {
 	fprintf(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
@@ -469,8 +476,8 @@ static void write_command(FILE *f, command *c, target *targets, unsigned add_nin
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
-	if (add_ninja_files) {
-		print_files(f, &print_ninja, "", ".");
+	if (files_fn) {
+		print_files(f, files_fn, "", ".");
 	}
 	fprint(f, "  </ItemGroup>\r\n");
 	fprint(f, "  <PropertyGroup Label=\"Globals\">\r\n");
@@ -646,7 +653,7 @@ int main(int argc, char *argv[]) {
 
 	printf("generating _BUILD_ALL.vcxproj\n");
 	f = must_fopen("_BUILD_ALL.vcxproj", "wb");
-	write_command(f, &def, targets, 1);
+	write_command(f, &def, targets, &print_ninja);
 	fclose(f);
 
 	command gen;
@@ -659,7 +666,7 @@ int main(int argc, char *argv[]) {
 
 		printf("generating _GENERATE_VCXPROJ.vcxproj\n");
 		f = must_fopen("_GENERATE_VCXPROJ.vcxproj", "wb");
-		write_command(f, &gen, targets, 0);
+		write_command(f, &gen, targets, &print_generate);
 		fclose(f);
 	}
 

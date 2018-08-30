@@ -50,7 +50,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>$(SolutionDir)\bin\obj\msvc-debug\tomlc99.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>_WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-debug/tomlc99.lib</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-debug/tomlc99.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-debug/tomlc99.lib</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-debug/tomlc99.lib</NMakeCleanCommandLine>
@@ -61,7 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>$(SolutionDir)\bin\obj\msvc-release\tomlc99.lib</NMakeOutput>
-    <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-release/tomlc99.lib</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-release/tomlc99.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-release/tomlc99.lib</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-release/tomlc99.lib</NMakeCleanCommandLine>

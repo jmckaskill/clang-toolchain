@@ -46,6 +46,12 @@ target = "bin/obj/{TGT}/zlib.lib"
 dirs = ["zlib"]
 
 [[project]]
+name = "stream"
+file = "stream/stream.vcxproj"
+target = "bin/obj/{TGT}/stream.lib"
+dirs = ["stream"]
+
+[[project]]
 name = "bearssl"
 file = "bearssl.vcxproj"
 target = "bin/obj/{TGT}/bearssl.lib"

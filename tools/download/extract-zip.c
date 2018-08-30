@@ -1,4 +1,4 @@
-#include "stream.h"
+#include "extract.h"
 #include "zip.h"
 
 static uint64_t ftell64(FILE *f) {
