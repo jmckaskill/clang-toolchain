@@ -11,16 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="container-tar.c" />
+    <ClCompile Include="container-zip.c" />
     <ClCompile Include="filter-decode-xz.c" />
     <ClCompile Include="filter-deflate.c" />
     <ClCompile Include="filter-limit.c" />
     <ClCompile Include="filter-sha256.c" />
+    <ClCompile Include="path.c" />
+    <ClCompile Include="source-buffer.c" />
     <ClCompile Include="source-file.c" />
     <ClCompile Include="source-http.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ssl-roots.h" />
     <ClInclude Include="stream.h" />
+    <ClInclude Include="tar.h" />
+    <ClInclude Include="zip.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

@@ -27,7 +27,13 @@ Global
 		Release|ALL = Release|ALL
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Debug|ALL.ActiveCfg = Debug|x64
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.ActiveCfg = Release|x64
+		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.Build.0 = Release|x64
+		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.Debug|ALL.ActiveCfg = Debug|x64
+		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.Release|ALL.ActiveCfg = Release|x64
 		{0E2DCA06-0733-563C-A5DD-2B913CE36554}.Debug|ALL.ActiveCfg = Debug|x64
+		{0E2DCA06-0733-563C-A5DD-2B913CE36554}.Debug|ALL.Build.0 = Debug|x64
 		{0E2DCA06-0733-563C-A5DD-2B913CE36554}.Release|ALL.ActiveCfg = Release|x64
 		{F1732B3D-3094-5E00-9DA8-209ACA0BEB6C}.Debug|ALL.ActiveCfg = Debug|x64
 		{F1732B3D-3094-5E00-9DA8-209ACA0BEB6C}.Release|ALL.ActiveCfg = Release|x64
@@ -41,12 +47,6 @@ Global
 		{76160DE2-E43F-54FF-8574-4234B74B3E0E}.Release|ALL.ActiveCfg = Release|x64
 		{7E2BE08C-E887-5763-BB3D-57C866C6BF63}.Debug|ALL.ActiveCfg = Debug|x64
 		{7E2BE08C-E887-5763-BB3D-57C866C6BF63}.Release|ALL.ActiveCfg = Release|x64
-		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.Debug|ALL.ActiveCfg = Debug|x64
-		{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}.Release|ALL.ActiveCfg = Release|x64
-		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Debug|ALL.ActiveCfg = Debug|x64
-		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Debug|ALL.Build.0 = Debug|x64
-		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.ActiveCfg = Release|x64
-		{FE12F84D-0E5E-5887-AEB5-9ED71CD9C65B}.Release|ALL.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

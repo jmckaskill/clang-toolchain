@@ -1,9 +1,10 @@
 #include "extract.h"
-#include "tar.h"
-#include "zip.h"
 
 #ifdef WIN32
 #pragma comment(lib, "shell32.lib")
+#include <windows.h>
+#include <direct.h>
+#define chdir _chdir
 #else
 #include <sys/types.h>
 #include <dirent.h>
@@ -209,7 +210,7 @@ int main(int argc, char *argv[]) {
 				return 5;
 			}
 			s = open_sha256_hash(s, hash);
-			if (extract_file(s, "download.tmp", sz)) {
+			if (extract_file(s, ".", "download.tmp", 0644, sz)) {
 				return -1;
 			}
 
@@ -246,25 +247,30 @@ int main(int argc, char *argv[]) {
 		int err;
 		size_t urlsz = strlen(url);
 		if (ends_with(url, urlsz, ".txz") || ends_with(url, urlsz, ".tar.xz")) {
-			stream *s = open_file(f);
-			s = open_xz_decoder(s);
-			err = extract_tar(s, path);
+			container *c = open_tar(open_xz_decoder(open_file_stream(f)));
+			err = extract_container(c, path);
+			c->close(c);
 
 		} else if (ends_with(url, urlsz, ".tar")) {
-			stream *s = open_file(f);
-			err = extract_tar(s, path);
+			container *c = open_tar(open_file_stream(f));
+			err = extract_container(c, path);
+			c->close(c);
 
 		} else if (ends_with(url, urlsz, ".zip")) {
-			err = extract_zip(f, path);
+			container *c = open_zip(f);
+			err = extract_container(c, path);
+			c->close(c);
 
 		} else if (ends_with(url, urlsz, ".xz")) {
-			stream *s = open_file(f);
+			stream *s = open_file_stream(f);
 			s = open_xz_decoder(s);
-			err = extract_file(s, path, 0);
+			err = extract_file(s, ".", path, 0644, 0);
+			s->close(s);
 
 		} else {
-			stream *s = open_file(f);
-			err = extract_file(s, path, 0);
+			stream *s = open_file_stream(f);
+			err = extract_file(s, ".", path, 0644, 0);
+			s->close(s);
 		}
 
 		fclose(f);

@@ -12,6 +12,9 @@ build $obj/stream/filter-limit.o: cc stream/filter-limit.c
 build $obj/stream/filter-sha256.o: cc stream/filter-sha256.c
 build $obj/stream/source-http.o: cc stream/source-http.c
 build $obj/stream/source-file.o: cc stream/source-file.c
+build $obj/stream/container-tar.o: cc stream/container-tar.c
+build $obj/stream/container-zip.o: cc stream/container-zip.c
+build $obj/stream/path.o: cc stream/path.c
 build $obj/stream.lib: lib $
  $obj/stream/filter-decode-xz.o $
  $obj/stream/filter-deflate.o $
@@ -19,17 +22,14 @@ build $obj/stream.lib: lib $
  $obj/stream/filter-sha256.o $
  $obj/stream/source-http.o $
  $obj/stream/source-file.o $
+ $obj/stream/container-tar.o $
+ $obj/stream/container-zip.o $
+ $obj/stream/path.o $
 
-build $obj/download/extract-file.o: cc download/extract-file.c
-build $obj/download/extract-tar.o: cc download/extract-tar.c
-build $obj/download/extract-zip.o: cc download/extract-zip.c
-build $obj/download/path.o: cc download/path.c
+build $obj/download/extract.o: cc download/extract.c
 build $obj/download/download.o: cc download/download.c
 build $bin/download.exe: clink $
- $obj/download/extract-file.o $
- $obj/download/extract-tar.o $
- $obj/download/extract-zip.o $
- $obj/download/path.o $
+ $obj/download/extract.o $
  $obj/download/download.o $
  $obj/stream.lib $
  $obj/bearssl.lib $

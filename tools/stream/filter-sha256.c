@@ -16,7 +16,7 @@ static void close_sha256(stream* s) {
 	free(ls);
 }
 
-static const uint8_t *sha256_data(stream *s, size_t *plen, size_t *atend) {
+static const uint8_t *sha256_data(stream *s, size_t *plen, int *atend) {
 	sha256_stream *ls = (sha256_stream*) s;
 	const uint8_t *p = ls->source->buffered(ls->source, plen, atend);
 	if (*plen == 0 && *atend) {

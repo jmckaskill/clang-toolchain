@@ -22,3 +22,5 @@ Release
 .ninja_log
 download.done
 .DS_Store
+download.hash
+/tools/ninja

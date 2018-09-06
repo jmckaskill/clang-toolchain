@@ -8,6 +8,7 @@
 #ifdef WIN32
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
+#include <WS2tcpip.h>
 #endif
 
 #ifdef _MSC_VER
@@ -88,7 +89,7 @@ static void close_https(struct stream *s) {
 	free(os);
 }
 
-static const uint8_t *https_data(struct stream *s, size_t *plen, size_t *atend) {
+static const uint8_t *https_data(struct stream *s, size_t *plen, int *atend) {
 	https_stream *os = (https_stream*) s;
 	*plen = os->avail - os->consumed;
 	if ((int64_t) *plen > os->length_remaining) {

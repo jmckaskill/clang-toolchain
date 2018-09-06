@@ -12,15 +12,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="download.c" />
-    <ClCompile Include="extract-file.c" />
-    <ClCompile Include="extract-tar.c" />
-    <ClCompile Include="extract-zip.c" />
-    <ClCompile Include="path.c" />
+    <ClCompile Include="extract.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extract.h" />
-    <ClInclude Include="tar.h" />
-    <ClInclude Include="zip.h" />
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>

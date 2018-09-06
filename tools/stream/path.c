@@ -1,4 +1,4 @@
-#include "extract.h"
+#include "stream.h"
 
 
 static int valid_path(const char *name) {
@@ -20,19 +20,18 @@ static int valid_path(const char *name) {
 	return 1;
 }
 
-char *clean_path(const char *dir, const char *name1, const char *name2) {
-	if (!*dir || !valid_path(name1) || !valid_path(name2) || (!*name1 && !*name2)) {
-		return NULL;
-	}
-	char *ret = (char*) malloc(strlen(dir) + 1 + strlen(name1) + 1 + strlen(name2) + 1);
-	strcpy(ret, dir);
+char *clean_path(const char *name1, const char *name2) {
+	char *ret = (char*) malloc(strlen(name1) + 1 + strlen(name2) + 1);
+	*ret = 0;
 	if (*name1) {
-		strcat(ret, "/");
 		strcat(ret, name1);
 	}
 	if (*name2) {
-		strcat(ret, "/");
 		strcat(ret, name2);
+	}
+	if (!*ret || !valid_path(ret)) {
+		free(ret);
+		return NULL;
 	}
 	return ret;
 }

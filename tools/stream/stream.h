@@ -5,6 +5,7 @@
 #include <inttypes.h>
 
 typedef struct stream stream;
+typedef struct container container;
 
 struct stream {
 	// returns non-zero on error
@@ -12,6 +13,17 @@ struct stream {
 	int (*get_more)(stream*);
 	const uint8_t *(*buffered)(stream*, size_t *plen, int *atend);
 	void (*consume)(stream*, size_t consumed);
+};
+
+struct container {
+	void(*close)(container*);
+	int(*next_file)(container*);
+	stream*(*open_file)(container*);
+
+	const char *file_path;
+	const char *link_target;
+	uint64_t file_size;
+	int file_mode;
 };
 
 #define HASH_BUFSZ 128
@@ -25,4 +37,9 @@ stream *open_xz_decoder(stream *source);
 stream *open_inflate(stream *source);
 stream *open_gzip(stream *source);
 stream *open_sha256_hash(stream *source, char *hash);
+
+container *open_zip(FILE *f);
+container *open_tar(stream *s);
+
+char *clean_path(const char *name1, const char *name2);
 
