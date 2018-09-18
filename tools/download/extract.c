@@ -22,7 +22,7 @@ void make_directory(char *file) {
 	}
 }
 
-static FILE *open_path(const char *dir, const char *file) {
+FILE *open_path(const char *dir, const char *file, int mode) {
 	char *path = malloc(strlen(dir) + 1 + strlen(file) + 1);
 	if (!path) {
 		return NULL;
@@ -33,17 +33,27 @@ static FILE *open_path(const char *dir, const char *file) {
 	make_directory(path);
 
 	FILE *f = fopen(path, "wb");
+#ifndef WIN32
+	if (f) {
+		fchmod(fileno(f), mode);
+	}
+#endif
 	free(path);
 	return f;
 }
 
-int extract_file(stream *s, const char *dir, const char *file, int mode, uint64_t progress_size) {
-	FILE *f = open_path(dir, file);
+int extract_path(stream *s, const char *dir, const char *file, int mode) {
+	FILE *f = open_path(dir, file, mode);
 	if (!f) {
-		fprintf(stderr, "failed to open %s/%s\n", dir, file);
 		return -1;
 	}
+	printf("extracting %s/%s\n", dir, file);
+	int err = extract_file(s, f, 0);
+	fclose(f);
+	return err;
+}
 
+int extract_file(stream *s, FILE *f, uint64_t progress_size) {
 	uint64_t recvd = 0;
 	int last_percent = 0;
 	if (progress_size > 1024 * 1024) {
@@ -52,50 +62,43 @@ int extract_file(stream *s, const char *dir, const char *file, int mode, uint64_
 		printf("downloading %"PRIu64" kB  0%%", progress_size / 1024);
 	} else if (progress_size) {
 		printf("downloading %"PRIu64" B  0%%", progress_size);
-	} else {
-		printf("extracting %s/%s", dir, file);
 	}
+	if (progress_size) {
 #ifdef WIN32
-	printf("\n");
+		printf("\n");
 #endif
-	fflush(stdout);
+		fflush(stdout);
+	}
 
+	size_t len = 0;
 	for (;;) {
-		size_t len;
-		int atend;
-		const uint8_t *p = s->buffered(s, &len, &atend);
-		if (len) {
-			if (fwrite(p, 1, len, f) != len) {
-				fprintf(stderr, "failed to write output file\n");
-				fclose(f);
-				return -1;
-			}
-			s->consume(s, len);
-			recvd += len;
-			if (progress_size) {
-				int percent = (int)(recvd * 100 / progress_size);
-				if (percent != last_percent) {
-#ifdef WIN32
-					printf("%2d%%\n", percent);
-#else
-					printf("\b\b\b%2d%%", percent);
-#endif
-					fflush(stdout);
-					last_percent = percent;
-				}
-			}
-		} else if (atend) {
+		const uint8_t *p = s->read(s, len, 1, &len);
+		if (!len) {
 #ifndef WIN32
 			if (progress_size) {
 				printf("\n");
 				fflush(stdout);
 			}
-			fchmod(fileno(f), mode);
 #endif
-			fclose(f);
 			return 0;
-		} else if (s->get_more(s)) {
+		}
+
+		if (fwrite(p, 1, len, f) != len) {
+			fprintf(stderr, "failed to write output file\n");
 			return -1;
+		}
+		recvd += len;
+		if (progress_size) {
+			int percent = (int)(recvd * 100 / progress_size);
+			if (percent != last_percent) {
+#ifdef WIN32
+				printf("%2d%%\n", percent);
+#else
+				printf("\b\b\b%2d%%", percent);
+#endif
+				fflush(stdout);
+				last_percent = percent;
+			}
 		}
 	}
 }
@@ -131,7 +134,7 @@ int extract_container(container *c, const char *dir) {
 			if (!s) {
 				return -1;
 			}
-			int err = extract_file(s, dir, c->file_path, c->file_mode, 0);
+			int err = extract_path(s, dir, c->file_path, c->file_mode);
 			s->close(s);
 			if (err) {
 				return err;

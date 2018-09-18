@@ -15,8 +15,8 @@
     <ClCompile Include="container-zip.c" />
     <ClCompile Include="filter-decode-xz.c" />
     <ClCompile Include="filter-deflate.c" />
+    <ClCompile Include="filter-hash.c" />
     <ClCompile Include="filter-limit.c" />
-    <ClCompile Include="filter-sha256.c" />
     <ClCompile Include="path.c" />
     <ClCompile Include="source-buffer.c" />
     <ClCompile Include="source-file.c" />

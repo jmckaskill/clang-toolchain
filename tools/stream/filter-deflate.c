@@ -7,106 +7,105 @@ typedef struct inflate_stream inflate_stream;
 struct inflate_stream {
 	stream iface;
 	z_stream z;
-	uint8_t buf[256*1024];
-	size_t consumed, avail;
+	size_t avail, bufsz, consumed;
 	int finished;
 	stream *source;
+	uint8_t *buf;
+	unsigned read_in;
 };
 
 static void close_inflate(stream *s) {
 	inflate_stream *ds = (inflate_stream*)s;
 	ds->source->close(ds->source);
 	inflateEnd(&ds->z);
+	free(ds->buf);
 	free(ds);
 }
 
-static const uint8_t *inflate_data(stream *s, size_t *plen, int *atend) {
+static const uint8_t *read_inflate(stream *s, size_t consume, size_t need, size_t *plen) {
 	inflate_stream *ds = (inflate_stream*) s;
-	*plen = ds->avail - ds->consumed;
-	*atend = ds->finished;
-	return ds->buf + ds->consumed;
-}
 
-static void consume_inflate(stream *s, size_t consume) {
-	inflate_stream *ds = (inflate_stream*) s;
+	// see if we can service from the existing buffer
 	ds->consumed += consume;
-}
-
-static int inflate_more(stream *s) {
-	inflate_stream *ds = (inflate_stream*) s;
-	if (ds->finished) {
-		fprintf(stderr, "calling inflate more after finished\n");
-		return -1;
+	if (ds->finished || ds->consumed + need <= ds->avail) {
+		*plen = ds->avail - ds->consumed;
+		return ds->buf + ds->consumed;
 	}
 
+	// compress the buffer
 	if (ds->consumed && ds->consumed < ds->avail) {
 		memmove(ds->buf, ds->buf + ds->consumed, ds->avail - ds->consumed);
 	}
 	ds->avail -= ds->consumed;
 	ds->consumed = 0;
 
-	for (;;) {
-		size_t len;
-		int atend;
-		const uint8_t *src = ds->source->buffered(ds->source, &len, &atend);
+	// get more data
+	do {
+		if (ds->z.avail_in) {
+			if (ds->avail == ds->bufsz) {
+				size_t bufsz = ds->bufsz + 32 * 1024;
+				uint8_t *buf = realloc(ds->buf, bufsz);
+				if (!buf) {
+					goto err;
+				}
+				ds->bufsz = bufsz;
+				ds->buf = buf;
+			}
 
-		if (len) {
-			ds->z.avail_in = len > UINT_MAX ? UINT_MAX : (unsigned) len;
-			ds->z.next_in = (uint8_t*) src;
 			ds->z.next_out = ds->buf + ds->avail;
-			ds->z.avail_out = (unsigned) (sizeof(ds->buf) - ds->avail);
+			ds->z.avail_out = (unsigned) (ds->bufsz - ds->avail);
 
 			int res = inflate(&ds->z, 0);
-			size_t consumed = len - ds->z.avail_in;
-			size_t produced = sizeof(ds->buf) - ds->avail - ds->z.avail_out;
-
-			ds->source->consume(ds->source, consumed);
+			size_t produced = ds->bufsz - ds->avail - ds->z.avail_out;
 			ds->avail += produced;
 
 			if (res == Z_STREAM_END) {
-				// check that upstream is done too
-				ds->source->buffered(ds->source, &len, &atend);
-				if (len || !atend) {
-					fprintf(stderr, "zlib stream finished before source\n");
-					return -1;
-				}
 				ds->finished = 1;
-				return 0;
+				break;
 			} else if (res) {
 				fprintf(stderr, "zlib inflate error %d\n", res);
-				ds->finished = 1;
-				return -1;
+				goto err;
 			} else if (produced) {
-				// we made forward progress
-				return 0;
+				continue;
 			}
 		}
 
-		// ask upstream to get more
-		if (ds->source->get_more(ds->source)) {
-			return -1;
+		// read more from upstream
+		size_t avail_in;
+		ds->z.next_in = (uint8_t*) ds->source->read(ds->source, ds->read_in - ds->z.avail_in, ds->z.avail_in + 1, &avail_in);
+		ds->z.avail_in = (avail_in > UINT_MAX) ? UINT_MAX : (unsigned)avail_in;
+		ds->read_in = ds->z.avail_in;
+		if (!ds->read_in) {
+			break;
 		}
-	}
+
+	} while (need > ds->avail);
+
+	*plen = ds->avail;
+	return ds->buf;
+err:
+	ds->finished = 1;
+	*plen = 0;
+	return NULL;
 }
 
 static stream *open_zlib(stream *source, int window) {
-	inflate_stream *ds = malloc(sizeof(struct inflate_stream));
-	if (!ds) {
+	if (!source) {
 		return NULL;
 	}
-	memset(&ds->z, 0, sizeof(ds->z));
+	inflate_stream *ds = calloc(1, sizeof(struct inflate_stream));
+	if (!ds) {
+		source->close(source);
+		return NULL;
+	}
 	if (inflateInit2(&ds->z, window)) {
+		source->close(source);
 		free(ds);
 		return NULL;
 	}
 	ds->source = source;
-	ds->consumed = 0;
-	ds->avail = 0;
-	ds->finished = 0;
 	ds->iface.close = &close_inflate;
-	ds->iface.get_more = &inflate_more;
-	ds->iface.buffered = &inflate_data;
-	ds->iface.consume = &consume_inflate;
+	ds->iface.read = &read_inflate;
 	return &ds->iface;
 
 }

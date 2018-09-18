@@ -9,7 +9,7 @@ build $TGT: phony $
 build $obj/stream/filter-decode-xz.o: cc stream/filter-decode-xz.c
 build $obj/stream/filter-deflate.o: cc stream/filter-deflate.c
 build $obj/stream/filter-limit.o: cc stream/filter-limit.c
-build $obj/stream/filter-sha256.o: cc stream/filter-sha256.c
+build $obj/stream/filter-hash.o: cc stream/filter-hash.c
 build $obj/stream/source-http.o: cc stream/source-http.c
 build $obj/stream/source-file.o: cc stream/source-file.c
 build $obj/stream/container-tar.o: cc stream/container-tar.c
@@ -19,7 +19,7 @@ build $obj/stream.lib: lib $
  $obj/stream/filter-decode-xz.o $
  $obj/stream/filter-deflate.o $
  $obj/stream/filter-limit.o $
- $obj/stream/filter-sha256.o $
+ $obj/stream/filter-hash.o $
  $obj/stream/source-http.o $
  $obj/stream/source-file.o $
  $obj/stream/container-tar.o $

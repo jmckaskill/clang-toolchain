@@ -1,4 +1,5 @@
 #include "extract.h"
+#include "bearssl_wrapper.h"
 
 #ifdef WIN32
 #pragma comment(lib, "shell32.lib")
@@ -204,17 +205,29 @@ int main(int argc, char *argv[]) {
 		if (!strncmp(url, "http://", strlen("http://"))
 		|| !strncmp(url, "https://", strlen("https://"))) {
 			uint64_t sz;
-			char hash[HASH_BUFSZ];
-			stream *s = open_http_downloader(url, &sz);
+			br_sha256_context ctx;
+			br_sha256_init(&ctx);
+			stream *s = open_hash(open_http_downloader(url, &sz), &ctx.vtable);
 			if (s == NULL) {
 				return 5;
 			}
-			s = open_sha256_hash(s, hash);
-			if (extract_file(s, ".", "download.tmp", 0644, sz)) {
+			f = fopen("download.tmp", "w+b");
+			if (!f) {
+				return 6;
+			}
+			if (extract_file(s, f, sz)) {
 				return -1;
 			}
 
-			switch (test_map("download.hash", url, hash)) {
+			uint8_t hash[br_sha256_SIZE];
+			br_sha256_out(&ctx, hash);
+			char str[128];
+			strcpy(str, "sha256:");
+			for (int i = 0; i < br_sha256_SIZE; i++) {
+				sprintf(str + strlen(str), "%02x", hash[i]);
+			}
+
+			switch (test_map("download.hash", url, str)) {
 			case MATCH:
 				break;
 			case MISMATCH:
@@ -222,13 +235,16 @@ int main(int argc, char *argv[]) {
 				return 10;
 			case NOVAL:
 				fprintf(stderr, "updating hash for %s\n", url);
-				if (update_map("download.hash", url, hash)) {
+				if (update_map("download.hash", url, str)) {
 					return 11;
 				}
 				break;
 			}
 
-			f = fopen("download.tmp", "rb");
+			fflush(f);
+			fclose(f);
+			f = fopen("download.tmp", "r+b");
+			fseek(f, 0, SEEK_SET);
 
 		} else if (!strncmp(url, "file:", strlen("file:"))) {
 			const char *source = url + strlen("file:");
@@ -264,12 +280,12 @@ int main(int argc, char *argv[]) {
 		} else if (ends_with(url, urlsz, ".xz")) {
 			stream *s = open_file_stream(f);
 			s = open_xz_decoder(s);
-			err = extract_file(s, ".", path, 0644, 0);
+			err = extract_path(s, ".", path, 0644);
 			s->close(s);
 
 		} else {
 			stream *s = open_file_stream(f);
-			err = extract_file(s, ".", path, 0644, 0);
+			err = extract_path(s, ".", path, 0644);
 			s->close(s);
 		}
 

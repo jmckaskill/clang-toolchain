@@ -72,93 +72,100 @@ struct https_stream {
 	br_ssl_client_context sc;
 	br_x509_minimal_context xc;
 	int fd, port;
-	size_t consumed, avail;
+	size_t bufsz, avail, consumed;
 	unsigned is_https;
 	char *host;
 	int64_t length_remaining;
 	int last_percent_report;
 	uint8_t inrec[32 * 1024];
 	uint8_t outrec[32 * 1024];
-	uint8_t buf[32 * 1024];
+	uint8_t *buf;
 };
 
 static void close_https(struct stream *s) {
 	https_stream *os = (https_stream*)s;
 	free(os->host);
 	closesocket(os->fd);
+	free(os->buf);
 	free(os);
 }
 
-static const uint8_t *https_data(struct stream *s, size_t *plen, int *atend) {
+static const uint8_t *read_https(struct stream *s, size_t consume, size_t need, size_t *plen) {
 	https_stream *os = (https_stream*) s;
-	*plen = os->avail - os->consumed;
-	if ((int64_t) *plen > os->length_remaining) {
-		*plen = (size_t) os->length_remaining;
+	os->consumed += consume;
+	os->length_remaining -= consume;
+	if ((int64_t)need > os->length_remaining) {
+		need = (size_t)os->length_remaining;
 	}
-	if (atend) {
-		*atend = (os->length_remaining == 0);
-	}
-	return os->buf + os->consumed;
-}
 
-static void consume_https(struct stream *s, size_t consumed) {
-	https_stream *os = (https_stream*) s;
-	os->consumed += consumed;
-	os->length_remaining -= consumed;
-}
-
-static int download_https(struct stream *s) {
-	https_stream *os = (https_stream*) s;
-	if (!os->length_remaining) {
-		fprintf(stderr, "calling download more after the download is finished");
-		return -1;
+	// see if we can service from the existing buffer
+	if (os->consumed + need <= os->avail) {
+		*plen = os->avail - os->consumed;
+		return os->buf + os->consumed;
 	}
+
+	// compress the buffer
 	if (os->consumed && os->consumed < os->avail) {
 		memmove(os->buf, os->buf + os->consumed, os->avail - os->consumed);
 	}
 	os->avail -= os->consumed;
 	os->consumed = 0;
-	int r;
-	if (os->is_https) {
-		r = br_sslio_read(&os->ctx, os->buf + os->avail, sizeof(os->buf) - os->avail);
-		if (r <= 0) {
-			fprintf(stderr, "ssl error on read %d\n", br_ssl_engine_last_error(os->ctx.engine));
-			return -1;
+
+	// get more data
+	while (os->avail < need) {
+		if (os->avail == os->bufsz) {
+			size_t bufsz = os->bufsz + 32 * 1024;
+			uint8_t *buf = realloc(os->buf, bufsz);
+			if (!buf) {
+				goto err;
+			}
+			os->buf = buf;
+			os->bufsz = bufsz;
 		}
-	} else {
-		r = recv(os->fd, (char*)os->buf + os->avail, (int) (sizeof(os->buf) - os->avail), 0);
-		if (r <= 0) {
-			fprintf(stderr, "error on read\n");
-			return -1;
+		int r;
+		if (os->is_https) {
+			r = br_sslio_read(&os->ctx, os->buf + os->avail, os->bufsz - os->avail);
+			if (r <= 0) {
+				fprintf(stderr, "ssl error on read %d\n", br_ssl_engine_last_error(os->ctx.engine));
+				goto err;
+			}
+		} else {
+			r = recv(os->fd, (char*)os->buf + os->avail, (int)(os->bufsz - os->avail), 0);
+			if (r <= 0) {
+				fprintf(stderr, "error on read\n");
+				goto err;
+			}
+		}
+		os->avail += r;
+		if ((int64_t)os->avail > os->length_remaining) {
+			goto err;
 		}
 	}
-	os->avail += r;
-	return 0;
+	*plen = os->avail;
+	return os->buf;
+err:
+	os->length_remaining = 0;
+	*plen = 0;
+	return NULL;
 }
 
 static char *get_line(struct https_stream *os) {
+	size_t line_len = 0;
 	for (;;) {
 		os->length_remaining = INT64_MAX;
-		size_t bufsz;
-		char *line = (char*) https_data(&os->iface, &bufsz, NULL);
-		char *nl = memchr(line, '\n', bufsz);
-		if (!nl) {
-			if (bufsz > 512) {
-				fprintf(stderr, "overlong header line\n");
-				return NULL;
+		char *line = (char*) read_https(&os->iface, 0, line_len+1, &line_len);
+		char *nl = memchr(line, '\n', line_len);
+		if (nl) {
+			os->consumed += nl - line + 1;
+			if (nl > line && nl[-1] == '\r') {
+				nl--;
 			}
-			if (download_https(&os->iface)) {
-				return NULL;
-			}
-			continue;
+			*nl = 0;
+			return line;
+		} else if (line_len > 512) {
+			fprintf(stderr, "overlong header line\n");
+			return NULL;
 		}
-
-		os->consumed = nl + 1 - (char*) os->buf;
-		if (nl[-1] == '\r') {
-			nl--;
-		}
-		*nl = 0;
-		return line;
 	}
 }
 
@@ -185,6 +192,8 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 	if (!os) {
 		return NULL;
 	}
+	os->iface.close = &close_https;
+	os->iface.read = &read_https;
 	os->fd = -1;
 	for (;;) {
 		if (++redirects == 5) {
@@ -239,8 +248,8 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			os->host = host;
 			os->fd = fd;
 			os->is_https = is_https;
-			os->consumed = 0;
 			os->avail = 0;
+			os->consumed = 0;
 
 			if (is_https) {
 				br_ssl_client_init_full(&os->sc, &os->xc, TAs, TAs_NUM);
@@ -332,10 +341,6 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 			}
 			free(free_url);
 			*ptotal = content_length;
-			os->iface.close = &close_https;
-			os->iface.get_more = &download_https;
-			os->iface.buffered = &https_data;
-			os->iface.consume = &consume_https;
 			os->length_remaining = content_length;
 			os->last_percent_report = 0;
 			return &os->iface;
@@ -348,9 +353,7 @@ stream *open_http_downloader(const char *url, uint64_t *ptotal) {
 
 err:
 	free(free_url);
-	closesocket(os->fd);
-	free(os->host);
-	free(os);
+	close_https(&os->iface);
 	return NULL;
 }
 

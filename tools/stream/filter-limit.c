@@ -10,48 +10,36 @@ struct limit_stream {
 
 static void close_limit(stream *s) {
 	// Stream limiters are used when the underlying source
-	// is used across multiple stream chains. As such we 
+	// is used across multiple stream chains. As such we
 	// do _not_ close the underlying source.
 	free(s);
 }
 
-static const uint8_t *limit_data(stream *s, size_t *plen, int *atend) {
+static const uint8_t *read_limit(stream *s, size_t consume, size_t need, size_t *plen) {
 	limit_stream *ls = (limit_stream*) s;
-	const uint8_t *ret = ls->source->buffered(ls->source, plen, atend);
-	if ((uint64_t) *plen >= ls->left) {
-		*atend = 1;
+	ls->left -= consume;
+	if ((uint64_t)need > ls->left) {
+		need = (size_t)ls->left;
+	}
+	const uint8_t *ret = ls->source->read(ls->source, consume, need, plen);
+	if ((uint64_t) *plen > ls->left) {
 		*plen = (size_t) ls->left;
-	} else {
-		*atend = 0;
 	}
 	return ret;
 }
 
-static void consume_limit(stream *s, size_t consumed) {
-	limit_stream *ls = (limit_stream*) s;
-	ls->left -= consumed;
-	ls->source->consume(ls->source, consumed);
-}
-
-static int limit_get_more(stream *s) {
-	limit_stream *ls = (limit_stream*) s;
-	if (!ls->left) {
-		fprintf(stderr, "read over the end of a limit\n");
-		return -1;
-	}
-	return ls->source->get_more(ls->source);
-}
-
 stream *open_limited(stream *source, uint64_t size) {
+	if (!source) {
+		return NULL;
+	}
 	limit_stream *ls = malloc(sizeof(struct limit_stream));
 	if (!ls) {
+		source->close(source);
 		return NULL;
 	}
 	ls->source = source;
 	ls->left = size;
 	ls->iface.close = &close_limit;
-	ls->iface.get_more = &limit_get_more;
-	ls->iface.buffered = &limit_data;
-	ls->iface.consume = &consume_limit;
+	ls->iface.read = &read_limit;
 	return &ls->iface;
 }

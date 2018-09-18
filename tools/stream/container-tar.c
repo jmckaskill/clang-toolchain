@@ -55,7 +55,7 @@ static void close_tar(container *iface) {
 	free(c);
 }
 
-static int extract_tar_file(struct tar_container *c, const tar_posix_header *t) {
+static int read_tar_file_header(struct tar_container *c, const tar_posix_header *t) {
 	char mode[sizeof(t->mode) + 1];
 	strncpy(mode, t->mode, sizeof(t->mode));
 	mode[sizeof(t->mode)] = 0;
@@ -85,7 +85,7 @@ static int extract_tar_file(struct tar_container *c, const tar_posix_header *t) 
 	return 0;
 }
 
-static int extract_tar_link(struct tar_container *c, const tar_posix_header *t) {
+static int read_tar_link_header(struct tar_container *c, const tar_posix_header *t) {
 	char *path = clean_tar_name(t);
 	if (!path) {
 		fprintf(stderr, "invalid link path %s\n", t->name);
@@ -122,55 +122,46 @@ static int next_tar_file(container *iface) {
 	}
 	c->padding = 0;
 
+	size_t consume = 0;
 	while (skip) {
-		size_t len;
-		int atend;
-		c->s->buffered(c->s, &len, &atend);
-		if ((uint64_t)len > skip) {
-			len = (size_t)skip;
-		}
-		if (len) {
-			c->s->consume(c->s, len);
-			skip -= len;
-		} else if (atend) {
+		c->s->read(c->s, consume, 1, &consume);
+		if (!consume) {
 			fprintf(stderr, "early close of stream\n");
 			return -1;
-		} else if (c->s->get_more(c->s)) {
-			return -1;
 		}
+		if ((uint64_t) consume > skip) {
+			consume = (size_t)skip;
+		}
+		skip -= consume;
 	}
 
 	for (;;) {
 		size_t len;
-		int atend;
-		const uint8_t *p = c->s->buffered(c->s, &len, &atend);
-		if (len >= TAR_BLOCK_SIZE) {
-			const tar_posix_header *t = (const tar_posix_header*)p;
-			int err;
-
-			switch (t->typeflag) {
-			case LNKTYPE:
-			case SYMTYPE:
-				err = extract_tar_link(c, t);
-				c->s->consume(c->s, TAR_BLOCK_SIZE);
-				return err;
-			case REGTYPE:
-				err = extract_tar_file(c, t);
-				c->s->consume(c->s, TAR_BLOCK_SIZE);
-				return err;
-			default:
-				c->s->consume(c->s, TAR_BLOCK_SIZE);
-				break;
-			}
-
-		} else if (len && atend) {
-			fprintf(stderr, "premature end of tar file\n");
-			return -1;
-		} else if (atend) {
-			// end of tar file
+		const uint8_t *p = c->s->read(c->s, consume, TAR_BLOCK_SIZE, &len);
+		if (!len) {
+			// end of file
 			return 1;
-		} else if (c->s->get_more(c->s)) {
+		} else if (len < TAR_BLOCK_SIZE) {
+			// error
 			return -1;
+		}
+
+		const tar_posix_header *t = (const tar_posix_header*)p;
+		int err;
+
+		switch (t->typeflag) {
+		case LNKTYPE:
+		case SYMTYPE:
+			err = read_tar_link_header(c, t);
+			c->s->read(c->s, TAR_BLOCK_SIZE, 0, &consume);
+			return err;
+		case REGTYPE:
+			err = read_tar_file_header(c, t);
+			c->s->read(c->s, TAR_BLOCK_SIZE, 0, &consume);
+			return err;
+		default:
+			consume = TAR_BLOCK_SIZE;
+			continue;
 		}
 	}
 }
