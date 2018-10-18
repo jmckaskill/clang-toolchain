@@ -1,2 +1,4 @@
 https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02-2.txz,sha256:21eb31b6793f3e0c5f96a4dc4f02247a7d8f0906fa76d95eec6d521e78cc6b86
 http://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz,sha256:0ef8e99e9c9b262a53ab8f2821e2391d041615dd3f3ff36fdf5370916b0f4268
+https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip,sha256:c80313e6c26c0b9e0c241504718e2d8bbc2798b73429933adf03fdc6d84f0e70
+https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2018-02-14.tar.xz,sha256:00867a4e6b608b530a184a36c30c87cebe3cceb90028b2840f12792374312fed

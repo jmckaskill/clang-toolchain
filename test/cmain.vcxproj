@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ARMV7|Win32">
+    <ProjectConfiguration Include="ARMV7|x64">
       <Configuration>ARMV7</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
@@ -23,12 +23,12 @@
     <ProjectName>cmain</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -38,30 +38,30 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeOutput>$(SolutionDir)\bin\win32-release\cmain.exe</NMakeOutput>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeOutput>$(SolutionDir)\bin\msvc-release\cmain.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cmain.exe</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cmain.exe &amp;&amp; ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cmain.exe</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cmain.exe</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/msvc-release/cmain.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/msvc-release/cmain.exe &amp;&amp; $(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/msvc-release/cmain.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/msvc-release/cmain.exe</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
     <ExcludePath />
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
     <NMakeOutput>$(SolutionDir)\bin\armv7-release\cmain.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cmain.exe</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cmain.exe &amp;&amp; ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cmain.exe</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cmain.exe</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/armv7-release/cmain.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/armv7-release/cmain.exe &amp;&amp; $(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/armv7-release/cmain.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/armv7-release/cmain.exe</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />

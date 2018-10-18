@@ -150,25 +150,112 @@ static inline int ends_with(const char *s, size_t sz, const char *test) {
 		&& !strcmp(s + sz - strlen(test), test);
 }
 
+#ifdef WIN32
+HANDLE manifest_file;
+
+static char *open_manifest() {
+	HANDLE h = CreateFileA("download.manifest", GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	OVERLAPPED ol = { 0 };
+	if (h == INVALID_HANDLE_VALUE
+	|| !LockFileEx(h, LOCKFILE_EXCLUSIVE_LOCK, 0, 0, MAXDWORD, &ol)) {
+		fprintf(stderr, "failed to open manifest\n");
+		exit(3);
+	}
+	DWORD sz = GetFileSize(h, NULL);
+	char *ret = malloc(sz+1);
+	if (!ret || !ReadFile(h, ret, sz, &sz, NULL)) {
+		fprintf(stderr, "failed to read manifest\n");
+		exit(5);
+	}
+	ret[sz] = 0;
+	manifest_file = h;
+	return ret;
+}
+
+static void close_manifest() {
+	OVERLAPPED ol = { 0 };
+	UnlockFileEx(manifest_file, 0, 0, MAXDWORD, &ol);
+	CloseHandle(manifest_file);
+}
+
+static void run_ninja(int argc, const char *argv[]) {
+	char buf[4096];
+	buf[0] = 0;
+	for (int i = 0; i < argc; i++) {
+		strncat(buf, "\"", sizeof(buf) - strlen(buf) - 1);
+		strncat(buf, argv[i], sizeof(buf) - strlen(buf) - 1);
+		strncat(buf, "\" ", sizeof(buf) - strlen(buf) - 1);
+	}
+	STARTUPINFO si = { 0 };
+	si.cb = sizeof(si);
+	si.dwFlags = STARTF_USESTDHANDLES;
+	si.hStdInput = INVALID_HANDLE_VALUE;
+	si.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+	si.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+	PROCESS_INFORMATION pi;
+	if (!CreateProcessA(NULL, buf, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi)) {
+		fprintf(stderr, "failed to launch ninja\n");
+		exit(6);
+	}
+	WaitForSingleObject(pi.hProcess, INFINITE);
+	CloseHandle(pi.hProcess);
+	CloseHandle(pi.hThread);
+}
+#else
+static int manifest_file;
+
+static char *open_manifest() {
+	int fd = open("download.manifest", O_CREAT | O_RDONLY, 0755);
+	if (fd < 0 || flock(fd, LOCK_EX)) {
+		fprintf(stderr, "failed to open manifest\n");
+		exit(3);
+	}
+	struct stat st = { 0 };
+	fstat(fd, &st);
+	char *ret = malloc(st.st_size+1);
+	if (!ret || read(fd, ret, st.st_size) != st.st_size) {
+		fprintf(stderr, "failed to read manifest\n");
+		exit(5);
+	}
+	ret[st.st_size] = 0;
+	manifest_file = fd;
+	return ret;
+}
+
+static void close_manifest() {
+	flock(manifest_file, LOCK_UN);
+	close(manifest_file);
+}
+
+static void run_ninja() {
+	// do nothing
+}
+#endif
+
 int main(int argc, char *argv[]) {
+	// run as download.exe folder ninja-exe ninja-arguments
 	if (argc > 1 && chdir(argv[1])) {
 		fprintf(stderr, "failed to change directory to %s\n", argv[1]);
 		return 1;
 	}
-	FILE *inf = fopen("download.manifest", "r");
-	if (inf == NULL) {
-		fprintf(stderr, "could not open download.manifest\n");
-		return 2;
+	char *manifest = open_manifest();
+	printf("started");
+	for (int i = 0; i < argc; i++) {
+		printf(" %s", argv[i]);
 	}
-
-	char line[256];
-	while (fgets(line, sizeof(line), inf)) {
-		char *end = line + strlen(line);
-		if (end == line || end[-1] != '\n') {
-			fprintf(stderr, "overlong line\n");
-			return 3;
+	printf("\n");
+	char *next = manifest;
+	while (*next) {
+		char *line = next;
+		char *nl = strchr(line, '\n');
+		if (!nl) {
+			nl = line + strlen(line);
+			next = nl;
+		} else {
+			next = nl + 1;
 		}
 
+		*nl = 0;
 		char *p = trim(line);
 		if (*p == '#' || *p == '\0') {
 			// comment or empty line
@@ -190,8 +277,6 @@ int main(int argc, char *argv[]) {
 
 		path = trim(path);
 		url = trim(url);
-
-		printf("checking %s\n", path);
 
 		if (test_map("download.done", path, url) == MATCH) {
 			continue;
@@ -297,6 +382,12 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	fflush(stdout);
+	if (argc > 2) {
+		run_ninja(argc - 2, &argv[2]);
+	}
+	free(manifest);
+	close_manifest();
 	return 0;
 }
 

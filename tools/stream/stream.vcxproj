@@ -17,6 +17,8 @@
     <ClCompile Include="filter-deflate.c" />
     <ClCompile Include="filter-hash.c" />
     <ClCompile Include="filter-limit.c" />
+    <ClCompile Include="mapped-file_posix.c" />
+    <ClCompile Include="mapped-file_win.c" />
     <ClCompile Include="path.c" />
     <ClCompile Include="source-buffer.c" />
     <ClCompile Include="source-file.c" />
@@ -24,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ssl-roots.h" />
+    <ClInclude Include="stream-hash.h" />
     <ClInclude Include="stream.h" />
     <ClInclude Include="tar.h" />
     <ClInclude Include="zip.h" />
@@ -61,9 +64,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>$(SolutionDir)\bin\obj\msvc-debug\stream.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-debug/stream.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-debug/stream.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-debug/stream.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-debug/stream.lib</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/obj/msvc-debug/stream.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/obj/msvc-debug/stream.lib &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/obj/msvc-debug/stream.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/obj/msvc-debug/stream.lib</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
@@ -72,9 +75,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>$(SolutionDir)\bin\obj\msvc-release\stream.lib</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-release/stream.lib</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-release/stream.lib &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/obj/msvc-release/stream.lib</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/obj/msvc-release/stream.lib</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/obj/msvc-release/stream.lib</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/obj/msvc-release/stream.lib &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/obj/msvc-release/stream.lib</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/obj/msvc-release/stream.lib</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />

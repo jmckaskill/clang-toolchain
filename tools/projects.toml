@@ -1,6 +1,7 @@
 solution = "tools.sln"
 generate = "$(SolutionDir)\\bin\\msvc-debug\\generate-vcxproj.exe $(SolutionDir)"
-build = "$(SolutionDir)\\ninja.exe -f msvc.ninja -C $(SolutionDir)"
+ninja = "bin\\ninja\\ninja.exe -f msvc.ninja"
+download = "$(SolutionDir)\\bin\\msvc-debug\\download.exe"
 includes = [
 	"xz-embedded/linux/include/linux",
 	"xz-embedded/userspace",

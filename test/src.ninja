@@ -8,4 +8,10 @@ build bin/$TGT/cmain.exe: clink $OBJ/cmain.o
 
 build bin/$TGT/cppmain.exe: cxxlink $OBJ/cppmain.o
 
+build $TGT: phony $
+ bin/$TGT/cmain.exe $
+ bin/$TGT/cppmain.exe $
+
+
+
 

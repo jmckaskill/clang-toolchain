@@ -1,4 +1,6 @@
-libarm, https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02-2.txz
-clang, http://releases.llvm.org/6.0.0/clang+llvm-6.0.0-x86_64-apple-darwin.tar.xz, mac
+bin/ninja, https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-mac.zip, mac
+bin/ninja, https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-win.zip, windows
 
+clang, https://storage.googleapis.com/ctct-clang-toolchain/host-win64-2018-02-14.tar.xz, windows
+libarm, https://storage.googleapis.com/ctct-clang-toolchain/libarm-2018-03-02-2.txz
 

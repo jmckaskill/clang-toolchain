@@ -1,14 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Release|Win32">
+    <ProjectConfiguration Include="Release|x64">
       <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="ARMV7|Win32">
+    <ProjectConfiguration Include="ARMV7|x64">
       <Configuration>ARMV7</Configuration>
-      <Platform>Win32</Platform>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\projects.toml" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{EBF61EF1-9FDD-536D-A602-53A8E81FC5BE}</ProjectGuid>
@@ -16,12 +19,12 @@
     <ProjectName>_GENERATE_VCXPROJ</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
@@ -31,21 +34,21 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'">
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <NMakeBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|Win32'">
-    <NMakeBuildCommandLine>generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
+    <NMakeBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\..\tools\bin\msvc-debug\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

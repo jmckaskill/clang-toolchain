@@ -45,14 +45,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) msvc-debug</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean msvc-debug &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) msvc-debug</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean msvc-debug</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja msvc-debug</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean msvc-debug &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja msvc-debug</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean msvc-debug</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) msvc-release</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean msvc-release &amp;&amp; $(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) msvc-release</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean msvc-release</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja msvc-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean msvc-release &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja msvc-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean msvc-release</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

@@ -353,7 +353,7 @@ static int is_debug_target(target *t) {
 	return 0;
 }
 
-static void write_project(FILE *f, project *p, target *tgts, string_list *sln_defines, string_list *sln_includes, const char *build) {
+static void write_project(FILE *f, project *p, target *tgts, string_list *sln_defines, string_list *sln_includes, const char *download_exe, const char *ninja_exe) {
 	fprint(f, "\xEF\xBB\xBF<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n"
 		"<Project DefaultTargets=\"Build\" ToolsVersion=\"14.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\r\n"
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
@@ -434,9 +434,9 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 			first_define = 0;
 		}
 		fprintf(f, "</NMakePreprocessorDefinitions>\r\n");
-		fprintf(f, "    <NMakeBuildCommandLine>%s %s</NMakeBuildCommandLine>\r\n", build, njtgt);
-		fprintf(f, "    <NMakeReBuildCommandLine>%s -t clean %s &amp;&amp; %s %s</NMakeReBuildCommandLine>\r\n", build, njtgt, build, njtgt);
-		fprintf(f, "    <NMakeCleanCommandLine>%s -t clean %s</NMakeCleanCommandLine>\r\n", build, njtgt);
+		fprintf(f, "    <NMakeBuildCommandLine>%s $(SolutionDir) %s %s</NMakeBuildCommandLine>\r\n", download_exe, ninja_exe, njtgt);
+		fprintf(f, "    <NMakeReBuildCommandLine>%s $(SolutionDir) %s -t clean %s &amp;&amp; %s $(SolutionDir) %s %s</NMakeReBuildCommandLine>\r\n", download_exe, ninja_exe, njtgt, download_exe, ninja_exe, njtgt);
+		fprintf(f, "    <NMakeCleanCommandLine>%s $(SolutionDir) %s -t clean %s</NMakeCleanCommandLine>\r\n", download_exe, ninja_exe, njtgt);
 
 		fprint(f, "    <NMakeIncludeSearchPath>$(ProjectDir)");
 		for (string_list *inc = sln_includes; inc != NULL; inc = inc->next) {
@@ -559,6 +559,7 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 	for (project *p = projects; p != NULL; p = p->next) {
 		for (target *t = targets; t != NULL; t = t->next) {
 			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", p->uuid, t->vs, t->vs);
+			fprintf(f, "\t\t%s.%s|ALL.Build.0 = %s|x64\r\n", p->uuid, t->vs, t->vs);
 		}
 	}
 
@@ -631,18 +632,18 @@ int main(int argc, char *argv[]) {
 	string_list *defines = get_string_list(root, "defines");
 	string_list *includes = get_string_list(root, "includes");
 	const char *slnfile = must_get_string(root, "solution");
-	const char *build = must_get_string(root, "build");
+	const char *ninja_exe = must_get_string(root, "ninja");
+	const char *download_exe = get_string(root, "download", "$(SolutionDir)\\download.exe");
 	const char *generate = get_string(root, "generate", NULL);
 
 	for (string_list *inc = includes; inc != NULL; inc = inc->next) {
 		replace_char(inc->str, '/', '\\');
 	}
 
-
 	char buildall[1024], rebuildall[2048], cleanall[1024];
-	snprintf(buildall, sizeof(buildall), "%s {DEFAULT}", build);
-	snprintf(rebuildall, sizeof(rebuildall), "%s -t clean {DEFAULT} &amp;&amp; %s {DEFAULT}", build, build);
-	snprintf(cleanall, sizeof(cleanall), "%s -t clean {DEFAULT}", build);
+	snprintf(buildall, sizeof(buildall), "%s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe);
+	snprintf(rebuildall, sizeof(rebuildall), "%s $(SolutionDir) %s -t clean {DEFAULT} &amp;&amp; %s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe, download_exe, ninja_exe);
+	snprintf(cleanall, sizeof(cleanall), "%s $(SolutionDir) %s -t clean {DEFAULT}", download_exe, ninja_exe);
 
 	command def;
 	def.name = "_BUILD_ALL";
@@ -675,7 +676,7 @@ int main(int argc, char *argv[]) {
 		f = must_fopen(p->file, "wb");
 		generate_uuid(p->uuid, p->file);
 		replace_char(p->file, '/', '\\');
-		write_project(f, p, targets, defines, includes, build);
+		write_project(f, p, targets, defines, includes, download_exe, ninja_exe);
 		fclose(f);
 	}
 
