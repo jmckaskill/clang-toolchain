@@ -182,10 +182,20 @@ static void run_ninja(int argc, const char *argv[]) {
 	char buf[4096];
 	buf[0] = 0;
 	for (int i = 0; i < argc; i++) {
-		strncat(buf, "\"", sizeof(buf) - strlen(buf) - 1);
+		int have_space = strchr(argv[i], ' ') != NULL;
+		if (have_space) {
+			strncat(buf, "\"", sizeof(buf) - strlen(buf) - 1);
+		}
 		strncat(buf, argv[i], sizeof(buf) - strlen(buf) - 1);
-		strncat(buf, "\" ", sizeof(buf) - strlen(buf) - 1);
+		if (have_space) {
+			strncat(buf, "\" ", sizeof(buf) - strlen(buf) - 1);
+		} else {
+			strncat(buf, " ", sizeof(buf) - strlen(buf) - 1);
+		}
 	}
+	printf("%s\n", buf);
+	fflush(stdout);
+	fflush(stderr);
 	STARTUPINFO si = { 0 };
 	si.cb = sizeof(si);
 	si.dwFlags = STARTF_USESTDHANDLES;
@@ -239,11 +249,6 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	char *manifest = open_manifest();
-	printf("started");
-	for (int i = 0; i < argc; i++) {
-		printf(" %s", argv[i]);
-	}
-	printf("\n");
 	char *next = manifest;
 	while (*next) {
 		char *line = next;
@@ -382,7 +387,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	fflush(stdout);
 	if (argc > 2) {
 		run_ninja(argc - 2, &argv[2]);
 	}
