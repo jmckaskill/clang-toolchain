@@ -8,7 +8,6 @@ typedef struct stream stream;
 typedef struct container container;
 
 struct stream {
-	// returns non-zero on error
 	void(*close)(stream*);
 	const uint8_t *(*read)(stream*, size_t consume, size_t need, size_t *plen);
 };
@@ -32,6 +31,7 @@ stream *open_buffer_stream(const void *data, size_t size);
 stream *open_limited(stream *source, uint64_t size);
 stream *open_xz_decoder(stream *source);
 stream *open_inflate(stream *source);
+stream *open_deflate(stream *source);
 stream *open_gzip(stream *source);
 stream *open_hash(stream *source, const br_hash_class **vt);
 
@@ -39,4 +39,6 @@ container *open_zip(FILE *f);
 container *open_tar(stream *s);
 
 char *clean_path(const char *name1, const char *name2);
+
+
 

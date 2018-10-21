@@ -21,11 +21,26 @@ struct zip_central_dir_end {
 
 #define ZIP_CENTRAL_DIR_END_SIG 0x06054b50
 
+struct zip64_central_dir_end {
+	uint8_t sig[4];
+	uint8_t end_record_size[8];
+	uint8_t create_version[2];
+	uint8_t extract_version[2];
+	uint8_t disk_num[4];
+	uint8_t dir_start_disk_num[4];
+	uint8_t num_entries_this_disk[8];
+	uint8_t num_entries[8];
+	uint8_t dir_len[8];
+	uint8_t dir_start[8];
+};
+
+#define ZIP64_CENTRAL_DIR_END_SIG 0x06064b50
+
 struct zip64_central_dir_locator {
 	uint8_t sig[4];
 	uint8_t dir_start_disk_num[4];
 	uint8_t dir_offset[8];
-	uint8_t disk_num[4];
+	uint8_t total_disks[4];
 };
 
 #define ZIP64_CENTRAL_DIR_LOCATOR_SIG 0x07064b50
@@ -58,6 +73,13 @@ struct zip_file_extra {
 };
 
 #define ZIP64_FILE_EXTRA 0x0001
+
+struct zip64_extra {
+	struct zip_file_extra h;
+	uint8_t uncompressed_len[8];
+	uint8_t compressed_len[8];
+	uint8_t header_off[8];
+};
 
 struct zip_local_header {
 	uint8_t sig[4];
