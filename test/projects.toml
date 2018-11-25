@@ -1,13 +1,21 @@
 solution = "test.sln"
-generate = "$(SolutionDir)\\..\\tools\\bin\\msvc-debug\\generate-vcxproj.exe $(SolutionDir)"
-ninja = "bin\\ninja\\ninja.exe -f msvc.ninja"
-download = "$(SolutionDir)\\..\\tools\\bin\\msvc-debug\\download.exe"
+generate = "$(SolutionDir)..\\tools\\bin\\win64-release\\generate-vcxproj.exe $(SolutionDir)"
+ninja = "$(SolutionDir)bin\\ninja\\ninja.exe -f msvc.ninja -C $(SolutionDir)"
+download = "$(SolutionDir)..\\tools\\bin\\win64-release\\download.exe"
 includes = ["."]
 
 [[target]]
 vs = "Release"
-ninja = "msvc-release"
-default = "msvc-release"
+platform = "x64"
+ninja = "win64-release"
+default = "win64-release"
+defines = ["_WIN32", "NDEBUG"]
+
+[[target]]
+vs = "Release"
+platform = "Win32"
+ninja = "win32-release"
+default = "win32-release"
 defines = ["_WIN32", "NDEBUG"]
 
 [[target]]

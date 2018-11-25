@@ -1,0 +1,6 @@
+TGT = win32-debug
+HOST = win32-debug
+
+include $TOOLCHAIN_DIR/target-msvc-debug.ninja
+
+

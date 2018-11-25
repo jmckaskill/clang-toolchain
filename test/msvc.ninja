@@ -1,9 +1,10 @@
 TOOLCHAIN_DIR = ..
 SRC_NINJA = src.ninja
 CLANG_DIR = clang
-LIB = lib/armv7
+LIB = libarm/armv7
 
-include ../host-msvc.ninja
-subninja ../target-msvc-release.ninja
+include ../host-win64.ninja
+subninja ../target-win32-release.ninja
+subninja ../target-win64-release.ninja
 subninja ../target-armv7-release.ninja
 

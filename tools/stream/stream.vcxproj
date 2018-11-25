@@ -17,8 +17,6 @@
     <ClCompile Include="filter-deflate.c" />
     <ClCompile Include="filter-hash.c" />
     <ClCompile Include="filter-limit.c" />
-    <ClCompile Include="mapped-file_posix.c" />
-    <ClCompile Include="mapped-file_win.c" />
     <ClCompile Include="path.c" />
     <ClCompile Include="source-buffer.c" />
     <ClCompile Include="source-file.c" />
@@ -26,7 +24,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ssl-roots.h" />
-    <ClInclude Include="stream-hash.h" />
     <ClInclude Include="stream.h" />
     <ClInclude Include="tar.h" />
     <ClInclude Include="zip.h" />

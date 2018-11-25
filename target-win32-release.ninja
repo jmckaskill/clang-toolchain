@@ -1,0 +1,6 @@
+TGT = win32-release
+HOST = win32-release
+
+include $TOOLCHAIN_DIR/target-msvc-release.ninja
+
+

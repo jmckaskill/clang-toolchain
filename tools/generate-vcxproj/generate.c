@@ -53,6 +53,7 @@ struct target {
 	char *vs;
 	char *ninja;
 	char *default_target;
+	char *platform;
 	string_list *defines;
 	string_list *includes;
 };
@@ -359,10 +360,10 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "    <ProjectConfiguration Include=\"%s|x64\">\r\n", t->vs);
+		fprintf(f, "    <ProjectConfiguration Include=\"%s|%s\">\r\n", t->vs, t->platform);
 		fprintf(f, "      <Configuration>%s</Configuration>\r\n", t->vs);
-		fprint(f, "      <Platform>x64</Platform>\r\n"
-			"    </ProjectConfiguration>\r\n");
+		fprintf(f, "      <Platform>%s</Platform>\r\n", t->platform);
+		fprint(f, "    </ProjectConfiguration>\r\n");
 	}
 
 	fprint(f, "  </ItemGroup>\r\n"
@@ -389,7 +390,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\" Label=\"Configuration\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\" Label=\"Configuration\">\r\n", t->vs, t->platform);
 		fprintf(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n");
 		fprintf(f, "    <UseDebugLibraries>%s</UseDebugLibraries>\r\n", is_debug_target(t) ? "true" : "false");
 		fprintf(f, "    <PlatformToolset>v140</PlatformToolset>\r\n"
@@ -403,7 +404,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		"  </ImportGroup>\r\n");
 
 	for (target *t = tgts; t != NULL; t = t->next) {
-		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
+		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\">\r\n", t->vs, t->platform);
 		fprint(f, "    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"
 			"  </ImportGroup>\r\n");
 	}
@@ -415,7 +416,7 @@ static void write_project(FILE *f, project *p, target *tgts, string_list *sln_de
 		char *vstgt = strdup(njtgt);
 		replace_char(vstgt, '/', '\\');
 
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\">\r\n", t->vs, t->platform);
 		fprintf(f, "    <NMakeOutput>$(SolutionDir)\\%s</NMakeOutput>\r\n", vstgt);
 		fprintf(f, "    <NMakePreprocessorDefinitions>");
 		int first_define = 1;
@@ -469,10 +470,10 @@ static void write_command(FILE *f, command *c, target *targets, print_fn files_f
 		"  <ItemGroup Label=\"ProjectConfigurations\">\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "    <ProjectConfiguration Include=\"%s|x64\">\r\n", t->vs);
+		fprintf(f, "    <ProjectConfiguration Include=\"%s|%s\">\r\n", t->vs, t->platform);
 		fprintf(f, "      <Configuration>%s</Configuration>\r\n", t->vs);
-		fprint(f, "      <Platform>x64</Platform>\r\n"
-			"    </ProjectConfiguration>\r\n");
+		fprintf(f, "      <Platform>%s</Platform>\r\n", t->platform);
+		fprint(f, "    </ProjectConfiguration>\r\n");
 	}
 	fprint(f, "  </ItemGroup>\r\n"
 	          "  <ItemGroup>\r\n");
@@ -488,7 +489,7 @@ static void write_command(FILE *f, command *c, target *targets, print_fn files_f
 		"  <Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\" Label=\"Configuration\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\" Label=\"Configuration\">\r\n", t->vs, t->platform);
 		fprint(f, "    <ConfigurationType>Makefile</ConfigurationType>\r\n"
 			"    <UseDebugLibraries>false</UseDebugLibraries>\r\n"
 			"    <PlatformToolset>v140</PlatformToolset>\r\n"
@@ -502,7 +503,7 @@ static void write_command(FILE *f, command *c, target *targets, print_fn files_f
 		"  </ImportGroup>\r\n");
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
+		fprintf(f, "  <ImportGroup Label=\"PropertySheets\" Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\">\r\n", t->vs, t->platform);
 		fprint(f, "    <Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\r\n"
 			"  </ImportGroup>\r\n");
 	}
@@ -514,7 +515,7 @@ static void write_command(FILE *f, command *c, target *targets, print_fn files_f
 		char *rebuild = dup_with_replacement(c->rebuild, "{DEFAULT}", t->default_target);
 		char *clean = dup_with_replacement(c->clean, "{DEFAULT}", t->default_target);
 
-		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|x64'\">\r\n", t->vs);
+		fprintf(f, "  <PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='%s|%s'\">\r\n", t->vs, t->platform);
 		fprintf(f, "    <NMakeBuildCommandLine>%s</NMakeBuildCommandLine>\r\n", build);
 		fprintf(f, "    <NMakeReBuildCommandLine>%s</NMakeReBuildCommandLine>\r\n", rebuild);
 		fprintf(f, "    <NMakeCleanCommandLine>%s</NMakeCleanCommandLine>\r\n", clean);
@@ -551,27 +552,27 @@ static void write_solution(FILE *f, project *projects, target *targets, command 
 
 	fprint(f, "Global\r\n\tGlobalSection(SolutionConfigurationPlatforms) = preSolution\r\n");
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "\t\t%s|ALL = %s|ALL\r\n", t->vs, t->vs);
+		fprintf(f, "\t\t%s|%s = %s|%s\r\n", t->vs, t->platform, t->vs, t->platform);
 	}
 	fprint(f, "\tEndGlobalSection\r\n"
 		"\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n");
 
 	for (project *p = projects; p != NULL; p = p->next) {
 		for (target *t = targets; t != NULL; t = t->next) {
-			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", p->uuid, t->vs, t->vs);
-			fprintf(f, "\t\t%s.%s|ALL.Build.0 = %s|x64\r\n", p->uuid, t->vs, t->vs);
+			fprintf(f, "\t\t%s.%s|%s.ActiveCfg = %s|%s\r\n", p->uuid, t->vs, t->platform, t->vs, t->platform);
+			fprintf(f, "\t\t%s.%s|%s.Build.0 = %s|%s\r\n", p->uuid, t->vs, t->platform, t->vs, t->platform);
 		}
 	}
 
 	if (gencmd) {
 		for (target *t = targets; t != NULL; t = t->next) {
-			fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", gencmd->uuid, t->vs, t->vs);
+			fprintf(f, "\t\t%s.%s|%s.ActiveCfg = %s|%s\r\n", gencmd->uuid, t->vs, t->platform, t->vs, t->platform);
 		}
 	}
 
 	for (target *t = targets; t != NULL; t = t->next) {
-		fprintf(f, "\t\t%s.%s|ALL.ActiveCfg = %s|x64\r\n", defcmd->uuid, t->vs, t->vs);
-		fprintf(f, "\t\t%s.%s|ALL.Build.0 = %s|x64\r\n", defcmd->uuid, t->vs, t->vs);
+		fprintf(f, "\t\t%s.%s|%s.ActiveCfg = %s|%s\r\n", defcmd->uuid, t->vs, t->platform, t->vs, t->platform);
+		fprintf(f, "\t\t%s.%s|%s.Build.0 = %s|%s\r\n", defcmd->uuid, t->vs, t->platform, t->vs, t->platform);
 	}
 
 	fprint(f, "\tEndGlobalSection\r\n"
@@ -622,6 +623,7 @@ int main(int argc, char *argv[]) {
 		t->default_target = must_get_string(tbl, "default");
 		t->defines = get_string_list(tbl, "defines");
 		t->includes = get_string_list(tbl, "includes");
+		t->platform = get_string(tbl, "platform", "x64");
 		for (string_list *inc = t->includes; inc != NULL; inc = inc->next) {
 			replace_char(inc->str, '/', '\\');
 		}
@@ -641,9 +643,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	char buildall[1024], rebuildall[2048], cleanall[1024];
-	snprintf(buildall, sizeof(buildall), "%s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe);
-	snprintf(rebuildall, sizeof(rebuildall), "%s $(SolutionDir) %s -t clean {DEFAULT} &amp;&amp; %s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe, download_exe, ninja_exe);
-	snprintf(cleanall, sizeof(cleanall), "%s $(SolutionDir) %s -t clean {DEFAULT}", download_exe, ninja_exe);
+	snprintf(buildall, sizeof(buildall), "%s $(SolutionDir) &amp;&amp; %s {DEFAULT}", download_exe, ninja_exe);
+	snprintf(rebuildall, sizeof(rebuildall), "%s $(SolutionDir) %s -t clean {DEFAULT} &amp;&amp; %s $(SolutionDir) &amp;&amp; %s {DEFAULT}", download_exe, ninja_exe, download_exe, ninja_exe);
+	snprintf(cleanall, sizeof(cleanall), "%s $(SolutionDir) &amp;&amp; %s -t clean {DEFAULT}", download_exe, ninja_exe);
 
 	command def;
 	def.name = "_BUILD_ALL";

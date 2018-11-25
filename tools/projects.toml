@@ -63,6 +63,7 @@ dirs = [
 	"BearSSL/src/ec",
 	"BearSSL/src/hash",
 	"BearSSL/src/int",
+	"BearSSL/src/kdf",
 	"BearSSL/src/mac",
 	"BearSSL/src/rand",
 	"BearSSL/src/rsa",

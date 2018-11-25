@@ -2,7 +2,7 @@ SRC_NINJA = src.ninja
 TOOLCHAIN_DIR = ..
 INCLUDES = -I . -I BearSSL/inc -I BearSSL/src -I xz-embedded/linux/include/linux -I xz-embedded/userspace -D XZ_USE_CRC64
 
-include ../host-msvc.ninja
-subninja ../target-msvc-release.ninja
-subninja ../target-msvc-debug.ninja
+include ../host-win64.ninja
+subninja ../target-win64-release.ninja
+subninja ../target-win64-debug.ninja
 

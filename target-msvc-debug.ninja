@@ -4,9 +4,6 @@ CXXFLAGS = /TP /EHsc $CFLAGSCMN /W4 /WX
 LINKFLAGS = /DEBUG
 LIBFLAGS = /LTCG
 
-TGT = msvc-debug
-HOST = msvc-debug
-
 rule cc
  command = cl /showIncludes -c $in /Fo$out /nologo $CFLAGS /W4 /WX
  deps = msvc

@@ -24,3 +24,4 @@ download.done
 .DS_Store
 download.hash
 /tools/ninja
+/test/x64
