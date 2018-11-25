@@ -643,9 +643,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	char buildall[1024], rebuildall[2048], cleanall[1024];
-	snprintf(buildall, sizeof(buildall), "%s $(SolutionDir) &amp;&amp; %s {DEFAULT}", download_exe, ninja_exe);
-	snprintf(rebuildall, sizeof(rebuildall), "%s $(SolutionDir) %s -t clean {DEFAULT} &amp;&amp; %s $(SolutionDir) &amp;&amp; %s {DEFAULT}", download_exe, ninja_exe, download_exe, ninja_exe);
-	snprintf(cleanall, sizeof(cleanall), "%s $(SolutionDir) &amp;&amp; %s -t clean {DEFAULT}", download_exe, ninja_exe);
+	snprintf(buildall, sizeof(buildall), "%s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe);
+	snprintf(rebuildall, sizeof(rebuildall), "%s $(SolutionDir) %s -t clean {DEFAULT} &amp;&amp; %s $(SolutionDir) %s {DEFAULT}", download_exe, ninja_exe, download_exe, ninja_exe);
+	snprintf(cleanall, sizeof(cleanall), "%s $(SolutionDir) %s -t clean {DEFAULT}", download_exe, ninja_exe);
 
 	command def;
 	def.name = "_BUILD_ALL";
