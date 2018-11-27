@@ -3,7 +3,7 @@ CPP = $CLANG_DIR/bin/clang++
 AR = $CLANG_DIR/bin/llvm-ar
 LD = $CLANG_DIR/bin/ld.lld${EXE_EXT}
 
-CFLAGSCMN = $CROSS_CFLAGS -mstrict-align $INCLUDES -I $LIB/include -flto --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
+CFLAGSCMN = $CROSS_CFLAGS -Wno-newline-eof -mstrict-align $INCLUDES -I $LIB/include -flto --system-header-prefix=sys -fdiagnostics-format=msvc -D_GNU_SOURCE -DHAVE_THREADS_H -nostdinc
 CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces -Wno-unused-function
 CXXFLAGS = -std=c++11 -I $LIB/include/c++ $CFLAGSCMN  -Wall -Werror -Wno-missing-braces
 

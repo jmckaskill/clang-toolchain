@@ -1,4 +1,4 @@
-CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -Werror
+CFLAGS = $INCLUDES -g -D_GNU_SOURCE -Wall -Wno-newline-eof -Wno-missing-braces -Wno-unused-function -Wno-extended-offsetof -Werror
 CXXFLAGS = $CFLAGS -std=c++11
 LDFLAGS = -g -lpthread -lm
 
