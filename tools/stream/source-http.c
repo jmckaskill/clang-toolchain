@@ -9,6 +9,14 @@
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #include <WS2tcpip.h>
+#else
+#include <unistd.h>
+#include <limits.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#define closesocket(fd) close(fd)
 #endif
 
 #ifdef _MSC_VER

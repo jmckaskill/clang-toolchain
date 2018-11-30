@@ -9,6 +9,9 @@
 #else
 #include <sys/types.h>
 #include <dirent.h>
+#include <unistd.h>
+#include <sys/file.h>
+#include <sys/stat.h>
 #endif
 
 
@@ -237,7 +240,7 @@ static void close_manifest() {
 	close(manifest_file);
 }
 
-static void run_ninja() {
+static void run_ninja(int argc, char *argv[]) {
 	// do nothing
 }
 #endif
