@@ -1,0 +1,63 @@
+TGT = ndk-release
+HOST = ${HOST_BASE}-release
+CC = arm-linux-androideabi-gcc.cmd
+CPP = arm-linux-androideabi-g++
+AR = arm-linux-androideabi-ar
+LD = arm-linux-androideabi-ld
+CLANG_INC = ${NDK_DIR}/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/7.0.2/include
+NDK_LIB = ${NDK_DIR}/platforms/android-23/arch-arm/usr/lib
+NDK_INC = ${NDK_DIR}/sysroot/usr/include
+LIBGCC_SO = ${NDK_DIR}/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/armv7-a/libgcc.a
+LINKER = /system/bin/linker
+
+CFLAGSCMN = -fPIC -DNDEBUG -Os -Wno-zero-length-array -Wno-gcc-compat -mstrict-align $INCLUDES -fdiagnostics-format=msvc -D_GNU_SOURCE -I ${NDK_INC} -I ${NDK_INC}/arm-linux-androideabi
+CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces -Wno-unused-function
+CXXFLAGS = -std=c++11 $CFLAGSCMN -Wall -Werror -Wno-missing-braces
+
+rule extcc
+ command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
+
+rule cc
+ command = $CC $CFLAGS -std=c11 -MMD -MF $out.d -c $in -o $out -pedantic
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
+
+rule ccdll
+ command = $CC $CFLAGS -std=c11 -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CC $in
+
+rule cxx
+ command = $CPP $CXXFLAGS -MMD -MF $out.d -c $in -o $out
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CXX $in
+
+rule cxxdll
+ command = $CPP $CXXFLAGS -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out -I clang-arm-linux/include/c++
+ deps = gcc
+ depfile = $out.d
+ description = ARM-CXX $in
+
+rule lib
+ command = $AR rcs $out $in
+ description = ARM-AR $out
+
+rule clink
+ command = $LD -e _start -pie --dynamic-linker ${LINKER} -o $out $in ${NDK_LIB}/libc.so ${NDK_LIB}/libm.so ${LIBGCC_SO} ${NDK_LIB}/crtbegin_dynamic.o ${NDK_LIB}/crtend_android.o
+ description = C-ARM-EXE $out
+
+rule cxxlink
+ command = $LD -o $out $in
+ description = CPP-ARM-EXE $out
+
+rule clinkdll
+ command = $LD --shared -o $out $in
+ description = ARM-DLL $out
+
+include $SRC_NINJA
