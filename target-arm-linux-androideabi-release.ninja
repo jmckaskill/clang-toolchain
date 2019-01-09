@@ -1,9 +1,10 @@
 TGT = ndk-release
 HOST = ${HOST_BASE}-release
-CC = arm-linux-androideabi-gcc.cmd
-CPP = arm-linux-androideabi-g++
-AR = arm-linux-androideabi-ar
-LD = arm-linux-androideabi-ld
+CC_DIR = ${NDK_DIR}/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin
+CC = ${CC_DIR}/arm-linux-androideabi-gcc.cmd
+CPP = ${CC_DIR}/arm-linux-androideabi-g++
+AR = ${CC_DIR}/arm-linux-androideabi-ar
+LD = ${CC_DIR}/arm-linux-androideabi-ld
 CLANG_INC = ${NDK_DIR}/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/7.0.2/include
 NDK_LIB = ${NDK_DIR}/platforms/android-23/arch-arm/usr/lib
 NDK_INC = ${NDK_DIR}/sysroot/usr/include
@@ -18,46 +19,46 @@ rule extcc
  command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
- description = ARM-CC $in
+ description = NDK-CC $in
 
 rule cc
  command = $CC $CFLAGS -std=c11 -MMD -MF $out.d -c $in -o $out -pedantic
  deps = gcc
  depfile = $out.d
- description = ARM-CC $in
+ description = NDK-CC $in
 
 rule ccdll
  command = $CC $CFLAGS -std=c11 -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
- description = ARM-CC $in
+ description = NDK-CC $in
 
 rule cxx
  command = $CPP $CXXFLAGS -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
- description = ARM-CXX $in
+ description = NDK-CXX $in
 
 rule cxxdll
  command = $CPP $CXXFLAGS -fvisibility=hidden -fPIC -MMD -MF $out.d -c $in -o $out -I clang-arm-linux/include/c++
  deps = gcc
  depfile = $out.d
- description = ARM-CXX $in
+ description = NDK-CXX $in
 
 rule lib
  command = $AR rcs $out $in
- description = ARM-AR $out
+ description = NDK-AR $out
 
 rule clink
  command = $LD -e _start -pie --dynamic-linker ${LINKER} -o $out $in ${NDK_LIB}/libc.so ${NDK_LIB}/libm.so ${LIBGCC_SO} ${NDK_LIB}/crtbegin_dynamic.o ${NDK_LIB}/crtend_android.o
- description = C-ARM-EXE $out
+ description = C-NDK-EXE $out
 
 rule cxxlink
  command = $LD -o $out $in
- description = CPP-ARM-EXE $out
+ description = CPP-NDK-EXE $out
 
 rule clinkdll
  command = $LD --shared -o $out $in
- description = ARM-DLL $out
+ description = NDK-DLL $out
 
 include $SRC_NINJA
