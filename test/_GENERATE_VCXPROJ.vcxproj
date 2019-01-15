@@ -66,23 +66,23 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\generate-vcxproj.exe $(SolutionDir)</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine></NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>

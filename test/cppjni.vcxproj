@@ -72,9 +72,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <NMakeOutput>$(SolutionDir)\bin\win64-release\cppjni.so</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win64-release/cppjni.so</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win64-release/cppjni.so &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win64-release/cppjni.so</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win64-release/cppjni.so</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win64-release/cppjni.so</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win64-release/cppjni.so &amp;&amp; $(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win64-release/cppjni.so</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win64-release/cppjni.so</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
@@ -83,9 +83,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <NMakeOutput>$(SolutionDir)\bin\win32-release\cppjni.so</NMakeOutput>
     <NMakePreprocessorDefinitions>_WIN32;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cppjni.so</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cppjni.so &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cppjni.so</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cppjni.so</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cppjni.so</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cppjni.so &amp;&amp; $(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/win32-release/cppjni.so</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/win32-release/cppjni.so</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
@@ -94,9 +94,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
     <NMakeOutput>$(SolutionDir)\bin\armv7-release\cppjni.so</NMakeOutput>
     <NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cppjni.so</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cppjni.so &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cppjni.so</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cppjni.so</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cppjni.so</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cppjni.so &amp;&amp; $(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/armv7-release/cppjni.so</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/armv7-release/cppjni.so</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />
@@ -105,9 +105,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android|x64'">
     <NMakeOutput>$(SolutionDir)\bin\ndk-release\cppjni.so</NMakeOutput>
     <NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/ndk-release/cppjni.so</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/ndk-release/cppjni.so &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/ndk-release/cppjni.so</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/ndk-release/cppjni.so</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/ndk-release/cppjni.so</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/ndk-release/cppjni.so &amp;&amp; $(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) bin/ndk-release/cppjni.so</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)\download.exe $(SolutionDir) $(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean bin/ndk-release/cppjni.so</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
     <SourcePath />

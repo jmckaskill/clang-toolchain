@@ -1,7 +1,7 @@
 solution = "test.sln"
-generate = "$(SolutionDir)..\\tools\\bin\\win64-release\\generate-vcxproj.exe $(SolutionDir)"
-ninja = "$(SolutionDir)bin\\ninja\\ninja.exe -f msvc.ninja -C $(SolutionDir)"
-download = "$(SolutionDir)..\\tools\\bin\\win64-release\\download.exe"
+generate = "$(SolutionDir)\\generate-vcxproj.exe $(SolutionDir)"
+ninja = "$(SolutionDir)\\bin\\ninja\\ninja.exe -f msvc.ninja -C $(SolutionDir)"
+download = "$(SolutionDir)\\download.exe"
 includes = ["."]
 
 [[target]]
