@@ -53,4 +53,8 @@ rule clinkdll
  command = $LD --shared --nostdlib -o $out $in $DEFLIBS
  description = ARM-DLL $out
 
+rule cxxlinkdll
+ command = $LD --shared --nostdlib -o $out $in $DEFLIBS
+ description = ARM-DLL $out
+
 include $SRC_NINJA

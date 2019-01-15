@@ -2,9 +2,11 @@ TOOLCHAIN_DIR = ..
 SRC_NINJA = src.ninja
 CLANG_DIR = clang
 LIB = libarm/armv7
+NDK_DIR = c:/Android/sdk/ndk-bundle
 
 include ../host-win64.ninja
 subninja ../target-win32-release.ninja
 subninja ../target-win64-release.ninja
 subninja ../target-armv7-release.ninja
+subninja ../target-arm-linux-androideabi-release.ninja
 

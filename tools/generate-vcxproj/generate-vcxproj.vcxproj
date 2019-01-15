@@ -48,8 +48,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <NMakeOutput>$(SolutionDir)\bin\msvc-debug\generate-vcxproj.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;DEBUG;_DEBUG</NMakePreprocessorDefinitions>
-    <NMakeBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/msvc-debug/generate-vcxproj.exe</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/msvc-debug/generate-vcxproj.exe &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/msvc-debug/generate-vcxproj.exe</NMakeReBuildCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)\bin\ninja\ninja.exe -C $(SolutionDir) -f msvc.ninja bin/msvc-debug/generate-vcxproj.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)\bin\ninja\ninja.exe -f msvc.ninja -t clean bin/msvc-debug/generate-vcxproj.exe &amp;&amp; $(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja bin/msvc-debug/generate-vcxproj.exe</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>$(SolutionDir)\bin\msvc-debug\download.exe $(SolutionDir) bin\ninja\ninja.exe -f msvc.ninja -t clean bin/msvc-debug/generate-vcxproj.exe</NMakeCleanCommandLine>
     <NMakeIncludeSearchPath>$(ProjectDir);$(SolutionDir)\xz-embedded\linux\include\linux;$(SolutionDir)\xz-embedded\userspace;$(SolutionDir)\BearSSL\inc;$(SolutionDir)\BearSSL\src;$(SolutionDir)\.</NMakeIncludeSearchPath>
     <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>

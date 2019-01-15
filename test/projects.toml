@@ -24,10 +24,59 @@ ninja = "armv7-release"
 default = "armv7-release"
 defines = ["__linux__", "__arm__", "NDEBUG"]
 
+[[target]]
+vs = "Android"
+ninja = "ndk-release"
+default = "ndk-release"
+defines = ["__linux__", "__arm__", "NDEBUG"]
+
 [[project]]
 name = "cmain"
 file = "cmain.vcxproj"
 target = "bin/{TGT}/cmain.exe"
 dirs = ["main.c"]
 
+[[project]]
+name = "cdll"
+file = "cdll.vcxproj"
+target = "bin/{TGT}/cdll.so"
+dirs = ["dll.c"]
+
+[[project]]
+name = "cjni"
+file = "cjni.vcxproj"
+target = "bin/{TGT}/cjni.so"
+dirs = ["jni.c"]
+
+[[project]]
+name = "cloader"
+file = "cloader.vcxproj"
+target = "bin/{TGT}/cloader.exe"
+dirs = ["loader.c"]
+
+
+
+[[project]]
+name = "cppmain"
+file = "cppmain.vcxproj"
+target = "bin/{TGT}/cppmain.exe"
+dirs = ["main.cpp"]
+
+[[project]]
+name = "cppdll"
+file = "cppdll.vcxproj"
+target = "bin/{TGT}/cppdll.so"
+dirs = ["dll.cpp"]
+
+[[project]]
+name = "cppjni"
+file = "cppjni.vcxproj"
+target = "bin/{TGT}/cppjni.so"
+dirs = ["jni.cpp"]
+
+[[project]]
+name = "cpploader"
+file = "cpploader.vcxproj"
+target = "bin/{TGT}/cpploader.exe"
+dirs = ["loader.cpp"]
 

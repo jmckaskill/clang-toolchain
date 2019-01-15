@@ -2,7 +2,7 @@ TGT = ndk-release
 HOST = ${HOST_BASE}-release
 CC_DIR = ${NDK_DIR}/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/bin
 CC = ${CC_DIR}/arm-linux-androideabi-gcc.cmd
-CPP = ${CC_DIR}/arm-linux-androideabi-g++
+CPP = ${CC_DIR}/arm-linux-androideabi-g++.cmd
 AR = ${CC_DIR}/arm-linux-androideabi-ar
 LD = ${CC_DIR}/arm-linux-androideabi-ld
 CLANG_INC = ${NDK_DIR}/toolchains/llvm/prebuilt/windows-x86_64/lib64/clang/7.0.2/include
@@ -10,10 +10,14 @@ NDK_LIB = ${NDK_DIR}/platforms/android-23/arch-arm/usr/lib
 NDK_INC = ${NDK_DIR}/sysroot/usr/include
 LIBGCC_SO = ${NDK_DIR}/toolchains/arm-linux-androideabi-4.9/prebuilt/windows-x86_64/lib/gcc/arm-linux-androideabi/4.9.x/armv7-a/libgcc.a
 LINKER = /system/bin/linker
+CPP_LIB = ${NDK_DIR}/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a
+DEF_CLIBS = ${NDK_LIB}/libc.so ${NDK_LIB}/libm.so ${LIBGCC_SO}
+DEF_CXXLIBS = ${CPP_LIB}/libc++_shared.so
+DEF_EXELIBS = ${NDK_LIB}/crtbegin_dynamic.o ${NDK_LIB}/crtend_android.o
 
 CFLAGSCMN = -fPIC -DNDEBUG -Os -Wno-zero-length-array -Wno-gcc-compat -mstrict-align $INCLUDES -fdiagnostics-format=msvc -D_GNU_SOURCE -I ${NDK_INC} -I ${NDK_INC}/arm-linux-androideabi
 CFLAGS = $CFLAGSCMN -Wall -Werror -Wno-missing-braces -Wno-unused-function
-CXXFLAGS = -std=c++11 $CFLAGSCMN -Wall -Werror -Wno-missing-braces
+CXXFLAGS = -std=c++11 $CFLAGSCMN -Wall -Werror -Wno-missing-braces -I ${NDK_DIR}/sources/cxx-stl/llvm-libc++/include
 
 rule extcc
  command = $CC $EXT_INCLUDES $CFLAGSCMN -std=c11 -MMD -MF $out.d -c $in -o $out
@@ -50,15 +54,19 @@ rule lib
  description = NDK-AR $out
 
 rule clink
- command = $LD -e _start -pie --dynamic-linker ${LINKER} -o $out $in ${NDK_LIB}/libc.so ${NDK_LIB}/libm.so ${LIBGCC_SO} ${NDK_LIB}/crtbegin_dynamic.o ${NDK_LIB}/crtend_android.o
+ command = $LD -e _start -pie --dynamic-linker ${LINKER} -o $out $in $DEF_CLIBS $DEF_EXELIBS
  description = C-NDK-EXE $out
 
 rule cxxlink
- command = $LD -o $out $in
+ command = $LD -e _start -pie --dynamic-linker ${LINKER} -o $out $in $DEF_CXXLIBS $DEF_CLIBS $DEF_EXELIBS
  description = CPP-NDK-EXE $out
 
 rule clinkdll
- command = $LD --shared -o $out $in
+ command = $LD --shared -o $out $in $DEF_CLIBS
+ description = NDK-DLL $out
+
+rule cxxlinkdll
+ command = $LD --shared -o $out $in $DEF_CXXLIBS $DEF_CLIBS
  description = NDK-DLL $out
 
 include $SRC_NINJA

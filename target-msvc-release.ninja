@@ -37,6 +37,10 @@ rule clinkdll
  command = link /DLL /INCREMENTAL:no /nologo $in /out:$out.dll /implib:$out $LINKFLAGS
  description = DLL $out
 
+rule cxxlinkdll
+ command = link /DLL /INCREMENTAL:no /nologo $in /out:$out.dll /implib:$out $LINKFLAGS
+ description = DLL $out
+
 rule clink
  command = link $in /nologo /out:$out $LINKFLAGS
  description = EXE $out

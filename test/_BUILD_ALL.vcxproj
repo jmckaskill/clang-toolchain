@@ -13,6 +13,10 @@
       <Configuration>ARMV7</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Android|x64">
+      <Configuration>Android</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
     <None Include=".\build.ninja" />
@@ -41,6 +45,11 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -55,21 +64,29 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Android|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win64-release</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win64-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win64-release</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win64-release</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win64-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win64-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win64-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win64-release</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win32-release</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win32-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win32-release</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win32-release</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win32-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win32-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) win32-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean win32-release</NMakeCleanCommandLine>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARMV7|x64'">
-    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) armv7-release</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean armv7-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) armv7-release</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) &amp;&amp; $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean armv7-release</NMakeCleanCommandLine>
+    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) armv7-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean armv7-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) armv7-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean armv7-release</NMakeCleanCommandLine>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Android|x64'">
+    <NMakeBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) ndk-release</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean ndk-release &amp;&amp; $(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) ndk-release</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>$(SolutionDir)..\tools\bin\win64-release\download.exe $(SolutionDir) $(SolutionDir)bin\ninja\ninja.exe -f msvc.ninja -C $(SolutionDir) -t clean ndk-release</NMakeCleanCommandLine>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

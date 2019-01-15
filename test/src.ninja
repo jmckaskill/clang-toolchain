@@ -2,11 +2,23 @@
 OBJ = obj/$TGT
 
 build $OBJ/cmain.o: cc main.c
+build $OBJ/cdll.o: ccdll dll.c
+build $OBJ/cloader.o: cc loader.c
+build $OBJ/cjni.o: ccdll jni.c
 build $OBJ/cppmain.o: cxx main.cpp
+build $OBJ/cppdll.o: cxxdll dll.cpp
+build $OBJ/cpploader.o: cxx loader.cpp
+build $OBJ/cppjni.o: cxxdll jni.cpp
 
 build bin/$TGT/cmain.exe: clink $OBJ/cmain.o
-
+build bin/$TGT/cdll.so: clinkdll $OBJ/cdll.o 
+build bin/$TGT/cloader.exe: clink $OBJ/cloader.o $NDK_DIR/platforms/android-23/arch-arm/usr/lib/libdl.so
+build bin/$TGT/cjni.so: clinkdll $OBJ/cjni.o
 build bin/$TGT/cppmain.exe: cxxlink $OBJ/cppmain.o
+build bin/$TGT/cppdll.so: cxxlinkdll $OBJ/cppdll.o 
+build bin/$TGT/cpploader.exe: cxxlink $OBJ/cpploader.o $NDK_DIR/platforms/android-23/arch-arm/usr/lib/libdl.so
+build bin/$TGT/cppjni.so: cxxlinkdll $OBJ/cjni.o
+
 
 build $TGT: phony $
  bin/$TGT/cmain.exe $
